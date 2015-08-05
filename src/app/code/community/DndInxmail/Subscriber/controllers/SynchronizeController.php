@@ -39,8 +39,13 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
 
         try {
             $unsubscribedStore = $synchronize->getUnsubscribedCustomers($store->getStoreId());
+
+            // Emulate store that is synchronized to get correct email subscription by store
+            $appEmulation = Mage::getSingleton('core/app_emulation');
+            $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($store->getStoreId());
             $synchronize->unsubscribeCustomersFromInxmail($unsubscribedStore);
             $synchronize->unsubscribeCustomersFromGroups();
+            $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
         }
         catch (Exception $e) {
             $message = Mage::helper('dndinxmail_subscriber')->__('Error synchronizing unsubscribed customers from Inxmail');

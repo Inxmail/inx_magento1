@@ -65,7 +65,7 @@ class DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber extends Mage_Ne
 
         $result = $this->_read->fetchRow($select, array(
             'subscriber_email'  => $customer->getEmail(),
-            'store_id'          => $customer->getStoreId()
+            'store_id'          => $storeId
         ));
 
         if ($result) {
