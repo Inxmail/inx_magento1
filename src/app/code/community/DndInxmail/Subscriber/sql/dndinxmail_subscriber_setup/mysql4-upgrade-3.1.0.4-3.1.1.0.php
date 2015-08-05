@@ -64,7 +64,7 @@ $newMappingConfigPath = 'dndinxmail_subscriber_mapping/mapping_customer/mapping'
 $mappingToSave = array();
 foreach ($defaultMapping as $attributeCode => $inxmailColumn) {
     $mappingToSave[] = array(
-        'attribute_code' => $attributeCode,
+        'attribute_code' => 'customer:' . $attributeCode,
         'inxmail_column' => $inxmailColumn,
     );
 }
@@ -77,7 +77,7 @@ foreach ($mapping as $websiteId => $websiteMapping) {
     $mappingToSave = array();
     foreach ($websiteMapping as $attributeCode => $inxmailColumn) {
         $mappingToSave[] = array(
-            'attribute_code' => $attributeCode,
+            'attribute_code' => 'customer:' . $attributeCode,
             'inxmail_column' => $inxmailColumn,
         );
     }

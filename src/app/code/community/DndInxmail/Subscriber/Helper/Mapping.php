@@ -5,7 +5,7 @@
  * @package                DndInxmail_Subscriber
  * @dev                    Merlin
  * @dev                    Alexander Velykzhanin
- * @last_modified          29/07/2015
+ * @last_modified          05/08/2015
  * @copyright              Copyright (c) 2012 Agence Dn'D
  * @author                 Agence Dn'D - Conseil en creation de site e-Commerce Magento : http://www.dnd.fr/
  * @license                http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
@@ -48,13 +48,27 @@ class DndInxmail_Subscriber_Helper_Mapping extends DndInxmail_Subscriber_Helper_
 
             $newMappings = $this->getAttributeMappingConfig();
             foreach ($newMappings as $newMapping) {
-                $mapping[$newMapping['attribute_code']] = $newMapping['inxmail_column'];
+                if (!$newMapping['attribute_code']) {
+                    continue;
+                }
+                // 1st part is attribute type (customer/customer_address), 2nd - attribute code
+                $dividedCode = explode(':', $newMapping['attribute_code']);
+                if (count($dividedCode) != 2 || !$dividedCode[0] || !$dividedCode[1]) {
+                    continue;
+                }
+                $mapping[$dividedCode[1]] = array (
+                    'inxmail_column' => $newMapping['inxmail_column'],
+                    'attribute_type' => $dividedCode[0],
+                );
             }
 
             foreach ($this->_dynamicAttributes as $dAttribute) {
                 $dValue = $this->getDynamicAttributeConfig($dAttribute);
                 if ($dValue != '' && $dValue != null) {
-                    $mapping[$dAttribute] = $dValue;
+                    $mapping[$dAttribute] = array(
+                        'inxmail_column' => $dValue,
+                        'attribute_type' => 'customer',
+                    );
                 }
             }
 

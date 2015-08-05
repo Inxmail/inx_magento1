@@ -4,7 +4,7 @@
  * @category               Module Model
  * @package                DndInxmail_Subscriber
  * @dev                    Alexander Velykzhanin
- * @last_modified          29/07/2015
+ * @last_modified          05/08/2015
  * @copyright              Copyright (c) 2015 Flagbit GmbH & Co. KG
  * @author                 Flagbit GmbH & Co. KG : https://www.flagbit.de/
  * @license                http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -24,15 +24,24 @@ class DndInxmail_Subscriber_Model_Adminhtml_System_Config_Source_Customer_Attrib
      * @var array
      */
     protected $_attributesToSkip = array(
-        'disable_auto_group_change',
-        'email',
-        'default_billing',
-        'default_shipping',
-        'password_hash',
-        'reward_update_notification',
-        'reward_warning_notification',
-        'rp_token',
-        'rp_token_created_at',
+        'customer' => array(
+            'disable_auto_group_change',
+            'email',
+            'default_billing',
+            'default_shipping',
+            'password_hash',
+            'reward_update_notification',
+            'reward_warning_notification',
+            'rp_token',
+            'rp_token_created_at',
+        ),
+        'customer_address' => array(
+            'firstname',
+            'lastname',
+            'middlename',
+            'prefix',
+            'suffix',
+        ),
     );
 
 
@@ -46,49 +55,49 @@ class DndInxmail_Subscriber_Model_Adminhtml_System_Config_Source_Customer_Attrib
         return array(
             array(
                 'label' => $helper->__('Customer ID'),
-                'value' => 'entity_id',
+                'value' => 'customer:entity_id',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_INTEGER,
                 ),
             ),
             array(
                 'label' => $helper->__('Update Date'),
-                'value' => 'updated_at',
+                'value' => 'customer:updated_at',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_DATE,
                 ),
             ),
             array(
                 'label' => $helper->__('Customer is active'),
-                'value' => 'is_active',
+                'value' => 'customer:is_active',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_BOOLEAN,
                 ),
             ),
             array(
                 'label' => $helper->__('Creation Date'),
-                'value' => 'created_at',
+                'value' => 'customer:created_at',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_DATE,
                 ),
             ),
             array(
-                'value' => 'group_id',
                 'label' => $helper->__('Group ID'),
+                'value' => 'customer:group_id',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_INTEGER,
                 ),
             ),
             array(
                 'label' => $helper->__('Store ID'),
-                'value' => 'store_id',
+                'value' => 'customer:store_id',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_INTEGER,
                 ),
             ),
             array(
                 'label' => $helper->__('Website ID'),
-                'value' => 'website_id',
+                'value' => 'customer:website_id',
                 'params' => array(
                     'data-type' => Inx_Api_Recipient_Attribute::DATA_TYPE_INTEGER,
                 ),
@@ -105,37 +114,16 @@ class DndInxmail_Subscriber_Model_Adminhtml_System_Config_Source_Customer_Attrib
     public function toOptionArray()
     {
         if (!$this->_options) {
-            $attributes = Mage::getModel('customer/entity_attribute_collection');
+            $customerAttributes = Mage::getResourceModel('customer/attribute_collection');
             // Static columns that are not attributes
             $results = $this->_getStaticAttributes();
 
-            $typeMapping = $this->getTypeMapping();
+            $customerAddressAttributes = Mage::getResourceModel('customer/address_attribute_collection');
 
-            foreach ($attributes as $attribute) {
-                $code = $attribute->getAttributeCode();
-                if (in_array($code, $this->_attributesToSkip)) {
-                    continue;
-                }
-                $label       = $attribute->getFrontendLabel();
-                $backendType = $attribute->getBackendType();
-                if ($backendType == 'static') {
-                    continue;
-                } elseif ($attribute->getFrontendInput() == 'boolean') {
-                    $type = Inx_Api_Recipient_Attribute::DATA_TYPE_BOOLEAN;
-                } else {
-                    $type = $typeMapping[$backendType];
-                }
-                if (!$label) {
-                    $label .= $code;
-                }
-                $results[] = array(
-                    'label' => $label,
-                    'value' => $code,
-                    'params' => array(
-                        'data-type'  => $type,
-                    ),
-                );
-            }
+            $customerOptions        = $this->_getAttributesOptions($customerAttributes, 'customer');
+            $customerAddressOptions = $this->_getAttributesOptions($customerAddressAttributes, 'customer_address');
+
+            $results = array_merge($results, $customerOptions, $customerAddressOptions);
 
             uasort($results, function($a, $b) {
                 return $a['label'] > $b['label'];
@@ -175,10 +163,66 @@ class DndInxmail_Subscriber_Model_Adminhtml_System_Config_Source_Customer_Attrib
                 }
             }
 
+            array_unshift(
+                $groupedOptions,
+                array(
+                    'label' => $helper->__('Please select value'),
+                    'value' => '',
+                )
+            );
+
             $this->_options = $groupedOptions;
         }
 
         return $this->_options;
+    }
+
+
+    /**
+     * @param $attributes
+     * @param $attributeType
+     *
+     * @return array
+     */
+    public function _getAttributesOptions($attributes, $attributeType)
+    {
+        $typeMapping = $this->getTypeMapping();
+        $results = array();
+
+        foreach ($attributes as $attribute) {
+            $code = $attribute->getAttributeCode();
+            if (in_array($code, $this->_attributesToSkip[$attributeType])) {
+                continue;
+            }
+            // Region id should be excluded to have only one region in list. Later we will check both as exclusion
+            // from general behavior
+            if ($code == 'region_id') {
+                continue;
+            }
+            $label       = $attribute->getFrontendLabel();
+            $backendType = $attribute->getBackendType();
+            if ($backendType == 'static') {
+                continue;
+            } elseif ($attribute->getFrontendInput() == 'boolean') {
+                $type = Inx_Api_Recipient_Attribute::DATA_TYPE_BOOLEAN;
+            } elseif ($attribute->getFrontendInput() == 'select' || $attribute->getFrontendInput() == 'multiselect') {
+                $type = Inx_Api_Recipient_Attribute::DATA_TYPE_STRING;
+            } else {
+                $type = $typeMapping[$backendType];
+            }
+            if (!$label) {
+                $label .= $code;
+            }
+            $results[] = array(
+                'label' => $label,
+                'value' => sprintf('%s:%s', $attributeType, $code),
+                'params' => array(
+                    'data-type'  => $type,
+                ),
+            );
+        }
+
+        return $results;
     }
 
 
