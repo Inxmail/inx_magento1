@@ -354,9 +354,13 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getCustomerByEmail($email)
     {
-        $websites = Mage::app()->getWebsites();
-        $website  = reset($websites);
-        $website  = (count($website) > 0) ? $website->getId() : Mage::app()->getWebsite()->getId();
+        if(Mage::app()->getStore()->getCode() == Mage_Core_Model_Store::ADMIN_CODE) {
+            $websites = Mage::app()->getWebsites();
+            $website  = reset($websites);
+            $website  = (count($website) > 0) ? $website->getId() : Mage::app()->getWebsite()->getId();
+        } else {
+            $website  = Mage::app()->getWebsite()->getId();
+        }
 
         $customer = Mage::getModel('customer/customer')->setWebsiteId($website)->loadByEmail($email);
 
