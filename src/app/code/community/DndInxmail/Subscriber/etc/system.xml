@@ -134,6 +134,34 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
+                        <mapping>
+                            <label>Mapping</label>
+                            <frontend_model>dndinxmail_subscriber/adminhtml_system_config_form_field_payment</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <button_label>Add mapping</button_label>
+                            <columns>
+                                <![CDATA[
+                                    <fields>
+                                        <attribute_code>
+                                            <type>select</type>
+                                            <label>Customer Attribute</label>
+                                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_customer_attributes</source_model>
+                                            <style>width:240px</style>
+                                        </attribute_code>
+                                        <inxmail_column>
+                                            <type>select</type>
+                                            <label>Inxmail Column</label>
+                                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_groupedColumns</source_model>
+                                            <style>width:240px</style>
+                                        </inxmail_column>
+                                    </fields>
+                                    ]]>
+                            </columns>
+                        </mapping>
                         <entity_id>
                             <label>Customer ID</label>
                             <frontend_type>select</frontend_type>

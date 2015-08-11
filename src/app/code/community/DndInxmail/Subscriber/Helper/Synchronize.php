@@ -4,7 +4,8 @@
  * @category               Module Helper
  * @package                DndInxmail_Subscriber
  * @dev                    Merlin
- * @last_modified          13/03/2013
+ * @dev                    Alexander Velykzhanin
+ * @last_modified          05/08/2015
  * @copyright              Copyright (c) 2012 Agence Dn'D
  * @author                 Agence Dn'D - Conseil en creation de site e-Commerce Magento : http://www.dnd.fr/
  * @license                http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
@@ -62,6 +63,13 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * @var null
      */
     protected $_customerCollection = null; // Customer collection for dynamic attributes
+
+    /**
+     * Contains cache for loaded attributes
+     *
+     * @var array
+     */
+    protected $_attributes = array();
 
     /**
      * Open an Inxmail session
@@ -203,22 +211,38 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         }
 
         $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
+        /** @var null|Mage_Customer_Model_Customer $customer */
         $customer      = $this->getCustomerByEmail($email);
         $vars          = array();
 
         if ($customer != false) {
             $fields = $mappingHelper->getMappingFields();
-            foreach ($fields as $magentoField => $inxmailField) {
+            foreach ($fields as $magentoField => $config) {
+                $inxmailColumn = $config['inxmail_column'];
                 if ($mappingHelper->isDynamicAttribute($magentoField)) {
                     $dynamicData = $this->getDynamicData($magentoField, $email);
                     if ($dynamicData !== false) {
-                        $vars[$inxmailField] = $dynamicData;
+                        $vars[$inxmailColumn] = $dynamicData;
+                    }
+
+                    continue;
+                }
+                $attributeType = $config['attribute_type'];
+
+                $value = null;
+                if ($attributeType === 'customer') {
+                    $value = $customer->getData($magentoField);
+                } elseif ($attributeType === 'customer_address') {
+                    $customerAddress = $customer->getDefaultBillingAddress();
+
+                    if ($customerAddress && $customerAddress->getId()) {
+                        $value = $customerAddress->getData($magentoField);
                     }
                 }
-                $value = $customer->getData($magentoField);
+
                 if ($value != null) {
-                    $value = $this->_processAttributesValue($magentoField, $value);
-                    $vars[$inxmailField] = $value;
+                    $value = $this->_processAttributesValue($magentoField, $value, $attributeType);
+                    $vars[$inxmailColumn] = $value;
                 }
             }
         }
@@ -721,29 +745,85 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      * @param $field
      * @param $value
+     * @param $attributeType
      *
      * @return string
      */
-    protected function _processAttributesValue($field, $value)
+    protected function _processAttributesValue($field, $value, $attributeType)
     {
-        switch ($field) {
 
-            case 'gender':
-                $gender = '';
-                if ($value == '2') {
-                    $gender = 'f';
+        if ($field == 'gender') {
+            $gender = '';
+            if ($value == '2') {
+                $gender = 'f';
+            }
+            elseif ($value == '1') {
+                $gender = 'm';
+            }
+
+            return $gender;
+        }
+
+        $attribute = $this->_getAttribute($field, $attributeType);
+
+        if (!is_null($attribute) && $attribute->usesSource()) {
+            if ($attribute->getFrontendInput() === 'select') {
+                $value = $attribute->getSource()
+                    ->getOptionText($value);
+            } elseif ($attribute->getFrontendInput() === 'multiselect') {
+                $exploded = explode(',', $value);
+                $values = array();
+                foreach ($exploded as $singleValue) {
+                    $optionText = $attribute->getSource()
+                        ->getOptionText($singleValue);
+
+                    if (is_array($optionText)) {
+                        $values[] = $optionText['label'];
+                    } else {
+                        $values[] = $optionText;
+                    }
+
                 }
-                elseif ($value == '1') {
-                    $gender = 'm';
-                }
-
-                $value = $gender;
-                break;
-
+                $value = implode(',', $values);
+            }
         }
 
         return $value;
     }
+
+
+    /**
+     * @param $field
+     * @param $attributeType
+     *
+     * @return null|Mage_Eav_Model_Entity_Attribute
+     */
+    protected function _getAttribute($field, $attributeType)
+    {
+        if (!array_key_exists($attributeType, $this->_attributes)) {
+            $attributes = array();
+            if ($attributeType === 'customer_address') {
+                $attributeCollection = Mage::getResourceModel('customer/address_attribute_collection');
+            } else {
+                $attributeCollection = Mage::getResourceModel('customer/attribute_collection');
+            }
+
+            foreach ($attributeCollection as $attribute) {
+                $attributes[$attribute->getAttributeCode()] = $attribute;
+            }
+
+            $this->_attributes[$attributeType] = $attributes;
+        }
+
+        $attribute = null;
+        if (array_key_exists($field, $this->_attributes[$attributeType])) {
+            $attribute = $this->_attributes[$attributeType][$field];
+        }
+
+        return $attribute;
+    }
+
+
 
     /**
      * Get data for dynamic attributes
