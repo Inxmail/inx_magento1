@@ -119,7 +119,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         $pass = Zend_Json::decode($pass);
 
         if ($data['failed'] == 'false') {
-
+            $synchronize->doMappingCheck();
             try {
 
                 foreach ($pass as $subscriber) {

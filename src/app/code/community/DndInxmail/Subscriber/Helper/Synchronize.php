@@ -40,6 +40,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      */
     const DNDINXMAIL_CUSTOMER_MAPPING_STATUS_DELETED = 'deleted'; // Customer mapping deleted status
+    /**
+     * Stores synchronization error notifications
+     */
+    const DND_INXMAIL_ADMIN_NOTIFICATION = 'dndinxmail_subscriber_general/general/notifications';
 
     /**
      * @var null
@@ -998,6 +1002,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         $contextListManager = $this->getListContextManager();
 
+        $this->doMappingCheck();
+
         foreach ($groupsConfig as $groupId) {
 
             $listName = $groupHelper->formatInxmailListName($groupId);
@@ -1017,6 +1023,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             if (!$emails) continue;
 
             $inxmailList = $contextListManager->get($list->getId());
+
             foreach ($emails as $email) {
 
                 $subscriber = Mage::getModel('newsletter/subscriber')->loadByEmail($email);
@@ -1033,6 +1040,69 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $this->closeInxmailSession();
 
         return true;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function doMappingCheck()
+    {
+        $hasErrors = false;
+        $errors    = array();
+        /** @var DndInxmail_Subscriber_Helper_Mapping $mappingHelper */
+        $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
+        /** @var DndInxmail_Subscriber_Helper_Log $logHelper */
+        $logHelper = Mage::helper('dndinxmail_subscriber/log');
+
+        $fields = $mappingHelper->getMappingFields();
+        $recipientContext      = $this->getRecipientContext();
+        $recipientMetaData     = $recipientContext->getMetaData();
+
+        foreach ($fields as $magentoField => $config) {
+            if ($mappingHelper->isDynamicAttribute($magentoField)) {
+                continue;
+            }
+            $inxmailColumn = $config['inxmail_column'];
+            $customerAttribute = Mage::getModel('eav/entity_attribute')->loadByCode('customer', $magentoField);
+            $customerAddressAttribute = Mage::getModel('eav/entity_attribute')
+                ->loadByCode('customer_address', $magentoField);
+            if (!$customerAttribute->getId() && !$customerAddressAttribute->getId()) {
+                $errors[] = sprintf(
+                    "'%s' magento attribute not found during synchronization for '%s' column",
+                    $magentoField,
+                    $inxmailColumn
+                );
+                $hasErrors = true;
+            }
+
+            try {
+                $recipientMetaData->getUserAttribute($inxmailColumn);
+            } catch (Inx_Api_Recipient_AttributeNotFoundException $e) {
+                $errors[] = sprintf(
+                    "'%s' inxmail column not found during synchronization for '%s' magento field",
+                    $inxmailColumn,
+                    $magentoField
+                );
+                $hasErrors = true;
+            }
+        }
+
+        $currentNotifications = Mage::getStoreConfig(self::DND_INXMAIL_ADMIN_NOTIFICATION);
+        if ($hasErrors && !empty($errors)) {
+            foreach ($errors as $error) {
+                $logHelper->logData($error);
+            }
+        }
+
+        $errorsJson = Mage::helper('core')->jsonEncode($errors);
+        if ($currentNotifications !== $errorsJson) {
+            $config = new Mage_Core_Model_Config();
+            $config->saveConfig(self::DND_INXMAIL_ADMIN_NOTIFICATION, $errorsJson);
+            $config->cleanCache();
+        }
+
+        return $hasErrors;
     }
 
     /**
