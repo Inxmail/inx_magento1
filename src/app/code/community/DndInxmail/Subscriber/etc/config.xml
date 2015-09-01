@@ -13,7 +13,7 @@
 <config>
     <modules>
         <DndInxmail_Subscriber>
-            <version>3.1.0.3</version>
+            <version>3.1.0.5</version>
         </DndInxmail_Subscriber>
     </modules>
     <global>
@@ -21,7 +21,22 @@
             <dndinxmail_subscriber>
                 <class>DndInxmail_Subscriber_Model</class>
             </dndinxmail_subscriber>
+            <newsletter_resource>
+                <rewrite>
+                    <subscriber>DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber</subscriber>
+                </rewrite>
+            </newsletter_resource>
         </models>
+
+        <resources>
+            <dndinxmail_subscriber_setup>
+                <setup>
+                    <module>DndInxmail_Subscriber</module>
+                    <class>Mage_Customer_Model_Resource_Setup</class>
+                </setup>
+            </dndinxmail_subscriber_setup>
+        </resources>
+
         <blocks>
             <dndinxmail_subscriber>
                 <class>DndInxmail_Subscriber_Block</class>

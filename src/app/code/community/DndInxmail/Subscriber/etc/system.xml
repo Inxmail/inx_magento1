@@ -134,126 +134,34 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <entity_id>
-                            <label>Customer ID</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_int</source_model>
+                        <mapping>
+                            <label>Mapping</label>
+                            <frontend_model>dndinxmail_subscriber/adminhtml_system_config_form_field_payment</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Integer</comment>
-                        </entity_id>
-                        <prefix>
-                            <label>Prefix</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_text</source_model>
-                            <sort_order>15</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Text</comment>
-                        </prefix>
-                        <gender>
-                            <label>Gender</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_text</source_model>
-                            <sort_order>16</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Text</comment>
-                        </gender>
-                        <firstname>
-                            <label>Firstname</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_text</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Text</comment>
-                        </firstname>
-                        <lastname>
-                            <label>Lastname</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_text</source_model>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Text</comment>
-                        </lastname>
-                        <dob>
-                            <label>Date Of Birth</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_dateonly</source_model>
-                            <sort_order>35</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Date only</comment>
-                        </dob>
-                        <group_id>
-                            <label>Group ID</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_int</source_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Integer</comment>
-                        </group_id>
-                        <website_id>
-                            <label>Website ID</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_int</source_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Integer</comment>
-                        </website_id>
-                        <store_id>
-                            <label>Store ID</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_int</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Integer</comment>
-                        </store_id>
-                        <created_at>
-                            <label>Creation Date</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_dateonly</source_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Date only</comment>
-                        </created_at>
-                        <updated_at>
-                            <label>Update Date</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_dateonly</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Date only</comment>
-                        </updated_at>
-                        <is_active>
-                            <label>Customer is active</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_columns_type_yesno</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Type Yes/No</comment>
-                        </is_active>
+                            <show_in_store>0</show_in_store>
+                            <button_label>Add mapping</button_label>
+                            <columns>
+                                <![CDATA[
+                                    <fields>
+                                        <attribute_code>
+                                            <type>select</type>
+                                            <label>Customer Attribute</label>
+                                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_customer_attributes</source_model>
+                                            <style>width:240px</style>
+                                        </attribute_code>
+                                        <inxmail_column>
+                                            <type>select</type>
+                                            <label>Inxmail Column</label>
+                                            <source_model>dndinxmail_subscriber/adminhtml_system_config_source_inxmail_groupedColumns</source_model>
+                                            <style>width:240px</style>
+                                        </inxmail_column>
+                                    </fields>
+                                    ]]>
+                            </columns>
+                        </mapping>
                     </fields>
                 </mapping_customer>
                 <mapping_dynamics>
