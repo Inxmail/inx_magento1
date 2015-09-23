@@ -45,8 +45,12 @@ class DndInxmail_Subscriber_Model_Xml extends Mage_Core_Model_Abstract
         $xmlAttr = "";
 
         if (count($attributes) != 0) {
-            foreach ($attributes as $attribute) {
-                $xmlAttr .= "<" . ucfirst($attribute) . ">" . htmlspecialchars($product->getAttributeText($attribute)) . "</" . ucfirst($attribute) . ">";
+            foreach ($attributes as $attributeCode) {
+                $attribute = $product->getResource()->getAttribute($attributeCode);
+                if (!$attribute) {
+                    continue;
+                }
+                $xmlAttr .= "<" . ucfirst($attributeCode) . ">" . htmlspecialchars($product->getAttributeText($attributeCode)) . "</" . ucfirst($attributeCode) . ">";
             }
         }
 
