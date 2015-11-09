@@ -1024,17 +1024,18 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
             $inxmailList = $contextListManager->get($list->getId());
 
-            foreach ($emails as $email) {
+            /** @var Mage_Newsletter_Model_Resource_Subscriber_Collection $subscriberCollection */
+            $subscriberCollection = Mage::getModel('newsletter/subscriber')->getCollection();
+            $subscriberCollection->useOnlySubscribed()
+                ->addFieldToFilter('subscriber_email', array('in' => $emails));
+            $subscriberCollection->getSelect()->group('main_table.subscriber_email');
 
-                $subscriber = Mage::getModel('newsletter/subscriber')->loadByEmail($email);
-                if (!$subscriber instanceof Varien_Object || !$subscriber->getSubscriberId()) {
+            foreach ($subscriberCollection as $subscriber) {
+                if (!$subscriber->isSubscribed()) {
                     continue;
                 }
-                if (!$subscriber->isSubscribed()) continue;
-
-                $this->subscribeCustomer($email, false, $inxmailList);
+                $this->subscribeCustomer($subscriber->getEmail(), false, $inxmailList);
             }
-
         }
 
         $this->closeInxmailSession();

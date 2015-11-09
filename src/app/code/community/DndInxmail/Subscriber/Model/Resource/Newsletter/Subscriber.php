@@ -16,13 +16,16 @@ class DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber extends Mage_Ne
 
         $select = $this->_read->select()
             ->from($this->getMainTable())
-            ->where('subscriber_email=:subscriber_email')
-            ->where('store_id=:store_id'); // Add store ID for newsletters
+            ->where('subscriber_email=:subscriber_email');
 
-        $result = $this->_read->fetchRow($select, array(
-            'subscriber_email'  => $subscriberEmail,
-            'store_id'          => $storeId
-        ));
+        $bind = array('subscriber_email' => $subscriberEmail);
+        // Add store ID for newsletters
+        if ($storeId != Mage_Core_Model_App::ADMIN_STORE_ID) {
+            $select->where('store_id=:store_id');
+            $bind['store_id'] = $storeId;
+        }
+
+        $result = $this->_read->fetchRow($select, $bind);
 
         if (!$result) {
             return array();
