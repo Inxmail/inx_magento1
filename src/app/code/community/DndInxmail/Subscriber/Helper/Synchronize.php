@@ -263,7 +263,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
         if (!$isSubscribed && $trigger == true) {
-            $subscriptionManager->processSubscription("Magento", null, $inxmailList, $email);
+            $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
+            $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email);
         }
 
         if (!$isSubscribed && $trigger == false) {
@@ -320,7 +321,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $batchChannel = $recipientContext->createBatchChannel();
 
         if ($trigger) {
-            $subscriptionManager->processUnsubscription("Magento", null, $inxmailList, $email);
+            $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
+            $subscriptionManager->processUnsubscription($sourceIdentifier, null, $inxmailList, $email);
         }
         else {
             $batchChannel->selectRecipient($email);
