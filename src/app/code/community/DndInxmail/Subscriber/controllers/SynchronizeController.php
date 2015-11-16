@@ -101,10 +101,12 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
             $data['failed'] = 'true';
             $data['msg']    = "No store set";
         }
-
-        if (!$session = $synchronize->openInxmailSession()) {
+        $session = new Varien_Object();
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
             $data['failed'] = 'true';
-            $data['msg']    = "Inxmail session does not exist";
+            $data['msg']    = $e->getMessage();
         }
 
         if (!$listid = (int)$synchronize->getSynchronizeListId($store->getStoreId())) {
@@ -112,13 +114,13 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
             $data['msg']    = "No list defined in configuration";
         }
 
-        $listContextManager = $session->getListContextManager();
-        $inxmailList        = $listContextManager->get($listid);
-
         $pass = $this->getRequest()->getParam('pass');
         $pass = Zend_Json::decode($pass);
 
         if ($data['failed'] == 'false') {
+            $listContextManager = $session->getListContextManager();
+            $inxmailList        = $listContextManager->get($listid);
+
             $synchronize->doMappingCheck();
             try {
 
