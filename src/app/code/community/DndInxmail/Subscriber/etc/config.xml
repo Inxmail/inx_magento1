@@ -183,24 +183,4 @@
             </mapping_groups>
         </dndinxmail_subscriber_mapping>
     </default>
-    <crontab>
-        <jobs>
-            <dndinxmail_subscriber_synchronize_unsubscribed>
-                <schedule>
-                    <cron_expr>0 * * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>dndinxmail_subscriber/observer::synchronizeUnsubscribed</model>
-                </run>
-            </dndinxmail_subscriber_synchronize_unsubscribed>
-            <dndinxmail_subscriber_synchronize_customer_group>
-                <schedule>
-                    <cron_expr>0 1 * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>dndinxmail_subscriber/observer::synchronizeCustomerGroup</model>
-                </run>
-            </dndinxmail_subscriber_synchronize_customer_group>
-        </jobs>
-    </crontab>
 </config>
