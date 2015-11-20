@@ -17,7 +17,7 @@ class Inx_Apiimpl_Recipient_AttributeManagerImpl implements Inx_Api_Recipient_At
 	public function __construct( $oSessionContext )
 	{
 		$this->_oSessionContext = $oSessionContext;
-		$this->_oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
+		$this->_oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
 	}
 	
 	

@@ -70,7 +70,7 @@ class Inx_Apiimpl_Mailing_AttachmentImpl implements Inx_Api_Mail_Attachment
     {
         try
 	    {
-	        $service = $this->_oRendererRef->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+	        $service = $this->_oRendererRef->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
 	        
 	        $sRefId = $service->getInputStream( $this->_oRendererRef->createCxt(), 
 	                $this->_oRendererRef->refId(), $this->_oData->streamId );

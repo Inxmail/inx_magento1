@@ -77,90 +77,9 @@
  * @package Inxmail
  * @subpackage Recipient
  */
-interface Inx_Api_Recipient_UnsubscriptionRecipientRowSet
-{
-
-    /**
-     * Moves the cursor to the front of this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object, just before the first row. 
-     * This method has no effect if the result set contains no rows.
-     */
-	public function beforeFirstRow();
-	
-    /**
-     * Moves the cursor to the end of this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object, just after the last row. 
-     * This method has no effect if the result set contains no rows.
-     */
-	public function afterLastRow();
-	
-    /**
-     * Moves the cursor to the given row number in this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object.
-     * The first row is row 0, the second is row 1, and so on. 
-     *
-     * @param int $iRow the number of the row to which the cursor should move.
-     */
-	public function setRow( $iRow );
-
-    /**
-     * Retrieves the current row number. The first row is number 0, the second number 1, and so on.  
-     *
-     * @return int the current row number.
-     */
-    public function getRow();
-
-    /**
-     * Moves the cursor down one row from its current position. 
-     * An <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> cursor is initially positioned before the first row; the 
-     * first call to the method <i>next()</i> makes the first row the current row; the second call makes the second row 
-     * the current row, and so on.
-	 * 
-	 * @return bool <i>true</i> if the new current row is valid, <i>false</i> if there are no more rows. 
-     */
-    public function next();
-    
-    /**
-     * Moves the cursor to the previous row in this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object.
-     *
-     * @return bool <i>true</i> if the cursor is on a valid row, <i>false</i> if it is off the result set.
-     */
-    public function previous();
-    
-	/**
-	 * Returns the number of rows in this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object.
-	 *
-	 * @return int the number of rows.
-	 */
-    public function getRowCount();    
-
-    /**
-     * Updates the underlying recipient on the server with the new contents of the current row of this
-	 * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object.
-	 * 
-	 * @throws Inx_Api_Recipient_BlackListException if the email address is blocked by a blacklist entry.
-	 * @throws Inx_Api_Recipient_IllegalValueException if one of the attribute values is invalid.
-	 * @throws Inx_Api_Recipient_DuplicateKeyException if the key value is already used.
-	 * @throws Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *             <i>next()</i>).
-     */
-    public function commitRowUpdate();
-
-    
-    /**
-     * Deletes the current row from this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object. 
-     * This method cannot be called when the cursor is on the insert row. 
-     * Do <strong>not</strong> call <i>commitRowUpdate()</i> after invoking this method, as this would trigger an 
-     * <i>Inx_Api_DataException</i>.
-     */
-    public function deleteRow();
-    
-    /**
-     * Deletes the specified rows from this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object. 
-     * Do <strong>not</strong> call <i>commitRowUpdate()</i> on an affected row after invoking this method, as this 
-     * would trigger an <i>Inx_Api_DataException</i>.
-	 * 
-	 * @param Inx_Api_IndexSelection $oSelection the rows to be deleted.
-     */
-    public function deleteRows( Inx_Api_IndexSelection $oSelection );
-    
+interface Inx_Api_Recipient_UnsubscriptionRecipientRowSet extends Inx_Api_Recipient_ReadOnlyRecipientRowSet, 
+    Inx_Api_ManipulationRowSet
+{    
     /**
      * Resubscribes the recipient. The resubscription will be processed after calling <code>commitRowUpdate()</code>.
 	 * 
@@ -178,15 +97,7 @@ interface Inx_Api_Recipient_UnsubscriptionRecipientRowSet
 	 * @param selection the selected rows. May be ommitted.
 	 * @return <i>true</i>, if the recipients were resubscribed, <i>false</i> otherwise.
 	 */
-	public function setResubscribe( $subscriptionDate, Inx_Api_IndexSelection $oSelection=null );
-    
-
-    /**
-     * Reports whether the underlying recipient is deleted or not.
-     *
-     * @return bool <i>true</i> if the underlying recipient is deleted, <i>false</i> otherwise.
-     */
-    public function isRowDeleted();    
+	public function setResubscribe( $subscriptionDate, Inx_Api_IndexSelection $oSelection=null );  
   
     /**
      * Retrieves the recipient id in the current row of this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object.
@@ -194,110 +105,15 @@ interface Inx_Api_Recipient_UnsubscriptionRecipientRowSet
      * @return int the recipient id in the current row.
      * @throws Inx_Api_DataException if the selected recipient is deleted.
      */
-    public function getId();
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>string</i>.
+    public function getId();  
+        
+        /**
+	 * Returns the point in time when the current recipient was unsubscribed from the selected list.
 	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the attribute value as String.
+	 * @return string the point in time when the current recipient was unsubscribed from the selected list as ISO 8601 
+         *         formatted datetime string. May be <i>null</i> if the subscription attribute was not found.
 	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>string</i>.
-     */
-    public function getString( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>bool</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return bool the attribute value as bool.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>bool</i>.
-     */
-    public function getBoolean( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>int</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return int the attribute value as int.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>int</i>.
-     */
-    public function getInteger( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>double</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return double the attribute value as double.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>double</i>.
-     */
-    public function getDouble( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>date</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the date value as ISO 8601 formatted date string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>date</i>.
-     */
-    public function getDate( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>time</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the time value as ISO 8601 formatted time string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>time</i>.
-     */
-    public function getTime( Inx_Api_Recipient_Attribute $oAttr );
-    
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as a <i>datetime</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the datetime value as ISO 8601 formatted datetime string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>datetime</i>.
-     */
-    public function getDatetime( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this 
-     * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object as the same data type as the attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return mixed the attribute value. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-     */
-	public function getObject( Inx_Api_Recipient_Attribute $oAttr );
-  
-    
-    /**
-     * Releases the resources associated with this <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object on 
-     * the server immediately.
-     * <p>
-     * An <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> object <strong>must</strong> be closed once 
- 	 * it is not needed anymore to prevent memory leaks and other potentially harmful side effects.
-     */	
-	public function close();
+	 *         <i>next()</i>).
+	 */
+	public function getUnsubscriptionDate();
 }

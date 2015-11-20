@@ -21,12 +21,12 @@ class Inx_Apiimpl_Recipient_ContextAttribute_Id extends Inx_Apiimpl_Recipient_Co
 		return (int)$oRecipientData->id;
 	}
 
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $sValue )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $sValue )
 	{
 		throw new Exception( "id attribute isn't updateable" );
 	}
 
-	public function updateInteger( $oRecipientData, &$aChangedAttrs, $sValue )
+	public function updateInteger( $oRecipientData, array &$aChangedAttrs, $sValue )
 	{
 		throw new Exception( "id attribute isn't updateable" );
 	}

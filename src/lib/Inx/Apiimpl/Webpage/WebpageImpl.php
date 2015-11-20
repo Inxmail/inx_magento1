@@ -23,7 +23,7 @@ class Inx_Apiimpl_Webpage_WebpageImpl implements Inx_Api_Webpage_Webpage
 	{
 		try
 		{
-			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::WEBPAGE_SERVICE );
+			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::WEBPAGE2_SERVICE );
 			$this->_oData = $service->get( $this->_oSessionContext->createCxt(), $this->_oData->id );
 
 			if( $this->_oData == null )

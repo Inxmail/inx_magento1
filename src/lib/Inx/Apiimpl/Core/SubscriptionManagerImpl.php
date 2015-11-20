@@ -7,7 +7,7 @@
 class Inx_Apiimpl_Core_SubscriptionManagerImpl implements Inx_Api_Subscription_SubscriptionManager
 {
 
-	protected $_oCoreService;
+	protected $_oCore2Service;
 	
     protected $_oSessionContext;
 
@@ -15,7 +15,7 @@ class Inx_Apiimpl_Core_SubscriptionManagerImpl implements Inx_Api_Subscription_S
 	public function __construct( Inx_Apiimpl_SessionContext $oSc )
 	{
 		$this->_oSessionContext = $oSc;
-		$this->_oCoreService = $oSc->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
+		$this->_oCore2Service = $oSc->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
 	}
 	
 	/**
@@ -26,7 +26,7 @@ class Inx_Apiimpl_Core_SubscriptionManagerImpl implements Inx_Api_Subscription_S
 			$aAttrKeyValuePairs = array() ) 
 	{
 		if (!isset($sSourceIdentifier) && !isset($sRemoteAddress) && count($aAttrKeyValuePairs) == 0) {
-		    $this->processSubscription2($oListContext, $sEmailAddress);
+		    return $this->processSubscription2($oListContext, $sEmailAddress);
 		}
 	    
 		$oAttrs = new stdClass;
@@ -158,7 +158,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 
 		try
 		{
-		    $oRet = $this->_oCoreService->processSubUnsubscription( 
+		    $oRet = $this->_oCore2Service->processSubUnsubscription(
 		                                $this->_oSessionContext->sessionId(), 
 		                                true,
 		    		                    $sSourceIdentifier, 
@@ -185,12 +185,12 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 			Inx_Api_List_StandardListContext $oListContext, $sEmailAddress, $mailingId = 0 ) 
 	{
 	    if (is_null($sSourceIdentifier) && is_null($sRemoteAddress)) {
-	        $this->processUnsubscription2($oListContext, $sEmailAddress);
+	        return $this->processUnsubscription2($oListContext, $sEmailAddress);
 	    }
 	    
 		try
 		{
-		    $oRet = $this->_oCoreService->processSubUnsubscription2( 
+		    $oRet = $this->_oCore2Service->processSubUnsubscription2(
 		                            $this->_oSessionContext->sessionId(), 
 		                            false,
 		    		                $sSourceIdentifier, 
@@ -216,7 +216,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 	{
 		try
 		{
-		    $oRet = $this->_oCoreService->processSubscription( $this->_oSessionContext->sessionId(), 
+		    $oRet = $this->_oCore2Service->processSubscription( $this->_oSessionContext->sessionId(),
 					$oListContext->getId(), $sEmailAddress );
 					
 		    return $oRet->value;
@@ -236,7 +236,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 	{
 		try
 		{
-		    $oRet = $this->_oCoreService->processUnsubscription( $this->_oSessionContext->sessionId(),
+		    $oRet = $this->_oCore2Service->processUnsubscription( $this->_oSessionContext->sessionId(),
 					$oListContext->getId(), $sEmailAddress );
 
 		    return $oRet->value;
@@ -383,7 +383,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 		
 		try
 		{
-			$oRet = $this->_oCoreService->processSubUnsubscription2(
+			$oRet = $this->_oCore2Service->processSubUnsubscription2(
 				$this->_oSessionContext->sessionId(),
 				false,
 				$sSourceIdentifier,
@@ -540,7 +540,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 		
 		try 
 		{
-			$oRet = $this->_oCoreService->processSubUnsubscription3(
+			$oRet = $this->_oCore2Service->processSubUnsubscription3(
 				$this->_oSessionContext->sessionId(),
 				false,
 				$sSourceIdentifier,
@@ -566,48 +566,72 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 
 	public function getAllLogEntries( $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                    
 		return $this->_getEntries( null, null, null, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesAfter( $after, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( null, $after, null, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesAfterAndList( $lc, $after, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( $lc, $after, null, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesBefore( $before, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( null, null, $before, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesBeforeAndList( $lc, $before, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( $lc, null, $before, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesBetween( $start, $end, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( null, $start, $end, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesBetweenAndList( $lc, $start, $end, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( $lc, $start, $end, $rc, $attrs );
 	}
 
 
 	public function getLogEntriesForList( $lc, $rc, $attrs )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('Inx_Api_Recipient_RecipientContext may not be null');
+                
 		return $this->_getEntries( $lc, null, null, $rc, $attrs );
 	}
 
@@ -623,7 +647,7 @@ $sPregTime = '/^[0-9]{2}:([0-9]{2}):([0-9]{2})(\\.[0-9]{3})?(Z|[+\-][0-9]{4}|[+\
 			else
 				$listId = $lc->getId();
 			//fixes XAPI-40: added $ sign to listId
-			$oResult = $this->_oCoreService->selectSubscriptionLogEntries( $this->_oSessionContext->createCxt(), $listId, 
+			$oResult = $this->_oCore2Service->selectSubscriptionLogEntries( $this->_oSessionContext->createCxt(), $listId,
 					Inx_Apiimpl_TConvert::TConvert( $start ), Inx_Apiimpl_TConvert::TConvert( $end ), $rc->_remoteRef()->refId(), $aAttrIds );
 
 			return new Inx_Apiimpl_Core_SubscriptionLogEntryRowSetImpl( $this->_oSessionContext,$rc,$attrs,$oResult );

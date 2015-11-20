@@ -13,14 +13,17 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	private $_oSessionContext;
 	private $_oService;
 
-	public function __construct( Inx_Apiimpl_SessionContext $oSC )
+	public function __construct( Inx_Apiimpl_AbstractSession $oSC )
 	{
 		$this->_oSessionContext = $oSC;
-		$this->_oService =$this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::DATAACCESS_SERVICE );
+		$this->_oService =$this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::DATAACCESS3_SERVICE );
 	}
 
 	public function selectByLink( $iLinkId,  Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+            
 		if (!is_int($iLinkId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iLinkId expected, got '.gettype($iLinkId));
 		}
@@ -32,7 +35,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByLinkRequest( 
 			    $this->_oSessionContext->createCxt(),$iLinkId, $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -43,6 +46,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByLinkBefore( $iLinkId, $dtSearchDate,  Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 		if (!is_int($iLinkId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iLinkId expected, got '.gettype($iLinkId));
 		}
@@ -55,7 +61,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByLinkBeforeRequest( 
 			    $this->_oSessionContext->createCxt(),$iLinkId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -66,6 +72,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByLinkAfter( $iLinkId, $dtSearchDate,  Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 		if (!is_int($iLinkId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iLinkId expected, got '.gettype($iLinkId));
 		}
@@ -78,7 +87,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByLinkAfterRequest( 
 			    $this->_oSessionContext->createCxt(),$iLinkId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -89,6 +98,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByLinkBetween( $iLinkId, $dtStartDate, $dtEndDate,  Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 		if (!is_int($iLinkId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iLinkId expected, got '.gettype($iLinkId));
 		}
@@ -104,7 +116,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByLinkBetweenRequest( 
 			    $this->_oSessionContext->createCxt(),$iLinkId,Inx_Apiimpl_TConvert::TConvert( $dtStartDate ),Inx_Apiimpl_TConvert::TConvert( $dtEndDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -116,6 +128,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 
 	public function selectByMailing( $iMailingId, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iMailingId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iMailingId expected, got '.gettype($iMailingId));
 		}
@@ -125,7 +140,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByMailingRequest( 
 			    $this->_oSessionContext->createCxt(), $iMailingId,$rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -136,6 +151,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 
 	public function selectByMailingBefore( $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iMailingId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iMailingId expected, got '.gettype($iMailingId));
 		}
@@ -148,7 +166,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByMailingBeforeRequest( 
 			    $this->_oSessionContext->createCxt(), $iMailingId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -159,6 +177,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByMailingAfter( $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iMailingId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iMailingId expected, got '.gettype($iMailingId));
 		}
@@ -171,7 +192,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByMailingAfterRequest( 
 			    $this->_oSessionContext->createCxt(), $iMailingId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -182,6 +203,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByMailingBetween( $iMailingId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iMailingId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iMailingId expected, got '.gettype($iMailingId));
 		}
@@ -196,7 +220,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByMailingBetweenRequest( 
 			    $this->_oSessionContext->createCxt(), $iMailingId,Inx_Apiimpl_TConvert::TConvert( $dtStartDate ),Inx_Apiimpl_TConvert::TConvert( $dtEndDate ), $rc->_remoteRef()->refId() , $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -207,6 +231,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipient( $iRecipientId, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -217,7 +244,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientRequest( 
 			    $this->_oSessionContext->createCxt(), $iRecipientId, $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-					$this->_oSessionContext,$rc,$aAttrs,$oResult);
+					$this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -228,6 +255,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientBefore( $iRecipientId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -240,7 +270,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientBeforeRequest( 
 			    $this->_oSessionContext->createCxt(), $iRecipientId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-					$this->_oSessionContext,$rc,$aAttrs,$oResult);
+					$this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -251,6 +281,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientAfter( $iRecipientId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -263,7 +296,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientAfterRequest( 
 			    $this->_oSessionContext->createCxt(), $iRecipientId,Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-					$this->_oSessionContext,$rc,$aAttrs,$oResult);
+					$this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -274,6 +307,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientBetween( $iRecipientId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs = null)
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -287,7 +323,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientBetweenRequest( 
 			    $this->_oSessionContext->createCxt(), $iRecipientId,Inx_Apiimpl_TConvert::TConvert( $dtStartDate ),Inx_Apiimpl_TConvert::TConvert( $dtEndDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-					$this->_oSessionContext,$rc,$aAttrs,$oResult);
+					$this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( Inx_Api_RemoteException $e )
 		{
@@ -299,6 +335,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientAndMailing( $iRecipientId, $iMailingId, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs=null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -311,7 +350,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientMailingRequest(
 			     $this->_oSessionContext->createCxt(), $iRecipientId, $iMailingId, $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( RemoteException $e )
 		{
@@ -323,6 +362,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientAndMailingBefore( $iRecipientId, $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs=null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -338,7 +380,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientMailingBeforeRequest(
 			     $this->_oSessionContext->createCxt(), $iRecipientId, $iMailingId, Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( RemoteException $e )
 		{
@@ -349,6 +391,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientAndMailingAfter( $iRecipientId, $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs=null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -364,7 +409,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientMailingAfterRequest(
 			     $this->_oSessionContext->createCxt(), $iRecipientId, $iMailingId, Inx_Apiimpl_TConvert::TConvert( $dtSearchDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( RemoteException $e )
 		{
@@ -375,6 +420,9 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 	
 	public function selectByRecipientAndMailingBetween( $iRecipientId, $iMailingId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $rc, array $aAttrs=null )
 	{
+                if(is_null($rc))
+                    throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+                
 	    if (!is_int($iRecipientId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRecipientId expected, got '.gettype($iRecipientId));
 		}
@@ -392,7 +440,7 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 			$oResult = $this->_oService->selectClickByRecipientMailingBetweenRequest(
 			     $this->_oSessionContext->createCxt(), $iRecipientId, $iMailingId, Inx_Apiimpl_TConvert::TConvert( $dtStartDate ),Inx_Apiimpl_TConvert::TConvert( $dtEndDate ), $rc->_remoteRef()->refId(), $aAttrIds );
 			return new Inx_Apiimpl_DataAccess_ClickDataRowSetImpl(
-			        $this->_oSessionContext,$rc,$aAttrs,$oResult);
+			        $this->_oSessionContext,$rc,$aAttrs,$oResult,$this);
 		}
 		catch( RemoteException $e )
 		{
@@ -412,5 +460,26 @@ class Inx_Apiimpl_DataAccess_ClickDataImpl implements Inx_Api_DataAccess_ClickDa
 		return $aAttrIds;
 	}
 
+        public function createQuery( Inx_Api_Recipient_RecipientContext $rc, array $attrs = null ) 
+        {
+            if(is_null($rc))
+                throw new Inx_Api_NullPointerException('RecipientContext may not be null');
+            
+            if(is_null($attrs))
+                $attrs = array();
+                
+            return new Inx_Apiimpl_DataAccess_ClickDataQueryImpl( $this->_oSessionContext, $rc, $attrs, $this );
+        }
+        
+        /**
+         * Helper method to get sending. Does NOT implement an interface method
+         * 
+         * @param int $iSendingId
+         * @return Inx_Api_Sending_Sending
+         */
+        function findSendingBySendingId($iSendingId)
+        {
+            return $this->_oSessionContext->getSendingHistoryManager()->get($iSendingId);
+        }
 }
     

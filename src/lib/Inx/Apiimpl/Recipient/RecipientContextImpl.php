@@ -172,6 +172,36 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 			return null;
 		}
 	}
+        
+        
+        public function findByIds( $aRecipientIds ) 
+        {
+                try
+                {
+                    $data = $this->_oService->findByIds( $this->_sessionId(), $this->_refId(), $aRecipientIds );
+                    return new Inx_Apiimpl_Recipient_RecipientRowSetImpl( $this, $data );
+                }
+                catch( Inx_Api_RemoteException $x )
+                {
+                    $this->_notify( $x );
+                    return null;
+                }        
+        }
+        
+        
+        public function findBySending($iSendingId) 
+        {
+            try
+            {
+                $data = $this->_oService->findBySending( $this->_sessionId(), $this->_refId(), $iSendingId );
+                return new Inx_Apiimpl_Recipient_RecipientRowSetImpl( $this, $data );
+            }
+            catch( Inx_Api_RemoteException $x )
+            {
+                $this->_notify( $x );
+                return null;
+            } 
+        }
 	
 	
 	public function selectUnsubscriber(Inx_Api_List_ListContext $oList, Inx_Api_Filter_Filter $oFilter=null, $sAdditionalFilter=null,

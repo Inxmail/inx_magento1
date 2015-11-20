@@ -232,6 +232,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getAllLogEntries($rc, $attrs );
 
@@ -246,6 +247,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesForList( $lc, $rc, $attrs );
 
@@ -262,6 +264,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and before a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBeforeAndList( $lc, $before, $rc, $attrs );
 
@@ -278,6 +281,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and after a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesAfterAndList( $lc, $after, $rc, $attrs );
 
@@ -296,6 +300,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and between the given dates.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBetweenAndList( $lc, $start, $end, $rc, $attrs );
 
@@ -311,6 +316,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				un/subscription log entries before a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBefore( $before, $rc, $attrs );
 
@@ -326,6 +332,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				un/subscription log entries after a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesAfter( $after, $rc, $attrs );
 
@@ -343,6 +350,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries between given dates.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBetween( $start, $end, $rc, $attrs );
 

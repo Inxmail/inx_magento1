@@ -119,23 +119,29 @@ class Inx_Apiimpl_Action_ActionImpl implements Inx_Api_Action_Action
 	 */
 	public function commitUpdate() 
 	{
-		try
+            try
 	    {
-			$oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION_SERVICE );
-			$ret = $oService->update( $this->_oSessionContext->createCxt(), 
+                $oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION_SERVICE );
+                $ret = $oService->update( $this->_oSessionContext->createCxt(), 
 			        $this->_oActionData, Inx_Apiimpl_TConvert::arrToTArr( $this->_aChangedAttrs ) );
-			$this->_oActionData = $ret->value;
-	        $this->_aChangedAttrs = null;
+                
+                if($ret->excDesc != null)
+                {
+                    throw new Inx_Api_UpdateException( $ret->excDesc->msg, $ret->excDesc->type, $ret->excDesc->source );
+                }
+                
+                $this->_oActionData = $ret->value;
+                $this->_aChangedAttrs = null;
 			
-			if( $this->_oActionData === null )
-			    throw new Inx_Api_DataException( "action is deleted" );
+		if( $this->_oActionData === null )
+                    throw new Inx_Api_DataException( "action is deleted" );
 	    }
 	    catch(Inx_Apiimpl_SoapException $se) {
 	        throw new Inx_Api_UpdateException( $se->getMessage(), $se->getCode(), $se->oReturnObj->excDesc->source);
 	    }
-		catch( Inx_Api_RemoteException $x )
-		{
-			$this->_oSessionContext->notify( $x);
+            catch( Inx_Api_RemoteException $x )
+            {
+		$this->_oSessionContext->notify( $x);
 	    }
 	}
 

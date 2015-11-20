@@ -2,15 +2,18 @@
 class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl 
         implements Inx_Api_TriggerMailing_TriggerMailingManager
 {
-	private $sc;
+        /**
+         * @var type Inx_Apiimpl_AbstractSession
+         */
+	private $session;
 
 	private $mService;
 
 
-	public function __construct( Inx_Apiimpl_SessionContext $sc )
+	public function __construct(Inx_Apiimpl_AbstractSession $session )
 	{
-		$this->sc = $sc;
-		$this->mService = $sc->getService( Inx_Apiimpl_SessionContext::TRIGGER_MAILING_SERVICE );
+		$this->session = $session;
+		$this->mService = $session->getService( Inx_Apiimpl_SessionContext::TRIGGER_MAILING_SERVICE );
 	}
 
 
@@ -18,18 +21,18 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 	{
 		try
 		{
-			$md = $this->mService->get( $this->sc->createCxt(), $iId );
+			$md = $this->mService->get( $this->session->createCxt(), $iId );
 
 			if( empty($md) )
 			{
                             throw new Inx_Api_DataException( "mailing is orphaned" );
 			}
 
-			return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->sc, $md);
+			return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->session, $this, $md);
 		}
 		catch( Inx_Api_RemoteException $x )
 		{
-			$this->sc->notify( $x );
+			$this->session->notify( $x );
 			return null;
 		}
 	}
@@ -39,11 +42,11 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 	{
 		try
 		{
-                        return $this->mService->remove( $this->sc->createCxt(), $iId );
+                        return $this->mService->remove( $this->session->createCxt(), $iId );
 		}
 		catch( Inx_Api_RemoteException $x )
 		{
-			$this->sc->notify( $x );
+			$this->session->notify( $x );
 			return false;
 		}
 	}
@@ -53,12 +56,12 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 	{
 		try
 		{
-			return new Inx_Apiimpl_TriggerMailing_TriggerMailingResultSet( $this->sc, 
-                                $this->mService->selectAll( $this->sc->createCxt() ) );
+			return new Inx_Apiimpl_TriggerMailing_TriggerMailingResultSet( $this->session, 
+                                $this->mService->selectAll( $this->session->createCxt() ), $this );
 		}
 		catch( Inx_Api_RemoteException $x )
 		{
-			$this->sc->notify( $x );
+			$this->session->notify( $x );
 			return null;
 		}
 	}
@@ -88,13 +91,13 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
                         
                         if(null === $sFilter)
                         {    
-                            $holder = $this->mService->select( $this->sc->createCxt(), $listContext->getId(), $mailingStateFilter, 
+                            $holder = $this->mService->select( $this->session->createCxt(), $listContext->getId(), $mailingStateFilter, 
                                     $triggerStateFilter, $orderAttributeId, $orderTypeId );
                             $resultSetData = $holder;
                         }
                         else
                         {   
-                            $holder = $this->mService->selectWithFilter( $this->sc->createCxt(), $listContext->getId(),
+                            $holder = $this->mService->selectWithFilter( $this->session->createCxt(), $listContext->getId(),
                                     $mailingStateFilter, $triggerStateFilter, Inx_Apiimpl_TConvert::TConvert( $sFilter ), 
                                     $orderAttributeId, $orderTypeId );
                             
@@ -104,11 +107,11 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
                             $resultSetData = $holder->reultSet;
                         }
                         
-			return new Inx_Apiimpl_TriggerMailing_TriggerMailingResultSet( $this->sc, $resultSetData );
+			return new Inx_Apiimpl_TriggerMailing_TriggerMailingResultSet( $this->session, $resultSetData, $this );
 		}
 		catch( Inx_Api_RemoteException $x )
 		{
-			$this->sc->notify( $x );
+			$this->session->notify( $x );
 			return null;
 		}
 	}
@@ -118,20 +121,20 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
                 Inx_Api_TriggerMailing_Descriptor_TriggerDescriptor $descriptor )
 	{
 		// default featureId is MAILING_FEATURE_ID
-		return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->sc, null, $listContext->getId(), 
+		return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->session, $this, null, $listContext->getId(), 
                     Inx_Api_Features::MAILING_FEATURE_ID, $descriptor);
 	}
 
 
 	public function createRenderer()
 	{
-		return new Inx_Apiimpl_TriggerMailing_TriggerMailingRendererImpl( $this->sc );
+		return new Inx_Apiimpl_TriggerMailing_TriggerMailingRendererImpl( $this->session );
 	}
 
 
 	public function createRendererForTestrecipient()
 	{
-		return new Inx_Apiimpl_TriggerMailing_TriggerMailingRendererTestRecipientImpl( $this->sc );
+		return new Inx_Apiimpl_TriggerMailing_TriggerMailingRendererTestRecipientImpl( $this->session );
 	}
 
 
@@ -139,7 +142,7 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 	{
 		try
 		{
-			$h = $this->mService->cloneMailing( $this->sc->createCxt(), $iMailingId, $lc->getId() );
+			$h = $this->mService->cloneMailing( $this->session->createCxt(), $iMailingId, $lc->getId() );
 			$desc = $h->mailingExcDesc;
 
 			if( !empty($desc) )
@@ -147,11 +150,11 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 				throw new Inx_Api_DataException( $desc->msg );
 			}
 
-			return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->sc, $h->value);
+			return new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl($this->session, $this, $h->value);
 		}
 		catch( Inx_Api_RemoteException $x )
 		{
-			$this->sc->notify( $x );
+			$this->session->notify( $x );
 		}
                 
 		return null;
@@ -193,4 +196,16 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
 	{
 		return Inx_Apiimpl_TriggerMailing_Descriptor_TriggerIntervalBuilderFactoryImpl::getInstance();
 	}
+        
+        
+        public function findSendingsByMailing($iMailingId)
+        {
+            return $this->session->getSendingHistoryManager()->findSendingsByMailing($iMailingId);
+        }
+        
+        
+        public function findLastSendingForMailing($iMailingId)
+        {
+            return $this->session->getSendingHistoryManager()->findLastSendingForMailing($iMailingId);
+        }
 }

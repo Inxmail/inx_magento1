@@ -620,4 +620,23 @@ interface Inx_Api_TriggerMailing_TriggerMailing extends Inx_Api_BusinessObject
          *      formatted datetime string.
 	 */
 	public function getNextSending();
+        
+        
+        /**
+	 * Returns an <i>Inx_Api_ROBOResultSet</i> containing all sendings of this trigger mailing.
+	 * 
+	 * @return Inx_Api_ROBOResultSet A <i>ROBOResultSet</i> containing all sendings of this trigger mailing.
+	 * @since API 1.11.1
+	 */
+        public function findSendings();
+        
+        
+        /**
+	 * Returns the <i>Inx_Api_Sending_Sending</i> object for the last sending of this trigger mailing, if any.
+	 * 
+	 * @return Inx_Api_Sending_Sending The <i>Sending</i> object for the last sending of this trigger mailing, 
+         * if any, <i>null</i> otherwise.
+	 * @since API 1.11.1
+	 */
+        public function findLastSending();
 }

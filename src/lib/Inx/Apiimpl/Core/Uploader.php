@@ -14,7 +14,7 @@ class Inx_Apiimpl_Core_Uploader
     public static function upload( Inx_Apiimpl_RemoteRef $remoteRef, $is, $iMaxChunkSize,
             $blExplicitClose ) 
     {
-        $oService = $remoteRef->getService( Inx_Apiimpl_RemoteRef::CORE_SERVICE ); 
+        $oService = $remoteRef->getService( Inx_Apiimpl_RemoteRef::CORE2_SERVICE );
         if (!is_int($iMaxChunkSize)) {
             throw new Inx_Api_IllegalArgumentException('Integer parameter $iMaxChunkSize expected, got '.gettype($iMaxChunkSize));
         }

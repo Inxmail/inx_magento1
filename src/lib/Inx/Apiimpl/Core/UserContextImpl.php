@@ -33,7 +33,7 @@ class Inx_Apiimpl_Core_UserContextImpl implements Inx_Api_UserContext
     {
     	try
 	    {
-            $cService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
+            $cService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
             $aUrs = Inx_Apiimpl_TConvert::TArrToArr( $cService->getUserRights( $this->_oSessionContext->sessionId() ) );
             
             $this->_iRefreshTimestamp = time();
@@ -59,7 +59,7 @@ class Inx_Apiimpl_Core_UserContextImpl implements Inx_Api_UserContext
     {
     	try
 		{
-			$cService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
+			$cService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
             $user = $cService->whoAmI($this->_oSessionContext->sessionId());
 			return new Inx_Api_User($user);
 		}

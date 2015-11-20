@@ -163,7 +163,7 @@ class Inx_Apiimpl_Recipient_BatchChannelImpl implements Inx_Api_Recipient_BatchC
 	        throw new Inx_Api_IllegalStateException( 
 	        	"no recipient is selected, first call selectRecipient() or createRecipient()" );
 		$this->_aCmds[] = self::BATCH_CHANNEL_CMD_UNSUBSCRIBE;
-		$this->add( $this->_oRecipientManager->getSubscriptionAttribute( $lc ), date("c") );
+		$this->add( $this->_oRecipientManager->getSubscriptionAttribute( $lc ), date('c') );
 	}
 	
 

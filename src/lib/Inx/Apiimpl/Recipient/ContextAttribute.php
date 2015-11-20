@@ -16,7 +16,8 @@ import com.inxmail.xpro.apiservice.recipient.RecipientData;*/
  * 
  * @version $Revision: 4690 $ $Date: 2006-09-20 07:24:45 +0000 (Mi, 20 Sep 2006) $ $Author: bgn $
  */
-abstract class Inx_Apiimpl_Recipient_ContextAttribute implements Inx_Api_Recipient_Attribute
+abstract class Inx_Apiimpl_Recipient_ContextAttribute implements Inx_Api_Recipient_Attribute, 
+    Inx_Apiimpl_Recipient_AttributeGetter, Inx_Apiimpl_Recipient_AttributeWriter
 {
 	protected $_iId;
     protected $_sName;
@@ -93,6 +94,11 @@ abstract class Inx_Apiimpl_Recipient_ContextAttribute implements Inx_Api_Recipie
 	{
 		return $this->_oRecipientContext;
 	}
+        
+        public function getArrayIndex()
+	{
+		return $this->_iArrayIndex;
+	}
 	
 	public function getTypeAttrIndex()
 	{
@@ -102,9 +108,9 @@ abstract class Inx_Apiimpl_Recipient_ContextAttribute implements Inx_Api_Recipie
 	
 	public abstract function createAttrUpdate( $sNewValue );
 	
-	public abstract function getObject( $oRecipientData ); // @TODO object RecipientData
+	//public abstract function getObject( $oRecipientData ); // @TODO object RecipientData
 
-	public abstract function updateObject( $oRecipientData, &$aChangedAttrs, $sValue ); // @TODO value object or string
+	//public abstract function updateObject( $oRecipientData, &$aChangedAttrs, $sValue ); // @TODO value object or string
 
 	
     public function getString( $oRecipientData )
@@ -142,37 +148,37 @@ abstract class Inx_Apiimpl_Recipient_ContextAttribute implements Inx_Api_Recipie
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
 	}
     
-    public function updateString( $oRecipientData, &$aChangedAttrs, $sValue )
+    public function updateString( $oRecipientData, array &$aChangedAttrs, $sValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
 
-    public function updateBoolean( $oRecipientData, &$aChangedAttrs, $blValue )
+    public function updateBoolean( $oRecipientData, array &$aChangedAttrs, $blValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
     
-    public function updateInteger( $oRecipientData, &$aChangedAttrs, $iValue )
+    public function updateInteger( $oRecipientData, array &$aChangedAttrs, $iValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
     
-    public function updateDouble( $oRecipientData, &$aChangedAttrs, $iValue )
+    public function updateDouble( $oRecipientData, array &$aChangedAttrs, $iValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
 
-    public function updateDate( $oRecipientData, &$aChangedAttrs, $dValue )
+    public function updateDate( $oRecipientData, array &$aChangedAttrs, $dValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
 
-    public function updateTime( $oRecipientData, &$aChangedAttrs, $dValue )
+    public function updateTime( $oRecipientData, array &$aChangedAttrs, $dValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }
 
-    public function updateDatetime( $oRecipientData, &$aChangedAttrs, $dValue )
+    public function updateDatetime( $oRecipientData, array &$aChangedAttrs, $dValue )
     {
     	throw new Inx_Api_IllegalStateException( "attribute type mismatch" ); 
     }

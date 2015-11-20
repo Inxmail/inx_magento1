@@ -129,7 +129,10 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
     
     
     /**
-	 * Sets the name of this action.
+	 * Sets the name of this action.<br>
+	 * Please note, that as of Inxmail Professional version 4.4.1, creating an action with the same name as an existing 
+	 * action will cause an <i>Inx_Api_UpdateException</i> to be thrown on commit. Updating an existing action to a new 
+	 * name that is already in use also triggers an <i>Inx_Api_UpdateException</i>.
 	 * 
 	 * @param string $sName	the unique name of this action.
 	 */

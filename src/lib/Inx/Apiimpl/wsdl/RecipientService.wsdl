@@ -535,6 +535,38 @@
    
    </wsdl:message>
    
+   <wsdl:message name="findByIdsRequest">
+   
+   		<wsdl:part name="sid" type ="xsd:string"/>
+   		
+   		<wsdl:part name="remoteRefId" type="xsd:string"/>
+   		
+   		<wsdl:part name="recipientIds" type="inx:ArrayOf_xsd_int"/>
+   		
+   </wsdl:message>
+   
+   <wsdl:message name="findByIdsResponse">
+   
+   		<wsdl:part name="findByIdsReturn" type="impl:RowSetData"/>
+   
+   </wsdl:message>
+   
+   <wsdl:message name="findBySendingRequest">
+   
+   		<wsdl:part name="sid" type="xsd:string"/>
+   		
+   		<wsdl:part name="remoteRefId" type="xsd:string"/>
+   		
+   		<wsdl:part name="sendingId" type="xsd:long"/>
+   
+   </wsdl:message>
+   
+   <wsdl:message name="findBySendingResponse">
+   
+   		<wsdl:part name="findBySendingReturn" type="impl:RowSetData"/>
+   
+   </wsdl:message>
+   
    <wsdl:message name="createRowSetRequest">
 
       <wsdl:part name="sid" type="xsd:string"/>
@@ -638,6 +670,22 @@
 
          <wsdl:output name="findAllByKeysResponse" message="impl:findAllByKeysResponse"/>
 
+      </wsdl:operation>
+      
+      <wsdl:operation name="findByIds" parameterOrder="sid remoteRefId recipientIds">
+      
+      		<wsdl:input name="findByIdsRequest" message="impl:findByIdsRequest"/>
+      		
+      		<wsdl:output name="findByIdsResponse" message="impl:findByIdsResponse"/>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findBySending" parameterOrder="sid remoteRefId sendingId">
+      
+      		<wsdl:input name="findBySendingRequest" message="impl:findBySendingRequest"/>
+      		
+      		<wsdl:output name="findBySendingResponse" message="impl:findBySendingResponse"/>
+      
       </wsdl:operation>
       
       <wsdl:operation name="createRowSet" parameterOrder="sid remoteRefId">
@@ -849,6 +897,42 @@
          </wsdl:output>
 
       </wsdl:operation>
+      
+      <wsdl:operation name="findByIds">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="findByIdsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="findByIdsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>     
+      
+      <wsdl:operation name="findBySending">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="findBySendingRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="findBySendingResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>    
       
       <wsdl:operation name="findAllByKeys">
 

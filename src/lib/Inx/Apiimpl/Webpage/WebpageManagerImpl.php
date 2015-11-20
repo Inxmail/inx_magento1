@@ -9,7 +9,7 @@ class Inx_Apiimpl_Webpage_WebpageManagerImpl implements Inx_Api_Webpage_WebpageM
 	public function __construct( Inx_Apiimpl_SessionContext $oSessionContext )
 	{
 		$this->_oSessionContext = $oSessionContext;
-		$this->_oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::WEBPAGE_SERVICE );
+		$this->_oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::WEBPAGE2_SERVICE );
 	}
 
 

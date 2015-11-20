@@ -12,6 +12,8 @@
  * <ul>
  * <li><i>Link id</i>: fetches a link by its unique identifier.
  * <li><i>Link name</i>: fetches a link by its name.
+ * <li><i>Link type</i>: fetches a link by its type.
+ * <li><i>Link name set</i>: fetches links which name is set or not set.
  * <li><i>Mailing id</i>: fetches all links used in the specified mailing.
  * <li><i>Recipient id</i>: fetches all links the specified user has clicked.
  * </ul>
@@ -22,6 +24,9 @@
  * <li><i>Recipient id</i>: fetches all clicks performed by the specified recipient.
  * <li><i>Mailing + Recipient id</i>: combination of the two above filters.
  * <li><i>Link id</i>: fetches all clicks of the specified link.
+ * <li><i>Link type</i>: fetches all clicks of links of the specified type.
+ * <li><i>Sending id</i>: fetches all clicks associated with the sending id.
+ * <li><i>Time</i>: fetches all clicks in a certain time span.
  * </ul>
  * All of the click data filters can be combined with a date filter: before, after or between.
  * <p>
@@ -32,21 +37,52 @@
  * The following snippet returns an <i>Inx_Api_DataAccess_LinkDataRowSet</i> containing all link data for the given 
  * recipient id:
  * <pre>
- * DataAccess da = s.getDataAccess();
- * LinkData ld = da.getLinkDataWithNewLinkType();
+ * $oDataAccess = $oSession->getDataAccess();
+ * $oLinkData = $oDataAccess->getLinkDataWithNewLinkType();
  * ...
- * LinkDataRowSet rowSet = ld.selectByRecipient( id );
+ * $oLinkDataRowSet = $oLinkData->selectByRecipient( $iId );
  * </pre>
  * <p>
  * The following snippet returns an <i>Inx_Api_DataAccess_ClickDataRowSet</i> containing all click data for the given 
  * recipient id:
  * <pre>
- * DataAccess da = s.getDataAccess();
- * ClickData cd = da.getClickData();
- * RecipientContext rc = s.createRecipientContext();
- * Attribute email = rc.getMetaData().getEmailAttribute();
+ * $oDataAccess = $oSession->getDataAccess();
+ * $oClickData = $oDataAccess->getClickData();
+ * $oRecipientContext = $oSession->createRecipientContext();
+ * $oEmail = $oRecipientContext->getMetaData()->getEmailAttribute();
  * ...
  * ClickDataRowSet rowSet = cd.selectByRecipient( id, rc, new Attribute[]{email} );
+ * </pre>
+ * <p>
+ * API version 1.11.1 allows you to filter by the type of the clicked link and to retrieve all clicks filtered only by
+ * date. Offering all possible combinations would have made figuring out which method is the right one a tedious job.
+ * Therefore, these filter types are only available using the new fluent query interface. The query API also allows to
+ * specify arrays of IDs. The following snippet demonstrates how to filter the clicks by two mailings, two link types
+ * and a start date:
+ * 
+ * <pre>
+ * $oDataAccess = $oSession->getDataAccess();
+ * $oClickData = $oDataAccess->getClickData();
+ * $oRecipientContext = $oSession->createRecipientContext();
+ * $oEmail = $oRecipientContext->getMetaData()->getEmailAttribute();
+ * 
+ * $aMailingIds = array( 1234, 4711 );
+ * $aLinkTypes = array( Inx_Api_DataAccess_LinkDataRowSet::LINK_TYPE_UNIQUE_COUNT, 
+ *      Inx_Api_DataAccess_LinkDataRowSet::LINK_TYPE_OPENING_COUNT );
+ * $sOneDayAgo = date( 'c', strtotime( '-1 day' ) );
+ * ...
+ * $oClickDataQuery = $oClickData->createQuery( $oRecipientContext, array( email ) );
+ * $oClickDataRowSet = $oClickDataQuery->mailings( $aMailingIds )->linkTypes( $aLinkTypes )->after( $sOneDayAgo ).executeQuery();
+ * </pre>
+ * <p>
+ * API version 1.12.1 allows you to filter links with a fluent query interface, similar to the fluent query interface for
+ * selecting clicks. Filter options newly available with this API version are only accessible through the new query. The
+ * following snipped demonstrates by example how to filter links with the new fluent query interface.:
+ * 
+ * <pre>
+ * $oQuery = session->getDataAccess()->getLinkDataWithNewLinkType()->createQuery();
+ * $oResult = $oQuery->linkType(Inx_Api_DataAccess_LinkDataRowSet::LINK_TYPE_UNIQUE_COUNT)->
+ *      recipientIds(array(1001, 1002))->executeQuery();
  * </pre>
  * <p>
  * Note: All data provided by <i>Inx_Api_DataAccess_DataAccess</i> is read only!

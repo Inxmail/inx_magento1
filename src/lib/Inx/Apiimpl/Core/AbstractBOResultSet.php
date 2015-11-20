@@ -1,5 +1,4 @@
 <?php
-
 abstract class Inx_Apiimpl_Core_AbstractBOResultSet extends Inx_Apiimpl_RemoteObject 
                                                     implements Inx_Api_BOResultSet
 {
@@ -8,6 +7,8 @@ abstract class Inx_Apiimpl_Core_AbstractBOResultSet extends Inx_Apiimpl_RemoteOb
 	protected $_iLastAccessedIndex = -1;
 	
 	protected $_iSize;
+        
+        protected $_iPosition = 0;
 	
     
     public function __construct( Inx_Apiimpl_SessionContext $oSc, $sRemoteRefId, $iSize, $aFirstChunk )
@@ -127,5 +128,32 @@ abstract class Inx_Apiimpl_Core_AbstractBOResultSet extends Inx_Apiimpl_RemoteOb
     {
         if( $this->_isReleased() )
             throw new Inx_Api_APIException( "result set is closed" );
+    }
+    
+    public function rewind() 
+    {
+        $this->_iPosition = 0;
+    }
+
+
+    public function current() 
+    {
+        return $this->get($this->_iPosition);
+    }
+
+
+    public function key() 
+    {
+        return $this->_iPosition;
+    }
+
+    public function next() 
+    {
+        ++$this->_iPosition;
+    }
+
+    public function valid() 
+    {
+        return $this->_iPosition < $this->_iSize;
     }
 }

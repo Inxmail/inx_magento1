@@ -13,8 +13,10 @@
  * <li><i>Recipient id</i>: which recipient clicked the link?
  * <li><i>Click date</i>: when did the click occur?
  * <li><i>User agent</i>: which user agent was used by the recipient?
- * <li><i>Remote host</i>: the recipients host address.
+ * <li><i>Remote host</i>: the recipient's host address.
  * <li><i>Recipient data</i>: various data about the recipient (like state or attributes).
+ * <li><i>Sending id</i>: which is the associated sending id?
+ * <li><i>Sending</i>: which is the associated sending?
  * </ul>
  * The recipient state can be one of the following:
  * <ul>
@@ -23,7 +25,9 @@
  * <li>RECIPIENT_STATE_DELETED - if the recipient was deleted.
  * </ul>
  * For information on how to navigate through an <i>Inx_Api_DataAccess_ClickDataRowSet</i>, see the 
- * <i>Inx_Api_DataAccess_DataRowSet</i> documentation.
+ * <i>Inx_Api_InxRowSet</i> documentation.
+ * For information on how to retrieve recipient meta data, see the 
+ * <i>Inx_Api_Recipient_ReadOnlyRecipientRowSet</i> documentation.
  * <p>
  * For an example on how to query click data, see the <i>Inx_Api_DataAccess_ClickData</i> documentation.
  * <p>
@@ -35,7 +39,8 @@
  * @package Inxmail
  * @subpackage DataAccess
  */
-interface Inx_Api_DataAccess_ClickDataRowSet extends Inx_Api_DataAccess_DataRowSet
+interface Inx_Api_DataAccess_ClickDataRowSet extends Inx_Api_DataAccess_DataRowSet, 
+        Inx_Api_Recipient_ReadOnlyRecipientRowSet
 {	
 	/**
 	 * State for missing recipient information. This state will be used when no <i>Inx_Api_Recipient_RecipientContext</i> 
@@ -114,96 +119,23 @@ interface Inx_Api_DataAccess_ClickDataRowSet extends Inx_Api_DataAccess_DataRowS
 	 * @throws Inx_Api_DataException if no row is selected (e.g. you forgot to call next()).
 	 */
 	public function getRecipientState();
-	
-	
-	/**
-	 * Returns the integer value for the given recipient Attribute.
+        
+        /**
+	 * Returns the id of the sending associated with this click.
 	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return int the integer value.
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>int</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
+	 * @return int the id of the sending associated with this click.
+	 * @throws DataException
+	 * @since API 1.12.1
 	 */
-	public function getInteger(Inx_Api_Recipient_Attribute $oAttr );
-	
-	
+	public function getSendingId();
+
+
 	/**
-	 * Returns the string value for the given recipient Attribute.
+	 * Returns the sending of this click. This method causes a server call.
 	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return string the string value.
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>string</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
+	 * @return Inx_Api_Sending_Sending the sending
+	 * @throws DataException
+	 * @since API 1.12.1
 	 */
-	public function getString(Inx_Api_Recipient_Attribute $oAttr );
-	
-	
-	/**
-	 * Returns the datetime value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return string the datetime value as ISO 8601 formatted datetime string. 
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>datetime</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getDatetime(Inx_Api_Recipient_Attribute $oAttr );
-	
-	/**
-	 * Returns the date value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return string the datetime value as ISO 8601 formatted date string. 
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>date</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getDate(Inx_Api_Recipient_Attribute $oAttr );
-	
-	
-	/**
-	 * Returns the time value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return string the time value as ISO 8601 formatted time string. 
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>time</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getTime(Inx_Api_Recipient_Attribute $oAttr );
-	
-	/**
-	 * Returns the double value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return double the double value.
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>double</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getDouble(Inx_Api_Recipient_Attribute $oAttr );
-	
-	/**
-	 * Returns the bool value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return bool the bool value.
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws Inx_Api_IllegalStateException if the requested attribute is not of type <i>bool</i>.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getBoolean(Inx_Api_Recipient_Attribute $oAttr );
-	
-	/**
-	 * Returns the value for the given recipient Attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the recipient attribute to be retrieved.
-	 * @return mixed the value.
-	 * @throws Inx_Api_IllegalArgumentException if the requested attribute was not fetched.
-	 * @throws DataException if no row is selected (e.g. you forgot to call next()).
-	 */
-	public function getObject(Inx_Api_Recipient_Attribute $oAttr);
-	
+	public function getSending();
 }

@@ -24,12 +24,12 @@ class Inx_Apiimpl_Recipient_ContextAttribute_Integer extends Inx_Apiimpl_Recipie
 		return $oRecipientData->integerData[ $this->_iTypeAttrIndex ]->value;
 	}
 
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$this->updateInteger( $oRecipientData, $aChangedAttrs, (int)$value );
 	}
 
-	public function updateInteger( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateInteger( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$oRecipientData->integerData[$this->_iTypeAttrIndex] = new stdClass();
 		$oRecipientData->integerData[$this->_iTypeAttrIndex]->value = $value;

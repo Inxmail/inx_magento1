@@ -12,11 +12,14 @@
  * <ul>
  * <li>mailing: <i>selectByMailing(int, RecipientContext, Attribute[])</i>
  * <li>link: <i>selectByLink(int, RecipientContext, Attribute[])</i>
+ * <li>link type: only available in fluent query interface
  * <li>recipient: <i>selectByRecipient(int, RecipientContext, Attribute[])</i>
  * <li>recipient and mailing: <i>selectByRecipientAndMailing(int, int, RecipientContext, Attribute[])</i>
+ * <li>before, after and between: various methods for selecting a time span are available
+ * <li>sending id: only available in fluent query interface
  * </ul>
  * <p>
- * All of these methods offer variants to filter the result by date. You can search for click data before or after a
+ * The basic select methods offer variants to filter the result by date. You can search for click data before or after a
  * specific date or between two specific dates.
  * <p>
  * The following example returns a result set containing click data for the specified mailing and fetches the email
@@ -29,6 +32,27 @@
  * $oEmail = $oRecipientContext->getMetaData()->getEmailAttribute();
  * ...
  * $oClickDataRowSet = $oClickData->selectByMailing( $iMailingId, $oRecipientContext, array($oEmail) );
+ * </pre>
+ * 
+ * API version 1.11.1 allows you to filter by the type of the clicked link and to retrieve all clicks filtered only by
+ * date. Offering all possible combinations would have made figuring out which method is the right one a tedious job.
+ * Therefore, these filter types are only available using the new fluent style query API. The query API also allows to
+ * specify arrays of IDs. The following snippet demonstrates how to filter the clicks by two mailings, two link types
+ * and a start date:
+ * 
+ * <pre>
+ * $oDataAccess = $oSession->getDataAccess();
+ * $oClickData = $oDataAccess->getClickData();
+ * $oRecipientContext = $oSession->createRecipientContext();
+ * $oEmail = $oRecipientContext->getMetaData()->getEmailAttribute();
+ * 
+ * $aMailingIds = array( 1234, 4711 );
+ * $aLinkTypes = array( Inx_Api_DataAccess_LinkDataRowSet::LINK_TYPE_UNIQUE_COUNT, 
+ *      Inx_Api_DataAccess_LinkDataRowSet::LINK_TYPE_OPENING_COUNT );
+ * $sOneDayAgo = date( 'c', strtotime( '-1 day' ) );
+ * ...
+ * $oClickDataQuery = $oClickData->createQuery( $oRecipientContext, array( $oEmail ) );
+ * $oClickDataRowSet = $oClickDataQuery->mailings( $aMailingIds )->linkTypes( $aLinkTypes )->after( $sOneDayAgo )->executeQuery();
  * </pre>
  * 
  * For more information on the data available for clicks, see the <i>Inx_Api_DataAccess_ClickDataRowSet</i> documentation.
@@ -58,6 +82,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function selectByMailing( $iMailingId, Inx_Api_Recipient_RecipientContext $oRc,array $aAttrs = null);
 	
@@ -79,6 +104,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByMailingBefore( $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc,array $aAttrs = null);
@@ -100,6 +126,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByMailingAfter( $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc,array $aAttrs = null);
@@ -124,6 +151,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByMailingBetween( $iMailingId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $oRc,array $aAttrs = null);
@@ -145,6 +173,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function selectByLink( $iLinkId,Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );
 
@@ -166,6 +195,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByLinkBefore( $iLinkId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );
@@ -187,6 +217,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByLinkAfter( $iLinkId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );
@@ -210,6 +241,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByLinkBetween( $iLinkId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );
@@ -229,6 +261,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function selectByRecipient( $iRecipientId, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );
 	
@@ -249,6 +282,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientBefore( $iRecipientId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );	
@@ -271,6 +305,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientAfter( $iRecipientId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );	
@@ -294,6 +329,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientBetween( $iRecipientId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null );	
@@ -315,6 +351,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.  
 	 */
 	public function selectByRecipientAndMailing( $iRecipientId, $iMailingId, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null);
 	
@@ -336,6 +373,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientAndMailingBefore( $iRecipientId, $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null);
@@ -358,6 +396,7 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientAndMailingAfter( $iRecipientId, $iMailingId, $dtSearchDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null);
@@ -382,9 +421,38 @@ interface Inx_Api_DataAccess_ClickData
 	 * 				See <i>Inx_Api_Recipient_RecipientMetaData</i>
 	 * @return Inx_Api_DataAccess_ClickDataRowSet an <i>Inx_Api_DataAccess_ClickDataRowSet</i> object that contains 
 	 * 				the data produced by the given query.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
 	 * @since API 1.6.2
 	 */
 	public function selectByRecipientAndMailingBetween( $iRecipientId, $iMailingId, $dtStartDate, $dtEndDate, Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs = null);
 	
-	
+	/**
+	 * Creates a query object which allows to retrieve clicks using a fluent interface. Using this object you can filter
+	 * the clicks by the following criteria:
+	 * <ul>
+	 * <li>mailing ID(s)</li>
+	 * <li>link ID(s)</li>
+	 * <li>recipient ID(s)</li>
+	 * <li>link type(s)</li>
+	 * <li>start date</li>
+	 * <li>end date</li>
+	 * </ul>
+	 * All filters can be freely combined. IDs can be given as a single <i>int</i> or as an <i>int[]</i>.
+	 * The same is true for the link types. This allows the creation of complex queries while the fluent interface keeps
+	 * the syntax as concise as possible.
+	 * <p>
+     * <b>Important note:</b> The Inxmail Professional server will terminate any <i>ClickDataQuery</i> request that 
+     * produces an overall result size of over ten million clicks, by default. Any request with a result size above this 
+     * threshold will result in a server-side <i>RuntimeException</i>.
+	 * 
+	 * @param Inx_Api_Recipient_RecipientContext $oRc the <i>RecipientContext</i>. See 
+         *      <i>Inx_Api_Session::createRecipientContext()</i>.
+	 * @param array $aAttrs an array of recipient attributes that will be fetched for later retrieval. See
+	 *      <i>Inx_Api_Recipient_RecipientMetaData</i>.
+	 * @return Inx_Api_DataAccess_ClickDataQuery a <i>ClickDataQuery</i> object which allows to retrieve clicks using a 
+         *      fluent interface.
+         * @throws Inx_Api_NullPointerException if no <i>Inx_Api_Recipient_RecipientContext</i> is provided.
+	 * @since API 1.11.1
+	 */
+	public function createQuery( Inx_Api_Recipient_RecipientContext $oRc, array $aAttrs );
 }

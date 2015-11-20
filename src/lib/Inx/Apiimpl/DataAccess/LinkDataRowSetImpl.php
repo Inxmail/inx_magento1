@@ -7,26 +7,14 @@
  * @version $Revision:$ $Date:$ $Author:$
  */
 class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
-                 extends Inx_Apiimpl_RemoteObject implements Inx_Api_DataAccess_LinkDataRowSet
+                 extends Inx_Apiimpl_Util_AbstractInxRowSet implements Inx_Api_DataAccess_LinkDataRowSet
 {
-
-	private $_iRowCount;
-	
-	protected $_oBuffer = null;
-
-	private $_iCurrentRow = -1;
-	protected $_iLastAccessedIndex = -1;
-	
-	private $_oService;
-
-	private $_oCurrentLink = null;
+        private $_oService;
 
 	public function __construct( Inx_Apiimpl_SessionContext $sc, $oResult )
 	{
-		parent::__construct( $sc, $oResult->remoteRefId );
-		$this->_iRowCount = $oResult->rowCount;
-		$this->_oService = $sc->getService( Inx_Apiimpl_SessionContext::DATAACCESS_SERVICE );
-		$this->_oBuffer = new Inx_Apiimpl_Util_IndexedBuffer();
+		parent::__construct( $sc, $oResult->remoteRefId, $oResult->rowCount, $oResult->data, 'link' );
+		$this->_oService = $sc->getService( Inx_Apiimpl_SessionContext::DATAACCESS3_SERVICE );
 	}
 
 	/**
@@ -34,8 +22,8 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getActionId()
 	{
-		$this->_checkExists();
-		return $this->_oCurrentLink->actionId;
+		$this->checkExists();
+		return $this->_oCurrentObject->actionId;
 	}
 
 	/**
@@ -43,8 +31,8 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getLinkId() 
 	{
-		$this->_checkExists();
-		return $this->_oCurrentLink->linkId;
+		$this->checkExists();
+		return $this->_oCurrentObject->linkId;
 	}
 
 	/**
@@ -52,8 +40,8 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getLinkName()
 	{
-		$this->_checkExists();
-		return Inx_Apiimpl_TConvert::convert($this->_oCurrentLink->linkName);
+		$this->checkExists();
+		return Inx_Apiimpl_TConvert::convert($this->_oCurrentObject->linkName);
 	}
 
 	/**
@@ -61,8 +49,8 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getLinkType()
 	{
-		$this->_checkExists();
-		return $this->_oCurrentLink->linkType;
+		$this->checkExists();
+		return $this->_oCurrentObject->linkType;
 	}
 
 	/**
@@ -70,8 +58,8 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getLinkUrl()
 	{
-		$this->_checkExists();
-		return Inx_Apiimpl_TConvert::convert( $this->_oCurrentLink->linkUrl );
+		$this->checkExists();
+		return Inx_Apiimpl_TConvert::convert( $this->_oCurrentObject->linkUrl );
 	}
 
 	/**
@@ -79,119 +67,21 @@ class Inx_Apiimpl_DataAccess_LinkDataRowSetImpl
 	 */
 	public function getMailingId()
 	{
-		$this->_checkExists();
-		return $this->_oCurrentLink->mailing;
+		$this->checkExists();
+		return $this->_oCurrentObject->mailing;
 	}
 
-	public function getRow()
-	{
-		return $this->_iCurrentRow;
-	}
-
-	public function getRowCount()
-	{
-		return $this->_iRowCount;
-	}
-	public function next()
-	{
-    	if(  $this->_iCurrentRow >= $this->_iRowCount-1 )
-    		return false;
-    	
-    	$this->_iCurrentRow++;
-    	$this->_fetchLink();
-    	return true;
-	}
-
-	public function previous()
-	{
-    	if( $this->_iCurrentRow < 1 )
-    		return false;
-    	
-    	$this->_iCurrentRow--;
-    	$this->_fetchLink();
-    	return true;
-	}
-
-	public function setRow( $iRow )
-	{
-		if (!is_int($iRow)) {
-		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iRow expected, got '.gettype($iRow));
-		}
-	    if( $iRow < 0 || $iRow >= $this->_iRowCount )
-			throw new Inx_Api_IndexOutOfBoundsException( "Index: ".$iRow.", Size: ".$this->_iRowCount );
-		$this->_iCurrentRow = $iRow;
-		$this->_fetchLink();
-
-	}
-
-
-	public function close()
-	{
-		$this->_release( true );
-		
-	}
-	
-	private function _fetchLink()
-	{
-		$this->_oCurrentLink = null;
-
-		try
-		{
-			$this->_oCurrentLink = $this->_oBuffer->getObject( $this->_iCurrentRow );
-		}
-		catch( Inx_Apiimpl_Util_IndexException $x )
-		{
-			try
-			{
-				if( $this->_iCurrentRow >= $this->_iLastAccessedIndex )
-				{
-					$this->_oBuffer->setBuffer( $this->_iCurrentRow, $this->_oService->fetchLink( 
-						$this->_createCxt(), $this->_refId(), $this->_iCurrentRow, 
-						Inx_Apiimpl_Constants::FETCH_FORWARD_DIRECTION ) );
-				}
-				else
-				{
-					$oa = $this->_oService->fetchLink($this->_createCxt(), $this->_refId(), $this->_iCurrentRow,
-							Inx_Apiimpl_Constants::FETCH_BACKWARD_DIRECTION );
-					$this->_oBuffer->setBuffer( $this->_iCurrentRow - count($oa) + 1, $oa );
-				}
-				$this->_iLastAccessedIndex = $this->_iCurrentRow;
-			}
-			catch( Inx_Api_RemoteException $rx )
-			{
-				$this->_notify( $rx );
-			}	
-			try
-			{
-				$this->_oCurrentLink = $this->_oBuffer->getObject( $this->_iCurrentRow );
-			}
-			catch( Inx_Apiimpl_Util_IndexException $ix )
-			{
-				throw new Inx_Api_APIException( "implementation error in LinkDataRowSetImpl", $ix );
-			}
-		}
-	}
-	
 	/**
 	 * @throws Inx_Api_DataException
 	 */
-	private function _checkExists()
+	public function isPermanent()
 	{
-		if($this->_oCurrentLink == null)
-			throw new Inx_Api_DataException("link deleted");
-		
+		$this->checkExists();
+		return $this->_oCurrentObject->permanent;
 	}
 
-	public function afterLastRow()
-	{
-		$this->_iCurrentRow = $this->_iRowCount;
-		$this->_oCurrentLink = null;
-	}
-
-	public function beforeFirstRow()
-	{
-		$this->_iCurrentRow = -1;
-		$this->_oCurrentLink = null;
-	}
-
+	protected function doFetch($oCxt, $sRemoteRefId, $iIndex, $iDirection) 
+        {
+            return $this->_oService->fetchLink( $oCxt, $sRemoteRefId, $iIndex, $iDirection );
+        }
 }

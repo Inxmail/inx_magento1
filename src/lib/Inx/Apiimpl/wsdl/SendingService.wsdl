@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://sending.apiservice.xpro.inxmail.com" 
+	xmlns:impl="http://sending.apiservice.xpro.inxmail.com" 
+	xmlns:inx="http://apiservice.xpro.inxmail.com" 
+	xmlns:intf="http://sending.apiservice.xpro.inxmail.com" 
+	xmlns:apachesoap="http://xml.apache.org/xml-soap" 
+	xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/">
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://apiservice.xpro.inxmail.com">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+    <complexType name="ArrayOf_xsd_string">
+     <complexContent>
+        <restriction base="soapenc:Array">
+         <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+        </restriction>
+     </complexContent>
+    </complexType>
+	
+	<complexType name="ArrayOf_xsd_int">
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType"
+						wsdl:arrayType="xsd:int[]" />
+			</restriction>
+		</complexContent>
+	</complexType>
+
+    <complexType name="SessionCxt">
+     <sequence>
+      <element name="sid" type="xsd:string"/>
+      <element name="relRefIds" nillable="true" type="inx:ArrayOf_xsd_string"/>
+     </sequence>
+    </complexType>
+  
+			<complexType name="TString">
+				<sequence>
+					<element name="value" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TBoolean">
+				<sequence>
+					<element name="value" type="xsd:boolean" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TInteger">
+				<sequence>
+					<element name="value" type="xsd:int" />
+				</sequence>
+			</complexType>
+			
+			<complexType name="TLong">
+				<sequence>
+					<element name="value" type="xsd:long" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TDouble">
+				<sequence>
+					<element name="value" type="xsd:double" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TDatetime">
+				<sequence>
+					<element name="value" type="xsd:dateTime" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TDate">
+				<sequence>
+					<element name="value" type="xsd:date" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TTime">
+				<sequence>
+					<element name="value" type="xsd:time" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOf_TString">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TString[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TBoolean">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TBoolean[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TInteger">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TInteger[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TDouble">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TDouble[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TDatetime">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TDatetime[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TDate">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TDate[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_TTime">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="inx:TTime[]" />
+					</restriction>
+				</complexContent>
+			</complexType>  
+  </schema>
+  
+  <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://sending.apiservice.xpro.inxmail.com">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   
+   <complexType name="SendingData">
+    <sequence>
+     <element name="id" type="xsd:long"/>
+     <element name="mailingId" type="xsd:int"/>
+     <element name="listId" type="xsd:int"/>  
+     <element name="startDate" nillable="true" type="inx:TDatetime"/>
+     <element name="endDate" nillable="true" type="inx:TDatetime"/>
+     <element name="modificationDate" nillable="true" type="inx:TDatetime"/>
+     <element name="state" type="xsd:int"/>
+     <element name="type" type="xsd:int"/>
+     <element name="totalSize" type="xsd:long" />
+     <element name="protocolDeleted" type="xsd:boolean"/>
+     <element name="mailingDeleted" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   
+   <complexType name="ArrayOfSendingData">
+   		<complexContent>
+   			<restriction base="soapenc:Array">
+      			<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:SendingData[]"/>
+     		</restriction>
+    	</complexContent>
+   </complexType>
+   
+   <complexType name="SendingReportData">
+    <sequence>
+     <element name="opened" type="xsd:int"/>
+     <element name="clicked" type="xsd:int"/>
+     <element name="sentIncludingBounces" type="xsd:int"/>
+     <element name="sentExcludingBounces" type="xsd:int"/>
+     <element name="bounced" type="xsd:int"/>
+     <element name="notSent" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   
+   <complexType name="ResultSetData">
+		<sequence>
+			<element name="remoteRefId" type="xsd:string" />
+			<element name="size" type="xsd:int" />
+			<element name="data" nillable="true" type="impl:ArrayOfSendingData" />
+		</sequence>
+	</complexType>
+	
+	
+	<complexType name="IndividualSendingData">
+		<sequence>
+			<element name="recipientId" type="xsd:int"/>
+			<element name="bounced" type="xsd:boolean"/>
+			<element name="opened" type="xsd:boolean"/>
+			<element name="clicked" type="xsd:boolean"/>
+			<element name="state" type="xsd:int"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ArrayOfIndividualSendingData">
+   		<complexContent>
+   			<restriction base="soapenc:Array">
+      			<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:IndividualSendingData[]"/>
+     		</restriction>
+    	</complexContent>
+   	</complexType>
+   
+   	<complexType name="IndividualSendingRowSetData">
+    	<sequence>
+    		<element name="remoteRefId" type="xsd:string"/>
+    		<element name="rowCount" type="xsd:int"/>
+    		<element name="sendingId" type="xsd:long"/>
+    		<element name="data" nillable="true" type="impl:ArrayOfIndividualSendingData"/>
+   		</sequence>
+   	</complexType>
+	
+	<complexType name="SendingRecipientData">
+		<sequence>
+			<element name="recipientId" type="xsd:int"/>
+			<element name="bounced" type="xsd:boolean"/>
+			<element name="opened" type="xsd:boolean"/>
+			<element name="clicked" type="xsd:boolean"/>
+			<element name="state" type="xsd:int"/>
+			<element name="stringData" nillable="true" type="inx:ArrayOf_TString"/>
+     		<element name="booleanData" nillable="true" type="inx:ArrayOf_TBoolean"/>
+     		<element name="integerData" nillable="true" type="inx:ArrayOf_TInteger"/>
+     		<element name="doubleData" nillable="true" type="inx:ArrayOf_TDouble"/>
+     		<element name="dateData" nillable="true" type="inx:ArrayOf_TDate"/>
+     		<element name="timeData" nillable="true" type="inx:ArrayOf_TTime"/>
+     		<element name="datetimeData" nillable="true" type="inx:ArrayOf_TDatetime"/>
+     		<element name="recipientState" type="xsd:int" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="ArrayOfSendingRecipientData">
+   		<complexContent>
+   			<restriction base="soapenc:Array">
+      			<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:SendingRecipientData[]"/>
+     		</restriction>
+    	</complexContent>
+   	</complexType>
+   	
+   	<complexType name="SendingRecipientRowSetData">
+    	<sequence>
+    		<element name="remoteRefId" type="xsd:string"/>
+    		<element name="rowCount" type="xsd:int"/>
+    		<element name="typedIndices" nillable="true" type="inx:ArrayOf_xsd_int" />
+    		<element name="sendingId" type="xsd:long"/>
+    		<element name="data" nillable="true" type="impl:ArrayOfSendingRecipientData"/>
+   		</sequence>
+   	</complexType>
+   
+  </schema>
+</wsdl:types>
+
+   	<wsdl:message name="getRequest">
+	    <wsdl:part name="sc" type="inx:SessionCxt"/>
+      	<wsdl:part name="id" type="xsd:long"/>
+   	</wsdl:message>
+   	<wsdl:message name="getResponse">
+      	<wsdl:part name="getReturn" type="impl:SendingData"/>
+  	</wsdl:message>
+  
+	<wsdl:message name="selectAllRequest">
+	  	<wsdl:part name="sc" type="inx:SessionCxt"/>
+  	</wsdl:message>
+  	<wsdl:message name="selectAllResponse">
+	  	<wsdl:part name="selectAllReturn" type="impl:ResultSetData"/>
+  	</wsdl:message>
+  
+  	<wsdl:message name="fetchBOsRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+		<wsdl:part name="remoteRefId" type="xsd:string" />
+		<wsdl:part name="index" type="xsd:int" />
+		<wsdl:part name="direction" type="xsd:int" />
+	</wsdl:message>
+	<wsdl:message name="fetchBOsResponse">
+		<wsdl:part name="fetchBOsReturn" type="impl:ArrayOfSendingData" />
+	</wsdl:message>
+	
+	<wsdl:message name="fetchIndividualSendingDataRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="remoteRefId" type="xsd:string"/>
+		<wsdl:part name="sendingId" type="xsd:long"/>
+		<wsdl:part name="index" type="xsd:int"/>
+		<wsdl:part name="direction" type="xsd:int"/>
+	</wsdl:message>
+	<wsdl:message name="fetchIndividualSendingDataResponse">
+		<wsdl:part name="fetchIndividualSendingDataReturn" type="impl:ArrayOfIndividualSendingData"/>
+	</wsdl:message>
+	
+	<wsdl:message name="fetchSendingRecipientDataRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="remoteRefId" type="xsd:string"/>
+		<wsdl:part name="sendingId" type="xsd:long"/>
+		<wsdl:part name="index" type="xsd:int"/>
+		<wsdl:part name="direction" type="xsd:int"/>
+	</wsdl:message>
+	<wsdl:message name="fetchSendingRecipientDataResponse">
+		<wsdl:part name="fetchSendingRecipientDataReturn" type="impl:ArrayOfSendingRecipientData"/>
+	</wsdl:message>
+  
+   <wsdl:message name="findByMailingRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="mailingId" type="xsd:int" />
+   </wsdl:message>
+   <wsdl:message name="findByMailingResponse">
+      <wsdl:part name="findByMailingReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findByRecipientRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int" />
+   </wsdl:message>
+   <wsdl:message name="findByRecipientResponse">
+      <wsdl:part name="findByRecipientReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findByDateRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="startDate" type="inx:TDatetime" />
+      <wsdl:part name="endDate" type="inx:TDatetime" />
+   </wsdl:message>
+   <wsdl:message name="findByDateResponse">
+      <wsdl:part name="findByDateReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findPastByMailingRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime" />
+      <wsdl:part name="endDate" type="inx:TDatetime" />
+   </wsdl:message>
+   <wsdl:message name="findPastByMailingResponse">
+      <wsdl:part name="findPastByMailingReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findPastByRecipientRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime" />
+      <wsdl:part name="endDate" type="inx:TDatetime" />
+   </wsdl:message>
+   <wsdl:message name="findPastByRecipientResponse">
+      <wsdl:part name="findPastByRecipientReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findFutureByDateRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="startDate" type="inx:TDatetime" />
+      <wsdl:part name="endDate" type="inx:TDatetime" />
+   </wsdl:message>
+   <wsdl:message name="findFutureByDateResponse">
+      <wsdl:part name="findFutureByDateReturn" type="inx:ArrayOf_TDatetime"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findFutureByMailingRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime" />
+      <wsdl:part name="endDate" type="inx:TDatetime" />
+   </wsdl:message>
+   <wsdl:message name="findFutureByMailingResponse">
+      <wsdl:part name="findFutureByMailingReturn" type="inx:ArrayOf_TDatetime"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findModifiedRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="sinceDate" type="inx:TDatetime"/>
+   </wsdl:message>
+   <wsdl:message name="findModifiedResponse">
+      <wsdl:part name="findModifiedReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findNextRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="findNextResponse">
+      <wsdl:part name="findNextReturn" type="inx:TDatetime"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findLastRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+   </wsdl:message>
+   <wsdl:message name="findLastResponse">
+      <wsdl:part name="findLastReturn" type="impl:SendingData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findLastByMailingRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="findLastByMailingResponse">
+      <wsdl:part name="findLastByMailingReturn" type="impl:SendingData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findLastByRecipientRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="findLastByRecipientResponse">
+      <wsdl:part name="findLastByRecipientReturn" type="impl:SendingData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasOpenedRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="hasOpenedResponse">
+      <wsdl:part name="hasOpenedReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasClickedRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="hasClickedResponse">
+      <wsdl:part name="hasClickedReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasBouncedRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+   </wsdl:message>
+   <wsdl:message name="hasBouncedResponse">
+      <wsdl:part name="hasBouncedReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasOpenedBetweenRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime"/>
+      <wsdl:part name="endDate" type="inx:TDatetime"/>
+   </wsdl:message>
+   <wsdl:message name="hasOpenedBetweenResponse">
+      <wsdl:part name="hasOpenedBetweenReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasClickedBetweenRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime"/>
+      <wsdl:part name="endDate" type="inx:TDatetime"/>
+   </wsdl:message>
+   <wsdl:message name="hasClickedBetweenResponse">
+      <wsdl:part name="hasClickedBetweenReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="hasBouncedBetweenRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="recipientId" type="xsd:int"/>
+      <wsdl:part name="mailingId" type="xsd:int"/>
+      <wsdl:part name="startDate" type="inx:TDatetime"/>
+      <wsdl:part name="endDate" type="inx:TDatetime"/>
+   </wsdl:message>
+   <wsdl:message name="hasBouncedBetweenResponse">
+      <wsdl:part name="hasBouncedBetweenReturn" type="xsd:boolean"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findIndividualSendingsRequest">
+   		<wsdl:part name="sc" type="inx:SessionCxt"/>
+   		<wsdl:part name="sendingId" type="xsd:long"/>
+   </wsdl:message>
+   <wsdl:message name="findIndividualSendingsResponse">
+   		<wsdl:part name="findIndividualSendingsReturn" type="impl:IndividualSendingRowSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="findSendingRecipientsRequest">
+   		<wsdl:part name="sc" type="inx:SessionCxt"/>
+   		<wsdl:part name="sendingId" type="xsd:long"/>
+   		<wsdl:part name="recCtxRefId" type="xsd:string"/>
+	  	<wsdl:part name="attrs" type="inx:ArrayOf_xsd_int"/>
+   </wsdl:message>
+   <wsdl:message name="findSendingRecipientsResponse">
+   		<wsdl:part name="findSendingRecipientsReturn" type="impl:SendingRecipientRowSetData"/>
+   </wsdl:message>
+   
+   <wsdl:message name="fetchSendingReportDataRequest">
+   		<wsdl:part name="sc" type="inx:SessionCxt"/>
+   		<wsdl:part name="sendingId" type="xsd:long"/>
+   </wsdl:message>
+   <wsdl:message name="fetchSendingReportDataResponse">
+   		<wsdl:part name="fetchSendingReportDataReturn" type="impl:SendingReportData"/>
+   </wsdl:message>
+
+    <wsdl:portType name="SendingService">
+		
+		<wsdl:operation name="get" parameterOrder="sc id">
+			<wsdl:input name="getRequest" message="impl:getRequest"/>
+			<wsdl:output name="getResponse" message="impl:getResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="selectAll" parameterOrder="sc">
+			<wsdl:input name="selectAllRequest" message="impl:selectAllRequest"/>
+			<wsdl:output name="selectAllResponse" message="impl:selectAllResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="fetchBOs" parameterOrder="sc remoteRefId index direction">
+			<wsdl:input name="fetchBOsRequest" message="impl:fetchBOsRequest"/>
+			<wsdl:output name="fetchBOsResponse" message="impl:fetchBOsResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="fetchIndividualSendingData" parameterOrder="sc remoteRefId sendingId index direction">
+			<wsdl:input name="fetchIndividualSendingDataRequest" message="impl:fetchIndividualSendingDataRequest"/>
+			<wsdl:output name="fetchIndividualSendingDataResponse" message="impl:fetchIndividualSendingDataResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="fetchSendingRecipientData" parameterOrder="sc remoteRefId sendingId index direction">
+			<wsdl:input name="fetchSendingRecipientDataRequest" message="impl:fetchSendingRecipientDataRequest"/>
+			<wsdl:output name="fetchSendingRecipientDataResponse" message="impl:fetchSendingRecipientDataResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findByMailing" parameterOrder="sc mailingId">
+			<wsdl:input name="findByMailingRequest" message="impl:findByMailingRequest"/>
+			<wsdl:output name="findByMailingResponse" message="impl:findByMailingResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findByRecipient" parameterOrder="sc recipientId">
+			<wsdl:input name="findByRecipientRequest" message="impl:findByRecipientRequest"/>
+			<wsdl:output name="findByRecipientResponse" message="impl:findByRecipientResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findByDate" parameterOrder="sc startDate endDate">
+			<wsdl:input name="findByDateRequest" message="impl:findByDateRequest"/>
+			<wsdl:output name="findByDateResponse" message="impl:findByDateResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findPastByMailing" parameterOrder="sc mailingId startDate endDate">
+			<wsdl:input name="findPastByMailingRequest" message="impl:findPastByMailingRequest"/>
+			<wsdl:output name="findPastByMailingResponse" message="impl:findPastByMailingResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findPastByRecipient" parameterOrder="sc recipientId startDate endDate">
+			<wsdl:input name="findPastByRecipientRequest" message="impl:findPastByRecipientRequest"/>
+			<wsdl:output name="findPastByRecipientResponse" message="impl:findPastByRecipientResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findFutureByDate" parameterOrder="sc startDate endDate">
+			<wsdl:input name="findFutureByDateRequest" message="impl:findFutureByDateRequest"/>
+			<wsdl:output name="findFutureByDateResponse" message="impl:findFutureByDateResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findFutureByMailing" parameterOrder="sc mailingId startDate endDate">
+			<wsdl:input name="findFutureByMailingRequest" message="impl:findFutureByMailingRequest"/>
+			<wsdl:output name="findFutureByMailingResponse" message="impl:findFutureByMailingResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findModified" parameterOrder="sc sinceDate">
+			<wsdl:input name="findModifiedRequest" message="impl:findModifiedRequest"/>
+			<wsdl:output name="findModifiedResponse" message="impl:findModifiedResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findNext" parameterOrder="sc mailingId">
+			<wsdl:input name="findNextRequest" message="impl:findNextRequest"/>
+			<wsdl:output name="findNextResponse" message="impl:findNextResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findLast" parameterOrder="sc">
+			<wsdl:input name="findLastRequest" message="impl:findLastRequest"/>
+			<wsdl:output name="findLastResponse" message="impl:findLastResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findLastByMailing" parameterOrder="sc mailingId">
+			<wsdl:input name="findLastByMailingRequest" message="impl:findLastByMailingRequest"/>
+			<wsdl:output name="findLastByMailingResponse" message="impl:findLastByMailingResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findLastByRecipient" parameterOrder="sc recipientId">
+			<wsdl:input name="findLastByRecipientRequest" message="impl:findLastByRecipientRequest"/>
+			<wsdl:output name="findLastByRecipientResponse" message="impl:findLastByRecipientResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasOpened" parameterOrder="sc recipientId mailingId">
+			<wsdl:input name="hasOpenedRequest" message="impl:hasOpenedRequest"/>
+			<wsdl:output name="hasOpenedResponse" message="impl:hasOpenedResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasClicked" parameterOrder="sc recipientId mailingId">
+			<wsdl:input name="hasClickedRequest" message="impl:hasClickedRequest"/>
+			<wsdl:output name="hasClickedResponse" message="impl:hasClickedResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasBounced" parameterOrder="sc recipientId mailingId">
+			<wsdl:input name="hasBouncedRequest" message="impl:hasBouncedRequest"/>
+			<wsdl:output name="hasBouncedResponse" message="impl:hasBouncedResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasOpenedBetween" parameterOrder="sc recipientId mailingId startDate endDate">
+			<wsdl:input name="hasOpenedBetweenRequest" message="impl:hasOpenedBetweenRequest"/>
+			<wsdl:output name="hasOpenedBetweenResponse" message="impl:hasOpenedBetweenResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasClickedBetween" parameterOrder="sc recipientId mailingId startDate endDate">
+			<wsdl:input name="hasClickedBetweenRequest" message="impl:hasClickedBetweenRequest"/>
+			<wsdl:output name="hasClickedBetweenResponse" message="impl:hasClickedBetweenResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="hasBouncedBetween" parameterOrder="sc recipientId mailingId startDate endDate">
+			<wsdl:input name="hasBouncedBetweenRequest" message="impl:hasBouncedBetweenRequest"/>
+			<wsdl:output name="hasBouncedBetweenResponse" message="impl:hasBouncedBetweenResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findIndividualSendings" parameterOrder="sc sendingId">
+			<wsdl:input name="findIndividualSendingsRequest" message="impl:findIndividualSendingsRequest"/>
+			<wsdl:output name="findIndividualSendingsResponse" message="impl:findIndividualSendingsResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="findSendingRecipients" parameterOrder="sc sendingId recCtxRefId attrs">
+			<wsdl:input name="findSendingRecipientsRequest" message="impl:findSendingRecipientsRequest"/>
+			<wsdl:output name="findSendingRecipientsResponse" message="impl:findSendingRecipientsResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="fetchSendingReportData" parameterOrder="sc sendingId">
+			<wsdl:input name="fetchSendingReportDataRequest" message="impl:fetchSendingReportDataRequest"/>
+			<wsdl:output name="fetchSendingReportDataResponse" message="impl:fetchSendingReportDataResponse"/>
+		</wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SendingServiceSoapBinding" type="impl:SendingService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="get">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="getRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="getResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+
+      <wsdl:operation name="selectAll">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="selectAllRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="selectAllResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="fetchBOs">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="fetchBOsRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="fetchBOsResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="fetchIndividualSendingData">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="fetchIndividualSendingDataRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="fetchIndividualSendingDataResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="fetchSendingRecipientData">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="fetchSendingRecipientDataRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="fetchSendingRecipientDataResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findByMailing">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findByMailingRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findByMailingResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findByRecipient">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findByRecipientRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findByRecipientResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findByDate">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findByDateRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findByDateResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findPastByMailing">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findPastByMailingRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findPastByMailingResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findPastByRecipient">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findPastByRecipientRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findPastByRecipientResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findFutureByDate">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findFutureByDateRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findFutureByDateResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findFutureByMailing">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findFutureByMailingRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findFutureByMailingResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findModified">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findModifiedRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findModifiedResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findNext">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findNextRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findNextResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findLast">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findLastRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findLastResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findLastByMailing">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findLastByMailingRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findLastByMailingResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findLastByRecipient">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findLastByRecipientRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findLastByRecipientResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasOpened">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasOpenedRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasOpenedResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasClicked">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasClickedRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasClickedResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasBounced">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasBouncedRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasBouncedResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasOpenedBetween">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasOpenedBetweenRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasOpenedBetweenResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasClickedBetween">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasClickedBetweenRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasClickedBetweenResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="hasBouncedBetween">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="hasBouncedBetweenRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="hasBouncedBetweenResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findIndividualSendings">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findIndividualSendingsRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findIndividualSendingsResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findSendingRecipients">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="findSendingRecipientsRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="findSendingRecipientsResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="fetchSendingReportData">
+      
+         <wsdlsoap:operation soapAction=""/>
+      
+         <wsdl:input name="fetchSendingReportDataRequest">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:input>
+      
+         <wsdl:output name="fetchSendingReportDataResponse">
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://sending.apiservice.xpro.inxmail.com"/>
+         </wsdl:output>
+      
+      </wsdl:operation>
+           
+   </wsdl:binding>
+
+   <wsdl:service name="SendingServiceSoap">
+
+      <wsdl:port name="SendingService" binding="impl:SendingServiceSoapBinding">
+
+         <wsdlsoap:address location="http://localhost:80/inxmail/api/SendingService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+   
+</wsdl:definitions>

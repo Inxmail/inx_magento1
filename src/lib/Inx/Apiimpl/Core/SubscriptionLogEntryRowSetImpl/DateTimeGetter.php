@@ -1,14 +1,21 @@
 <?php
-class Inx_Apiimpl_DataAccess_ClickDataRowSetImpl_DateTimeGetter
-                extends Inx_Apiimpl_DataAccess_ClickDataRowSetImpl_AttrGetter
+class Inx_Apiimpl_Core_SubscriptionLogEntryRowSetImpl_DateTimeGetter 
+    extends Inx_Apiimpl_Core_SubscriptionLogEntryRowSetImpl_SubscriptionLogEntryAttributeGetter
 {
-	public function getObject( $oData )
-	{
-		return $this->getDateTime( $oData );
-	}
-	
-	public function getDateTime( $oData )
-	{
-		return Inx_Apiimpl_TConvert::convert( $oData->datetimeData[$this->typedIndex] );
-	}
+        public function __construct( $iTypedIndex )
+        {
+                parent::__construct($iTypedIndex);
+        }
+
+
+        public function getObject( $oData )
+        {
+                return $this->getDatetime( $oData );
+        }
+
+
+        public function getDatetime( $oData )
+        {
+                return Inx_Apiimpl_TConvert::convert( $oData->datetimeData[$this->_iTypedIndex] );
+        }
 }

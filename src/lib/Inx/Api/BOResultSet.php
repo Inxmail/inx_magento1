@@ -3,16 +3,34 @@
  * @package Inxmail
  */
 /**
- * An <i>Inx_Api_BOResultSet</i> is a list of <i>Inx_Api_BusinessObject</i>s. 
+ * An <i>Inx_Api_BOResultSet</i> is effectively a list of <i>Inx_Api_BusinessObject</i>s. 
  * The result set can be used to browse through this list, and to remove elements of the list.
+ * <p>
+ * As of Inxmail Professional API 1.11.1, <i>Inx_Api_BOResultSet</i> implements <i>Iterator</i>. This enables you to 
+ * use a for-each loop on an <i>Inx_Api_BOResultSet</i>.
  * <p>
  * <strong>Note:</strong> An <i>Inx_Api_BOResultSet</i> object <strong>must</strong> be closed once it is not needed
  * anymore to prevent memory leaks and other potentially harmful side effects.
- *
+ * <p>
+ * The following snippet demonstrates the preferable way to iterate over a <i>Inx_Api_BOResultSet</i>, as of Inxmail
+ * Professional API 1.11.1:
+ * 
+ * <pre>
+ * $oMailings = $oSession->getMailingManager()->selectAll();
+ * 
+ * foreach( $oMailings as $oMailing )
+ * {
+ *  echo 'Mailing: ' . $oMailing->getName() . '&lt;br&gt;';
+ * }
+ * 
+ * $oMailings->close();
+ * </pre>
+ * 
  * @version $Revision: 9497 $ $Date: 2007-12-19 17:03:25 +0200 (Tr, 19 Grd 2007) $ $Author: aurimas $
  * @package Inxmail
+ * @see Inx_Api_ROBOResultSet
  */
-interface Inx_Api_BOResultSet
+interface Inx_Api_BOResultSet extends Iterator
 {
 
 	/**

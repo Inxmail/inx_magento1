@@ -6,14 +6,17 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
  	protected 			$_blSessionClosed 		= false;
  	protected       	$_aServiceMap           = array();
  	protected 			$_sApplicationUrl 		= null;
+        protected $_sConnectionUrl = null;
  	
  	protected           $_aPropertyMap          = array();
  	
  	protected $_oListManager                    = null;
 	protected $_oAttributeManager               = null;
+	protected $_oGeneralMailingManager          = null;
 	protected $_oMailingManager                 = null;
-        protected $_oTriggerMailingManager          = null;
-	protected $_oSubscriptionManager            = null;
+    protected $_oTriggerMailingManager          = null;
+    protected $_oSendingHistoryManager          = null;
+    protected $_oSubscriptionManager            = null;
 	protected $_oResourceManager                = null;
 	protected $_oReportEngine                   = null;
 	protected $_oBlacklistManager               = null;	
@@ -22,7 +25,10 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 	protected $_oActionManager                  = null;
 	protected $_oUserContext                    = null;
 	protected $_oInboxManager					= null;
- 	
+	protected $_oTransformationManager          = null;
+	protected $_oSplitTestMailingManager        = null;
+	protected $_oSplitTestManager         	 	= null;
+        
 	protected $_aReleasedRemoteRefs             = array();
 	protected $_maxReleasedRefs                 = null;
  	
@@ -37,11 +43,12 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 	}
 	
  	protected static $_aServiceDescriptors 	= array(
- 		self::CORE_SERVICE => 'http://core.apiservice.xpro.inxmail.com',
+ 		self::CORE2_SERVICE => 'http://core2.apiservice.xpro.inxmail.com',
  		self::RECIPIENT_SERVICE => 'http://recipient.apiservice.xpro.inxmail.com',
  		self::LIST_SERVICE => 'http://list.apiservice.xpro.inxmail.com',
- 		self::MAILING6_SERVICE => 'http://mailing6.apiservice.xpro.inxmail.com',
-                self::TRIGGER_MAILING_SERVICE => 'http://triggermailing.apiservice.xpro.inxmail.com',
+ 		self::MAILING7_SERVICE => 'http://mailing7.apiservice.xpro.inxmail.com',
+        self::TRIGGER_MAILING_SERVICE => 'http://triggermailing.apiservice.xpro.inxmail.com',
+        self::SENDING_SERVICE => 'http://sending.apiservcie.xpro.inxmail.com',
  		self::PROPERTY_SERVICE => 'http://property.apiservice.xpro.inxmail.com',
  		self::RESOURCE_SERVICE => 'http://resource.apiservice.xpro.inxmail.com',
  		self::BLACKLIST_SERVICE => 'http://blacklist.apiservice.xpro.inxmail.com',
@@ -51,14 +58,18 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
  		self::TEXTMODULE_SERVICE => 'http://textmodule.apiservice.xpro.inxmail.com',
  		self::MAILING_TEMPLATE_SERVICE => 'http://mailingtemplate.apiservice.xpro.inxmail.com',
  		self::DESIGN_COLLECTION2_SERVICE => 'http://designtemplate2.apiservice.xpro.inxmail.com',
- 		self::BOUNCE2_SERVICE => 'http://bounce2.apiservice.xpro.inxmail.com',
- 		self::DATAACCESS_SERVICE => 'http://dataaccess.apiservice.xpro.inxmail.com',
+		self::BOUNCE3_SERVICE => 'http://bounce3.apiservice.xpro.inxmail.com',
+ 		self::DATAACCESS3_SERVICE => 'http://dataaccess3.apiservice.xpro.inxmail.com',
  		self::APPROVER_SERVICE => 'http://approver.apiservice.xpro.inxmail.com',
  		self::TESTRECIPIENT_SERVICE => 'http://testrecipient.apiservice.xpro.inxmail.com',
  		self::UNSUBSCRIBER_SERVICE => 'http://unsubscriber.apiservice.xpro.inxmail.com',
  		self::PLUGIN_SERVICE => 'http://plugin.apiservice.xpro.inxmail.com', 
  		self::INBOX_SERVICE => 'http://inbox.apiservice.xpro.inxmail.com',
- 		self::WEBPAGE_SERVICE => 'http://webpage.apiservice.xpro.inxmail.com'
+ 		self::WEBPAGE2_SERVICE => 'http://webpage2.apiservice.xpro.inxmail.com',
+ 		self::GENERAL_MAILING_SERVICE => 'http://generalmailing.apiservice.xpro.inxmail.com',
+ 		self::TRANSFORMATION_SERVICE => 'http://transformation.apiservice.xpro.inxmail.com',
+ 		self::SPLIT_TEST_MAILING_SERVICE => 'http://splittestmailing.apiservice.xpro.inxmail.com',
+	    self::SPLIT_TEST_SERVICE => 'http://splittest.apiservice.xpro.inxmail.com'
  	);
     
 
@@ -98,7 +109,7 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 	
 	protected function _login($sUsername, $sPassword, $blPwdEncrypted=false, $sAppId)
  	{
- 		$oService = $this->getService(self::CORE_SERVICE);
+ 		$oService = $this->getService(self::CORE2_SERVICE);
  		if ($blPwdEncrypted) {
  			$params = $oService->newInitSecureLogin( $sUsername, $sAppId );
 			$sl = new Inx_Apiimpl_SecureLogin( $params );
@@ -125,7 +136,7 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 	
 	protected function _login2( $sLoginToken, $sAppId)
  	{
- 		$oService = $this->getService(self::CORE_SERVICE);
+ 		$oService = $this->getService(self::CORE2_SERVICE);
  		$oLogin = $oService->loginWithToken($sLoginToken, $sAppId);
  		if (isset($oLogin->excDesc) && $oLogin->excDesc) {
  			throw new Inx_Api_LoginException($oLogin->excDesc->msg, $oLogin->excDesc->type);
@@ -144,7 +155,7 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
  	
  	protected function _login3($pluginSecretId,$sUsername, $sPassword, $blPwdEncrypted=false, $sAppId)
  	{
- 		$oService = $this->getService(self::CORE_SERVICE);
+ 		$oService = $this->getService(self::CORE2_SERVICE);
  		if ($blPwdEncrypted) {
  			$params = $oService->newInitSecureLogin( $sUsername, $sAppId );
 			$sl = new Inx_Apiimpl_SecureLogin( $params );
@@ -244,7 +255,21 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 
 	
 	/**
-	 * Returns the <code>Inx_Api_Mailing_MailingManager</code> object that will used to manage mailings
+	 * Returns the <code>Inx_Api_GeneralMailing_GeneralMailingManager</code> object that will be used to access mailings regardless
+	 * of their type.
+	 *
+	 * @return Inx_Apiimpl_GeneralMailing_GeneralMailingManagerImpl the general mailing manager
+	 * @since API 1.11.10
+	 */
+	public function getGeneralMailingManager(){
+	    if (!isset($this->_oGeneralMailingManager))
+	        $this->_oGeneralMailingManager = new Inx_Apiimpl_GeneralMailing_GeneralMailingManagerImpl( $this );
+	    return $this->_oGeneralMailingManager;
+	}
+	
+	
+	/**
+	 * Returns the <code>Inx_Api_Mailing_MailingManager</code> object that will be used to manage mailings
 	 * and creating mail views.
 	 *
 	 * @return Inx_Apiimpl_Mailing_MailingManagerImpl the mailing manager
@@ -269,6 +294,20 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
             if (!isset($this->_oTriggerMailingManager))
                 $this->_oTriggerMailingManager = new Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl ( $this );
             return $this->_oTriggerMailingManager;
+        }
+        
+        
+        /**
+         * Returns the <i>Inx_Api_Sending_SendingHistoryManager</i> object that will be used to retrieve sending information.
+	 * 
+	 * @return Inx_Api_Sending_SendingHistoryManager the sending history manager.
+	 * @since API 1.11.1
+         */
+        public function getSendingHistoryManager() 
+        {
+            if(!isset($this->_oSendingHistoryManager))
+                $this->_oSendingHistoryManager = new Inx_Apiimpl_Sending_SendingHistoryManagerImpl( $this );
+            return $this->_oSendingHistoryManager;
         }
 
 	
@@ -491,6 +530,11 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 		}
 
 	}
+        
+        public function getConnectionUrl() 
+        {
+            return $this->_sConnectionUrl;
+        }
 	
 	public function getPluginStore()
 	{
@@ -514,7 +558,7 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 		
 		try
 		{
-			$oService = $this->getService(self::CORE_SERVICE);
+			$oService = $this->getService(self::CORE2_SERVICE);
 			$oService->logout( $this->_sSessionId );
 		}
 		catch( Exception $e )
@@ -527,7 +571,7 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 	{
 		try
 		{
-			$oService = $this->getService(self::CORE_SERVICE);
+			$oService = $this->getService(self::CORE2_SERVICE);
 			$st = $oService->getServerTime($this->_sSessionId);
 			return new Inx_Apiimpl_ServerTimeImpl(Inx_Apiimpl_TConvert::convert( $st->dateTime ),
 									$st->gmtOffset,$st->dstOffset,$st->timeZone);
@@ -582,8 +626,8 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 			{
 				$aRefIds = $this->fetchReleasedRemoteRefs();
 				
-				$oCoreService = $this->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
-				$oCoreService->releaseRef( $this->sessionId(), $aRefIds );
+				$oCore2Service = $this->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
+				$oCore2Service->releaseRef( $this->sessionId(), $aRefIds );
 			}
 			catch( Inx_Api_RemoteException $x )
 			{
@@ -607,6 +651,27 @@ abstract class Inx_Apiimpl_AbstractSession extends Inx_Api_Session implements In
 		if( $this->_oResourceManager == null )
 			$this->_oResourceManager = new Inx_Apiimpl_Resource_ResourceManagerImpl( $this );
 		return $this->_oResourceManager;
+	}
+        
+        public function getTransformationManager() {
+            if( $this->_oTransformationManager === null )
+                $this->_oTransformationManager = new Inx_Apiimpl_Transformation_TransformationManagerImpl( $this );
+            
+            return $this->_oTransformationManager;
+        }
+
+	public function getSplitTestMailingManager() {
+		if( $this->_oSplitTestMailingManager === null )
+			$this->_oSplitTestMailingManager = new Inx_Apiimpl_SplitTestMailing_SplitTestMailingManagerImpl( $this );
+
+		return $this->_oSplitTestMailingManager;
+	}
+
+	public function getSplitTestManager() {
+		if( $this->_oSplitTestManager === null )
+			$this->_oSplitTestManager = new Inx_Apiimpl_SplitTest_SplitTestManagerImpl( $this );
+
+		return $this->_oSplitTestManager;
 	}
 /*
 	

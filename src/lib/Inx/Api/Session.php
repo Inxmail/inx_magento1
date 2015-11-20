@@ -205,6 +205,16 @@ abstract class Inx_Api_Session
 
 	
 	/**
+	 * Returns the <i>Inx_Api_GeneralMailing_GeneralMailingManager</i> object that will be used to access mailings
+	 * regardless of their type.
+	 *
+	 * @return Inx_Api_GeneralMailing_GeneralMailingManager the general mailing manager.
+	 * @since API 1.11.10
+	 */
+	public abstract function getGeneralMailingManager();
+	
+	
+	/**
 	 * Returns the <i>Inx_Api_Mailing_MailingManager</i> object that will be used to manage mailings and 
 	 * produce the mailing output (HTML and/or plain text) for a single recipient.
 	 *
@@ -222,6 +232,15 @@ abstract class Inx_Api_Session
 	 * @since API 1.10.0
 	 */
         public abstract function getTriggerMailingManager();
+        
+        
+        /**
+         * Returns the <i>Inx_Api_Sending_SendingHistoryManager</i> object that will be used to retrieve sending information.
+	 * 
+	 * @return Inx_Api_Sending_SendingHistoryManager the sending history manager.
+	 * @since API 1.11.1
+         */
+        public abstract function getSendingHistoryManager();
 
 	
 	/**
@@ -386,6 +405,32 @@ abstract class Inx_Api_Session
 	 */
 	public abstract function getApprovalManager();
 	
+	/**
+	 * Returns the <i>Inx_Api_Transformation_TransformationManager</i> object that will be used to manage transformations.
+	 * A transformation converts datasource content to another format and allows another presentation of the datasource.
+	 * 
+	 * @return Inx_Api_Transformation_TransformationManager the transformation Manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getTransformationManager();
+
+	/**
+	 * Return the <i>Inx_Api_SplitTestMailing_SplitTestMailingManager</i> object that gives read only access to all split test mailings in
+	 * the system.
+	 *
+	 * @return Inx_Api_SplitTestMailing_SplitTestMailingManager the split test mailing manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getSplitTestMailingManager();
+
+	/**
+	 * Return the <i>Inx_Api_SplitTest_SplitTestManager</i> object that gives read only access to all split tests in
+	 * the system.
+	 *
+	 * @return Inx_Api_SplitTest_SplitTestManager the split test manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getSplitTestManager();
 	
 	/**
 	 * Returns the unique id of this session.
@@ -432,6 +477,14 @@ abstract class Inx_Api_Session
 	 * @since API 1.6.0
 	 */
 	public abstract function createTestRecipientContext();
+        
+        /**
+	 * Returns the URL of the peer of this session, which is the URL of the Inxmail Professional server.
+	 * 
+	 * @return string the URL of the peer of this session.
+     * @since API 1.11.1
+	 */
+	public abstract function getConnectionUrl();
 	
 	/**
 	 * Sets the session property specified by the given key to the given value. 

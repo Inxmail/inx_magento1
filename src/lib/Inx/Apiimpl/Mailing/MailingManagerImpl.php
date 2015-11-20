@@ -10,17 +10,17 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 {
 
 	/**
-	 * @var Inx_Apiimpl_SessionContext
+	 * @var Inx_Apiimpl_AbstractSession
 	 */
-    protected $_oSc;
+    protected $_oSession;
 
     protected $_oMService;
 
     
-    public function __construct( Inx_Apiimpl_SessionContext $oSc )
+    public function __construct(Inx_Apiimpl_AbstractSession $oSession )
     {
-        $this->_oSc = $oSc;
-        $this->_oMService = $this->_oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+        $this->_oSession = $oSession;
+        $this->_oMService = $this->_oSession->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
     }
 
     /**
@@ -34,14 +34,14 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	    }
 	    try
 	    {
-	        $md = $this->_oMService->get( $this->_oSc->createCxt(), $iId );
+	        $md = $this->_oMService->get( $this->_oSession->createCxt(), $iId );
 	        if( empty($md) )
 	            throw new Inx_Api_DataException( "mailing is orphaned" );
-	        return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSc, $md );
+	        return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSession, $this, $md );
 	    }
 		catch( Inx_Api_RemoteException $e )
 		{
-			$this->_oSc->notify( $e );
+			$this->_oSession->notify( $e );
 			return null;
 		}
     }
@@ -54,11 +54,11 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	    }
 	    try
 	    {
-	        return $this->_oMService->remove( $this->_oSc->createCxt(), $iId );
+	        return $this->_oMService->remove( $this->_oSession->createCxt(), $iId );
 	    }
 		catch( Inx_Api_RemoteException $e )
 		{
-			$this->_oSc->notify( $e );
+			$this->_oSession->notify( $e );
 			return false;
 		}
     }
@@ -74,11 +74,12 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	    
 	    try
 	    {
-	        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSc, $this->_oMService->selectAll( $this->_oSc->createCxt() ) );
+	        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSession, 
+                        $this->_oMService->selectAll( $this->_oSession->createCxt() ), $this );
 	    }
 		catch( Inx_Api_RemoteException $e )
 		{
-			$this->_oSc->notify( $e );
+			$this->_oSession->notify( $e );
 			return null;
 		}
     }
@@ -106,31 +107,31 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
     	
     	if ( !is_null($oListContext) && !is_null($iStateFilter) && !is_null($sFilter) &&  !is_null($iOrderAttribute) &&  !is_null($iOrderType) ) {
 	    	try {
-	        	$oHolder = $this->_oMService->selectWithFilter( $this->_oSc->createCxt(),
+	        	$oHolder = $this->_oMService->selectWithFilter( $this->_oSession->createCxt(),
 	        			$oListContext->getId(), $iStateFilter, Inx_Apiimpl_TConvert::TConvert($sFilter), $iOrderAttribute, $iOrderType );
 	        	
 	        	if( $oHolder->updExcDesc != null )
 	        		throw new Inx_Api_FilterStmtException( $oHolder->updExcDesc->msg, $oHolder->updExcDesc->type );
 	    	    
-	        	return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSc, $oHolder->reultSet );
+	        	return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSession, $oHolder->reultSet, $this );
 	        } catch( Inx_Api_RemoteException $e ) {
-				$this->_oSc->notify( $e );
+				$this->_oSession->notify( $e );
 				return null;
 			}
     	} elseif(!is_null($oListContext) && !is_null($iStateFilter) && !is_null($iOrderAttribute) && !is_null($iOrderType)) {
 	    	try {
-		        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSc, $this->_oMService->select( $this->_oSc->createCxt(),
-		                $oListContext->getId(), $iStateFilter, $iOrderAttribute, $iOrderType ) );
+		        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSession, $this->_oMService->select( $this->_oSession->createCxt(),
+		                $oListContext->getId(), $iStateFilter, $iOrderAttribute, $iOrderType ), $this );
 		    } catch( Inx_Api_RemoteException $e ) {
-				$this->_oSc->notify( $e );
+				$this->_oSession->notify( $e );
 				return null;
 			}
     	} elseif(!is_null($oListContext) && !is_null($iStateFilter)) {
 	    	try {
-		        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSc, $this->_oMService->select( $this->_oSc->createCxt(),
-		                $oListContext->getId(), $iStateFilter, -1, -1 ) );
+		        return new Inx_Apiimpl_Mailing_MailingResultSet( $this->_oSession, $this->_oMService->select( $this->_oSession->createCxt(),
+		                $oListContext->getId(), $iStateFilter, -1, -1 ), $this );
 		    } catch( Inx_Api_RemoteException $e ) {
-				$this->_oSc->notify( $e );
+				$this->_oSession->notify( $e );
 				return null;
 			}
     	} else {
@@ -140,12 +141,12 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
     
 	public function createRenderer()
 	{
-	    return new Inx_Apiimpl_Mailing_MailingRendererImpl( $this->_oSc );
+	    return new Inx_Apiimpl_Mailing_MailingRendererImpl( $this->_oSession );
 	}
 	
 	public function createRendererForTestRecipient()
 	{
-		return new Inx_Apiimpl_Mailing_MailingRendererTestRecipientImpl( $this->_oSc );
+		return new Inx_Apiimpl_Mailing_MailingRendererTestRecipientImpl( $this->_oSession );
 	}
 	
 
@@ -158,7 +159,8 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	public function createMailing( Inx_Api_List_ListContext $oListContext )
 	{
 	    // default featureId is MAILING_FEATURE_ID
-	    return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSc, null, $oListContext->getId(), Inx_Api_Features::MAILING_FEATURE_ID );
+	    return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSession, $this, null, $oListContext->getId(), 
+                    Inx_Api_Features::MAILING_FEATURE_ID );
 	}
 	
 
@@ -170,7 +172,7 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	 */
     public function createTemporaryMail( Inx_Api_List_ListContext $oListContext )
     {
-        return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSc, null, $oListContext->getId(), -1 );
+        return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSession, $this, null, $oListContext->getId(), -1 );
     }
     
     /**
@@ -187,11 +189,11 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 	    }
         try
         {
-            return $this->_oMService->sendTempMail( $this->_oSc->createCxt(), $oMail->oData, $iRecipientId );
+            return $this->_oMService->sendTempMail( $this->_oSession->createCxt(), $oMail->oData, $iRecipientId );
 	    }
 	    catch( Inx_Api_RemoteException $e )
 		{
-			$this->_oSc->notify( $e );
+			$this->_oSession->notify( $e );
 			return false;
 		}
     }
@@ -201,20 +203,31 @@ class Inx_Apiimpl_Mailing_MailingManagerImpl implements Inx_Api_Mailing_MailingM
 
     	try
 		{
-			$h = $this->_oMService->cloneMailing( $this->_oSc->createCxt(), $iMailingId, $oListContext->getId() );
+			$h = $this->_oMService->cloneMailing( $this->_oSession->createCxt(), $iMailingId, $oListContext->getId() );
 			$oDesc = $h->mailingExcDesc;
 			if( !empty($oDesc) )
 			{
 				throw new Inx_Api_DataException( $oDesc->msg );
 			}
-			return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSc, $h->value );
+			return new Inx_Apiimpl_Mailing_MailingImpl( $this->_oSession, $this, $h->value );
 		}
     	catch( Inx_Api_RemoteException $e )
 		{
-			$this->_oSc->notify( $e );
+			$this->_oSession->notify( $e );
 			
 		}
 		return null;
     }
     
+    
+    public function findSendingsByMailing($iMailingId)
+    {
+        return $this->_oSession->getSendingHistoryManager()->findSendingsByMailing($iMailingId);
+    }
+    
+    
+    public function findLastSendingForMailing($iMailingId)
+    {
+        return $this->_oSession->getSendingHistoryManager()->findLastSendingForMailing($iMailingId);
+    }
 }

@@ -42,6 +42,11 @@
  * $oReportRequest->putParameter("begin", $iMillennium);
  * </pre>
  * <p>
+ * Please note: some reports require you to specify the type of the mailing for which the report is built. To specify
+ * this mailing type, use the <i>putMailingTypeParameter($sKey, $oMailingType)</i> method which accepts
+ * <i>Inx_Api_Reporting_ReportMailingType</i>s. To find out which reports expect a mailing type parameter, take a look 
+ * at the reports reference in the Inxmail Professional API Developer Guide.
+ * <p>
  * For an example on how to retrieve a report, see the <i>Inx_Api_Reporting_ReportEngine</i> documentation.
  * 
  * @see Inx_Api_Reporting_ReportEngine
@@ -223,6 +228,20 @@ class Inx_Api_Reporting_ReportRequest
 	{
 		$this->aParameterMap[$sKey] = $value;
 	}
+        
+        
+        /**
+	 * Associates the specified value with the specified key in this report request. This method should be used to
+	 * specify the type of the mailing the report concerns.
+	 * 
+	 * @param string $sKey the key with which the specified value is to be associated.
+	 * @param Inx_Api_Reporting_ReportMailingType $oMailingType the mailing type to be associated with the specified key.
+	 * @since API 1.11.1
+	 */
+        public function putMailingTypeParameter( $sKey, Inx_Api_Reporting_ReportMailingType $oMailingType)
+        {
+            $this->putParameter($sKey, $oMailingType->getReportId());
+        }
 
 	
 	/**

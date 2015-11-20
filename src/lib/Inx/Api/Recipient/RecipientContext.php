@@ -200,7 +200,7 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @return Inx_Api_Recipient_RecipientMetaData an <i>Inx_Api_Recipient_RecipientMetaData</i> object that contains meta data.
 	 */
 	public function getMetaData();
-
+	
 	
 	/**
 	 * Returns an empty <i>Inx_Api_Recipient_RecipientRowSet</i>. Use this to add new recipients to the system.
@@ -208,6 +208,7 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @return Inx_Api_Recipient_RecipientRowSet an empty <i>Inx_Api_Recipient_RecipientRowSet</i>.
 	 */
 	public function createRowSet();
+	
 	
 	/**
 	 * Returns an <i>Inx_Api_Recipient_RecipientRowSet</i> containing all recipients that are members of the given list 
@@ -227,8 +228,8 @@ interface Inx_Api_Recipient_RecipientContext
 	 */
 	public function select(Inx_Api_List_ListContext $list=null, Inx_Api_Filter_Filter $oFilter=null, $sAdditionalFilter=null,
 		Inx_Api_Recipient_Attribute $oOrderAttribute=null, $iOrderType=null);
-
-
+	
+	
 	/**
 	 * Returns an <i>Inx_Api_Recipient_RecipientRowSet</i> containing exactly one recipient: the one with the specified key. 
 	 * If multiple recipients use that key, only the first one will be retrieved. 
@@ -275,8 +276,30 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @since API 1.9.0
 	 */
 	public function findAllByKeys( $aKeys );
-		
-		
+	
+	
+	 /**
+	 * Returns an <i>Inx_Api_Recipient_RecipientRowSet</i> containing all recipients specified by the given IDs.
+	 * For each ID that cannot be mapped to an existing recipient ID, the returned <i>RecipientRowSet</i> contains a
+	 * <i>NULL</i> entry.
+	 * @param array $aRecipientIds the IDs of the recipients to retrieve.
+	 * @return Inx_Api_Recipient_RecipientRowSet a <i>RecipientRowSet</i> containing all recipients specified by the given IDs.
+	 */
+	public function findByIds( $aRecipientIds );
+	
+	
+	 /**
+	 * Returns an <i>Inx_Api_Recipient_RecipientRowSet</i> containing all recipients associated with the specified sending.
+	 * Be aware that any recipients which are not existing anymore (with respect to their ID) are not included in the result.
+	 * 
+	 * @param int $iSendingId the ID of the sending whose recipients shall be retrieved.
+	 * @return Inx_Api_Recipient_RecipientRowSet a <i>RecipientRowSet</i> containing all recipients associated with the 
+	 * specified sending.
+	 * @since API 1.11.4
+	 */
+	public function findBySending( $iSendingId );
+	
+	
 	/**
 	 * Returns an <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet</i> containing all recipients that have been 
 	 * unsubscribed from the given list and match the given filter and additional filter statement, ordered by the 
@@ -298,11 +321,10 @@ interface Inx_Api_Recipient_RecipientContext
 	 */
 	public function selectUnsubscriber( Inx_Api_List_ListContext $list, Inx_Api_Filter_Filter $oFilter=null, $sAdditionalFilter=null,
 		Inx_Api_Recipient_Attribute $oOrderAttribute=null, $iOrderType=null );
-		
-		
-
-    /**
-     * Sets the specified attribute value to all recipients in the system.
+	
+	
+	/**
+	 * Sets the specified attribute value to all recipients in the system.
 	 * Note: $newValue must be of type stdClass. To set the actual value, use the value variable.
 	 * The following snippet demonstrates this:
 	 * <pre>
@@ -315,10 +337,9 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @param Inx_Api_Recipient_Attribute $attr the designated attribute.
 	 * @param stdClass $newValue the new attribute value.
 	 * @return bool <i>true</i>, if the attribute was updated on all recipients, <i>false</i> otherwise.
-     */
-    public function setAttributeValue( Inx_Api_Recipient_Attribute $attr, stdClass $newValue );
-
-
+	 */
+	public function setAttributeValue( Inx_Api_Recipient_Attribute $attr, stdClass $newValue );
+	
 	
 	/**
 	 * Creates an <i>Inx_Api_Recipient_BatchChannel</i> for fast recipient data manipulation with an optional 
@@ -332,7 +353,7 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @return Inx_Api_Recipient_BatchChannel an <i>Inx_Api_Recipient_BatchChannel</i>.
 	 */
 	public function createBatchChannel( Inx_Api_Recipient_Attribute $oSelectAttribute = null );
-
+	
 	
 	/**
 	 * Checks whether or not this <i>Inx_Api_Recipient_RecipientContext</i> is up to date. 
@@ -353,13 +374,13 @@ interface Inx_Api_Recipient_RecipientContext
 	 * @return bool <i>true</i> if the key is unique, <i>false</i> otherwise.
 	 */
 	public function isKeyUnique();
-
 	
-    /**
-     * Closes this recipient context and releases any resources associated with it. 
-     * An <i>Inx_Api_Recipient_RecipientContext</i> object <strong>must</strong> be closed once it is 
- 	 * not needed anymore to prevent memory leaks and other potentially harmful side effects.
-     */
+	
+	/**
+	 * Closes this recipient context and releases any resources associated with it. 
+	 * An <i>Inx_Api_Recipient_RecipientContext</i> object <strong>must</strong> be closed once it is 
+	 * not needed anymore to prevent memory leaks and other potentially harmful side effects.
+	 */
 	public function close();
 	
 }

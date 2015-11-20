@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://splittestmailing.apiservice.xpro.inxmail.com"
+	xmlns:impl="http://splittestmailing.apiservice.xpro.inxmail.com"
+	xmlns:inx="http://apiservice.xpro.inxmail.com" xmlns:intf="http://splittestmailing.apiservice.xpro.inxmail.com"
+	xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://apiservice.xpro.inxmail.com">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+
+			<complexType name="TString">
+				<sequence>
+					<element name="value" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="TDatetime">
+				<sequence>
+					<element name="value" type="xsd:dateTime" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOf_TString">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TString[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_xsd_string">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_xsd_int">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:int[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="TInteger">
+				<sequence>
+					<element name="value" type="xsd:integer" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOf_xsd_long">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:long[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="SessionCxt">
+				<sequence>
+					<element name="sid" type="xsd:string" />
+					<element name="relRefIds" nillable="true" type="inx:ArrayOf_xsd_string" />
+				</sequence>
+			</complexType>
+
+		</schema>
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://splittestmailing.apiservice.xpro.inxmail.com">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+
+			<complexType name="SplitTestMailingData">
+				<sequence>
+					<element name="id" type="xsd:int" />
+					<element name="name" nillable="true" type="inx:TString" />
+					<element name="subject" nillable="true" type="inx:TString" />
+					<element name="listId" type="xsd:int" />
+					<element name="splitTestId" type="inx:TInteger" nillable="true" />
+					<element name="creationDatetime" nillable="true" type="inx:TDatetime" />
+					<element name="modificationDatetime" type="inx:TDatetime" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOfSplitTestMailingData">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:SplitTestMailingData[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ResultSetData">
+				<sequence>
+					<element name="remoteRefId" type="xsd:string" />
+					<element name="size" type="xsd:int" />
+					<element name="data" nillable="true"
+						type="impl:ArrayOfSplitTestMailingData" />
+				</sequence>
+			</complexType>
+
+		</schema>
+	</wsdl:types>
+
+	<wsdl:message name="getRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+		<wsdl:part name="id" type="xsd:int" />
+	</wsdl:message>
+	<wsdl:message name="getResponse">
+		<wsdl:part name="getReturn" type="impl:SplitTestMailingData" />
+	</wsdl:message>
+
+	<wsdl:message name="selectAllRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+	</wsdl:message>
+	<wsdl:message name="selectAllResponse">
+		<wsdl:part name="selectAllReturn" type="impl:ResultSetData" />
+	</wsdl:message>
+
+	<wsdl:message name="fetchBOsRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+		<wsdl:part name="remoteRefId" type="xsd:string" />
+		<wsdl:part name="index" type="xsd:int" />
+		<wsdl:part name="direction" type="xsd:int" />
+	</wsdl:message>
+	<wsdl:message name="fetchBOsResponse">
+		<wsdl:part name="fetchBOsReturn" type="impl:ArrayOfSplitTestMailingData" />
+	</wsdl:message>
+
+	<wsdl:portType name="SplitTestMailingService">
+
+		<wsdl:operation name="get" parameterOrder="sc id">
+			<wsdl:input name="getRequest" message="impl:getRequest" />
+			<wsdl:output name="getResponse" message="impl:getResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="selectAll" parameterOrder="sc">
+			<wsdl:input name="selectAllRequest" message="impl:selectAllRequest" />
+			<wsdl:output name="selectAllResponse" message="impl:selectAllResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="fetchBOs" parameterOrder="sc remoteRefId index direction">
+			<wsdl:input name="fetchBOsRequest" message="impl:fetchBOsRequest" />
+			<wsdl:output name="fetchBOsResponse" message="impl:fetchBOsResponse" />
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<wsdl:binding name="SplitTestMailingServiceSoapBinding"
+		type="impl:SplitTestMailingService">
+
+		<wsdlsoap:binding style="rpc"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+
+		<wsdl:operation name="get">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="getRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="getResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="selectAll">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="selectAllRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="selectAllResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="fetchBOs">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="fetchBOsRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="fetchBOsResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://splittestmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="SplitTestMailingServiceSoap">
+
+		<wsdl:port name="SplitTestMailingService" binding="impl:SplitTestMailingServiceSoapBinding">
+
+			<wsdlsoap:address
+				location="http://localhost:80/inxmail/api/SplitTestMailingService" />
+
+		</wsdl:port>
+
+	</wsdl:service>
+
+</wsdl:definitions>
+

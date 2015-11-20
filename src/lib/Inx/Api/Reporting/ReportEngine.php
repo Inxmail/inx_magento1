@@ -68,6 +68,10 @@
  * }
  * </pre>
  * <p>
+ * Please note: some reports require you to specify the type of the mailing for which the report is built. To specify
+ * this mailing type, use the <i>Inx_Api_Reporting_ReportRequest::putMailingTypeParameter($sKey, $oMailingType)</i> 
+ * method which accepts <i>Inx_Api_Reporting_ReportMailingType</i>s.
+ * <p>
  * For a complete list of the available reports and the properties associated with them, see Appendix A of the API
  * developer guide.
  * 

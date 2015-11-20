@@ -237,4 +237,16 @@ interface Inx_Api_Property_PropertyNames
 	 */
 	const TRACKING_PROXY = "TrackingProxy";
 	
+        /**
+	 * Constant for the Unsubscribe not in list members property. The Unsubscribe not in list property defines whether
+	 * it is possible for recipients to unsubscribe from a list they are not member of. This property is available for
+	 * the following list types:
+	 * <ul>
+	 * <li>Standard list
+	 * <li>System list
+	 * </ul>
+	 * 
+	 * @since API 1.10.1
+	 */
+	const UNSUBSCRIBE_NOT_IN_LIST = "UnsubscribeNotInList";
 }

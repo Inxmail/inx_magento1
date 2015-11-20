@@ -8,14 +8,21 @@
  */
 class Inx_Apiimpl_Mailing_MailingResultSet extends Inx_Apiimpl_Core_AbstractBOResultSet
 {
-    protected $_oService;
+        protected $_oService;
+
+        /**
+         * @var type Inx_Apiimpl_Mailing_MailingManagerImpl
+         */
+        protected $_oMailingManager;
 	
-	public function __construct( Inx_Apiimpl_SessionContext $oSc, stdClass $oResultSet )
+	public function __construct( Inx_Apiimpl_SessionContext $oSc, stdClass $oResultSet, 
+            Inx_Apiimpl_Mailing_MailingManagerImpl $oMailingManager )
 	{
 		parent::__construct( $oSc, $oResultSet->remoteRefId, $oResultSet->size,
-		        Inx_Apiimpl_Mailing_MailingImpl::convert( $oSc, $oResultSet->data ) );
-		
-        $this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+		        Inx_Apiimpl_Mailing_MailingImpl::convert( $oSc, $oResultSet->data, $oMailingManager ) );
+                
+                $this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
+                $this->_oMailingManager = $oMailingManager;
 	}
 	
 	
@@ -42,7 +49,7 @@ class Inx_Apiimpl_Mailing_MailingResultSet extends Inx_Apiimpl_Core_AbstractBORe
     protected function _fetchBOs( $iIndex, $iDirection ) 
     {
         return Inx_Apiimpl_Mailing_MailingImpl::convert( $this->_remoteRef(), $this->_oService->fetchBOs(
-        		$this->_createCxt(), $this->_refId(), $iIndex, $iDirection ) );
+        		$this->_createCxt(), $this->_refId(), $iIndex, $iDirection ), $this->_oMailingManager );
     }
 
 }

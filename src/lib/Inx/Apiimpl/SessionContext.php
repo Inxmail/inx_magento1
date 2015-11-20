@@ -2,15 +2,17 @@
 interface Inx_Apiimpl_SessionContext
 {
 	
-	const CORE_SERVICE = "CoreService";
+	const CORE2_SERVICE = "Core2Service";
 
 	const RECIPIENT_SERVICE = "RecipientService";
 
 	const LIST_SERVICE = "ListService";
 
-	const MAILING6_SERVICE = "Mailing6Service";
+	const MAILING7_SERVICE = "Mailing7Service";
         
-        const TRIGGER_MAILING_SERVICE = "TriggerMailingService";
+    const TRIGGER_MAILING_SERVICE = "TriggerMailingService";
+        
+    const SENDING_SERVICE = "SendingService";
 
 	const PROPERTY_SERVICE = "PropertyService";
 
@@ -28,11 +30,11 @@ interface Inx_Apiimpl_SessionContext
 	
 	const MAILING_TEMPLATE_SERVICE = "MailingTemplateService";
 
-	const DATAACCESS_SERVICE = "DataAccessService";
+	const DATAACCESS3_SERVICE = "DataAccess3Service";
 
 	const DESIGN_COLLECTION2_SERVICE = "DesignTemplate2Service";
-	
-	const BOUNCE2_SERVICE = "Bounce2Service";
+        
+	const BOUNCE3_SERVICE = "Bounce3Service";
 	
 	const APPROVER_SERVICE = "ApproverService";
 	
@@ -44,7 +46,15 @@ interface Inx_Apiimpl_SessionContext
 	
 	const INBOX_SERVICE = "InboxService";
 	
-	const WEBPAGE_SERVICE = "WebpageService";
+	const WEBPAGE2_SERVICE = "Webpage2Service";
+        
+	const GENERAL_MAILING_SERVICE = "GeneralMailingService";
+        
+	const TRANSFORMATION_SERVICE = "TransformationService";
+	
+	const SPLIT_TEST_MAILING_SERVICE = "SplitTestMailingService";
+
+	const SPLIT_TEST_SERVICE = "SplitTestService";
 	
 //	public function sessionId();
 

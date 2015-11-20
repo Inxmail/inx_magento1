@@ -25,7 +25,8 @@
  * recipient.
  * <li>LINK_TYPE_VERIFY_SUBSCRIPTION - verifies the subscription of the current recipient.
  * <li>LINK_TYPE_VERIFY_UNSUBSCRIPTION - verifies the unsubscription of the current recipient.
- * <li>LINK_TYPE_OPENING_COUNT - trackable image that counts each loading.
+ * <li>LINK_TYPE_OPENING_COUNT - trackable image that counts each loading and the <i>first</i> loading for each
+ * recipient.
  * <li>LINK_TYPE_CONTENT - tracking link embedded in external content (unique count).
  * <li>LINK_TYPE_OPENING_CONTENT - trackable image embedded in external content (unique count).
  * <li>LINK_TYPE_UNSUBSCRIBE_LINK - unsubscribes the current recipient without verification.
@@ -36,7 +37,7 @@
  * <li>LINK_TYPE_UNKNOWN - unknown link type used for legacy APIs (server version > API version).
  * </ul>
  * For information on how to navigate through an <i>Inx_Api_DataAccess_LinkDataRowSet</i>, see the 
- * <i>Inx_Api_DataAccess_DataRowSet</i> documentation.
+ * <i>Inx_Api_InxRowSet</i> documentation.
  * <p>
  * For an example on how to query link data, see the <i>Inx_Api_DataAccess_LinkData</i> documentation.
  * <p>
@@ -83,7 +84,8 @@ interface Inx_Api_DataAccess_LinkDataRowSet extends Inx_Api_DataAccess_DataRowSe
     const LINK_TYPE_VERIFY_UNSUBSCRIPTION	= 6;
     
     /**
-	 * The 'opening count' link type is used to count the <i>first</i> loading of a particular image by a recipient.
+	 * The 'opening count' link type counts each loading of a particular image and the <i>first</i> loading for each recipient
+	 * (tracks the number of recipients for which the image has been loaded). Both values can be used for reporting and analysis.
 	 * 
 	 * @see LINK_TYPE_UNIQUE_COUNT
 	 */ 
@@ -184,7 +186,8 @@ interface Inx_Api_DataAccess_LinkDataRowSet extends Inx_Api_DataAccess_DataRowSe
 	 * recipient.
 	 * <li>LINK_TYPE_VERIFY_SUBSCRIPTION - verifies the subscription of the current recipient.
 	 * <li>LINK_TYPE_VERIFY_UNSUBSCRIPTION - verifies the unsubscription of the current recipient.
-	 * <li>LINK_TYPE_OPENING_COUNT - trackable image that counts each loading.
+	 * <li>LINK_TYPE_OPENING_COUNT - trackable image that counts each loading and the <i>first</i> loading for each
+ 	 * recipient.
 	 * <li>LINK_TYPE_CONTENT - tracking link embedded in external content (unique count).
 	 * <li>LINK_TYPE_OPENING_CONTENT - trackable image embedded in external content (unique count).
 	 * <li>LINK_TYPE_UNSUBSCRIBE_LINK - unsubscribes the current recipient without verification.
@@ -217,4 +220,12 @@ interface Inx_Api_DataAccess_LinkDataRowSet extends Inx_Api_DataAccess_DataRowSe
 	 */
 	public function getMailingId();
 
+	/**
+	 * Returns whether the current link is permanent. Permanent links will not be changed in future.
+	 * Non permanent links are called temporary and may be changed or deleted.
+	 * 
+	 * @return boolean true if and only if the current link is permanent, false otherwise (temporary link)
+	 * @throws Inx_Api_DataException if no row is selected (e.g. you forgot to call next()).
+	 */
+	public function isPermanent();
 }

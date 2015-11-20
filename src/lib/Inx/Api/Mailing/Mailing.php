@@ -678,7 +678,27 @@ interface Inx_Api_Mailing_Mailing extends Inx_Api_BusinessObject
 	 * @throws Inx_Api_DataException
 	 */
 	public function getSendingInfo();
+        
+        
+        /**
+	 * Returns an <i>Inx_Api_ROBOResultSet</i> containing all sendings of this mailing.
+	 * 
+	 * @return Inx_Api_ROBOResultSet A <i>ROBOResultSet</i> containing all sendings of this mailing.
+	 * @since API 1.11.1
+	 */
+        public function findSendings();
+        
+        
+        /**
+	 * Returns the <i>Inx_Api_Sending_Sending</i> object for the last sending of this mailing, if any.
+	 * 
+	 * @return Inx_Api_Sending_Sending The <i>Sending</i> object for the last sending of this mailing, 
+         * if any, <i>null</i> otherwise.
+	 * @since API 1.11.1
+	 */
+        public function findLastSending();
 	
+        
 	/**
 	 * Returns the create date of the mailing
 	 * 
