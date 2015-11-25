@@ -234,6 +234,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
                     if ($firstPass == 'true') $synchronize->truncateSpecificInxmailList($list);
                 }
 
+                Mage::getModel('dndinxmail_subscriber/synchronization')->synchronizeCustomers($pass, $list);
                 foreach ($pass as $email) {
                     $synchronize->subscribeCustomer($email, false, $list);
                 }

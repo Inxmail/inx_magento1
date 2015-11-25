@@ -63,4 +63,11 @@ class DndInxmail_Subscriber_Block_Adminhtml_System_Config_Form_Button_Subscriber
         return $button->toHtml();
     }
 
+    /**
+     * @return bool
+     */
+    public function isSynchronized()
+    {
+        return Mage::helper('dndinxmail_subscriber/config')->isSynchronized();
+    }
 }

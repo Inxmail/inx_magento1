@@ -49,6 +49,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * @var null
      */
     protected $_inxmailSession = null; // Inxmail session
+
     /**
      * @var null
      */
@@ -62,11 +63,6 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * @var array
      */
     protected $_dynamicAttributes = array(); // Mapping dynamic attributes
-
-    /**
-     * @var null
-     */
-    protected $_customerCollection = null; // Customer collection for dynamic attributes
 
     /**
      * Contains cache for loaded attributes
@@ -83,7 +79,6 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     public function openInxmailSession()
     {
         if (!$this->isInxmailSession()) {
-
             $url  = $this->getConfig(self::DNDINXMAIL_API_URL);
             $user = $this->getConfig(self::DNDINXMAIL_API_USER);
             $pass = $this->getConfig(self::DNDINXMAIL_API_PASSWORD);
@@ -214,44 +209,13 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             return false;
         }
 
-        $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
         /** @var null|Mage_Customer_Model_Customer $customer */
         $customer      = $this->getCustomerByEmail($email);
         $vars          = array();
 
         if ($customer != false) {
-            $fields = $mappingHelper->getMappingFields();
-            foreach ($fields as $magentoField => $config) {
-                $inxmailColumn = $config['inxmail_column'];
-                if ($mappingHelper->isDynamicAttribute($magentoField)) {
-                    $dynamicData = $this->getDynamicData($magentoField, $email);
-                    if ($dynamicData !== false) {
-                        $vars[$inxmailColumn] = $dynamicData;
-                    }
-
-                    continue;
-                }
-                $attributeType = $config['attribute_type'];
-
-                $value = null;
-                if ($attributeType === 'customer') {
-                    $value = $customer->getData($magentoField);
-                } elseif ($attributeType === 'customer_address') {
-                    $customerAddress = $customer->getDefaultBillingAddress();
-
-                    if ($customerAddress && $customerAddress->getId()) {
-                        $value = $customerAddress->getData($magentoField);
-                    }
-                }
-
-                if ($value != null) {
-                    $value = $this->_processAttributesValue($magentoField, $value, $attributeType);
-                    $vars[$inxmailColumn] = $value;
-                }
-            }
+            $vars = $this->getCustomerAttributesForInxmail($customer);
         }
-
-        $this->_customerCollection = null;
 
         $recipientContext      = $this->getRecipientContext();
         $subscriptionManager   = $session->getSubscriptionManager();
@@ -292,6 +256,49 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $batchChannel->executeBatch();
 
         return true;
+    }
+
+    /**
+     * @param Mage_Customer_Model_Customer $customer
+     *
+     * @return array
+     */
+    public function getCustomerAttributesForInxmail(Mage_Customer_Model_Customer $customer)
+    {
+        $vars = array();
+
+        $email = $customer->getEmail();
+        $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
+        $fields = $mappingHelper->getMappingFields();
+        foreach ($fields as $magentoField => $config) {
+            $inxmailColumn = $config['inxmail_column'];
+            if ($mappingHelper->isDynamicAttribute($magentoField)) {
+                $dynamicData = $this->getDynamicData($magentoField, $email);
+                if ($dynamicData !== false) {
+                    $vars[$inxmailColumn] = $dynamicData;
+                }
+
+                continue;
+            }
+            $attributeType = $config['attribute_type'];
+
+            $value = null;
+            if ($attributeType === 'customer') {
+                $value = $customer->getData($magentoField);
+            } elseif ($attributeType === 'customer_address') {
+                $customerAddress = $customer->getDefaultBillingAddress();
+
+                if ($customerAddress && $customerAddress->getId()) {
+                    $value = $customerAddress->getData($magentoField);
+                }
+            }
+
+            if ($value != null) {
+                $value = $this->_processAttributesValue($magentoField, $value, $attributeType);
+                $vars[$inxmailColumn] = $value;
+            }
+        }
+        return $vars;
     }
 
     /**
@@ -841,7 +848,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getDynamicData($attribute, $email)
     {
-        $collection = ($this->_customerCollection == null) ? Mage::getResourceModel('customer/customer_collection')->addAttributeToFilter('email', array('eq' => $email)) : $this->_customerCollection;
+        $collection = Mage::getResourceModel('customer/customer_collection')->addAttributeToFilter('email', array('eq' => $email));
 
         $entityType  = Mage::getModel('eav/entity_type')->loadByCode('order');
         $entityTable = $collection->getTable($entityType->getEntityTable());
