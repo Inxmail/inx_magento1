@@ -285,7 +285,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             }
         }
 
-        if (!$isSubscribed) {
+        if (!$isSubscribed && $trigger == false) {
             $batchChannel->write($subscriptionAttribute, date("c"));
         }
 
