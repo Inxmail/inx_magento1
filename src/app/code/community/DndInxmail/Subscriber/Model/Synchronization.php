@@ -28,11 +28,10 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
         }
 
         $synchronizeHelper = Mage::helper('dndinxmail_subscriber/synchronize');
-        if (!$synchronizeHelper->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData(
-                '## Inxmail session does not exist',
-                __FUNCTION__
-            );
+        try {
+            $synchronizeHelper->openInxmailSession();
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return;
         }

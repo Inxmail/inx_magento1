@@ -88,7 +88,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         }
         $session = new Varien_Object();
         try {
-            $session = $this->openInxmailSession(false);
+            $session = $synchronize->openInxmailSession(false);
         } catch (Exception $e) {
             $data['failed'] = 'true';
             $data['msg']    = $e->getMessage();
@@ -111,6 +111,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
                 Mage::getModel('dndinxmail_subscriber/synchronization')
                     ->synchronizeCustomers($pass, $inxmailList, $store);
             } catch (Exception $e) {
+                Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e);
                 $data['failed'] = 'true';
                 $data['msg']    = $e->getMessage();
             }
@@ -198,9 +199,11 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         $data['failed'] = 'false';
         $data['msg']    = 'Success';
 
-        if (!$session = $synchronize->openInxmailSession()) {
+        try {
+            $session = $synchronize->openInxmailSession(false);
+        } catch (Exception $e) {
             $data['failed'] = 'true';
-            $data['msg']    = "Inxmail session does not exist";
+            $data['msg']    = $e->getMessage();
         }
 
         $firstPass = $this->getRequest()->getParam('first');
