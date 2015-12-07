@@ -6,6 +6,7 @@ src/app/design/frontend/base/default/template/dndinxmail app/design/frontend/bas
 src/app/etc/modules/* app/etc/modules
 src/app/locale/en_US/* app/locale/en_US
 src/app/locale/fr_FR/* app/locale/fr_FR
+src/app/locale/de_DE/* app/locale/de_DE
 src/js/dndinxmail js/dndinxmail
 src/lib/Inx lib/Inx
 src/skin/frontend/base/default/dndinxmail skin/frontend/base/default/dndinxmail
