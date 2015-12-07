@@ -43,11 +43,10 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
             // Emulate store that is synchronized to get correct email subscription by store
             $appEmulation = Mage::getSingleton('core/app_emulation');
             $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($store->getStoreId());
-            $synchronize->unsubscribeCustomersFromInxmail($unsubscribedStore);
+            $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedStore);
             $synchronize->unsubscribeCustomersFromGroups();
             $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $message = Mage::helper('dndinxmail_subscriber')->__('Error synchronizing unsubscribed customers from Inxmail');
             Mage::getSingleton('core/session')->addError($message);
             $this->_redirect('dndinxmail_subscriber_front/messages/error/');
@@ -57,20 +56,6 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
 
         if (!isset($pass['total']) || (isset($pass['total']) && $pass['total'] == 0)) {
             $message = Mage::helper('dndinxmail_subscriber')->__('No subscriber to synchronize.');
-            Mage::getSingleton('core/session')->addError($message);
-            $this->_redirect('dndinxmail_subscriber_front/messages/error/');
-        }
-
-        try {
-            Mage::app()->setCurrentStore($store->getStoreId()); // Set current store for list
-            if (!$synchronize->truncateInxmailList()) {
-                $message = Mage::helper('dndinxmail_subscriber')->__('Error truncating Inxmail list.');
-                Mage::getSingleton('core/session')->addError($message);
-                $this->_redirect('dndinxmail_subscriber_front/messages/error/');
-            }
-        }
-        catch (Exception $e) {
-            $message = Mage::helper('dndinxmail_subscriber')->__($e->getMessage());
             Mage::getSingleton('core/session')->addError($message);
             $this->_redirect('dndinxmail_subscriber_front/messages/error/');
         }
@@ -121,19 +106,12 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         if ($data['failed'] == 'false') {
             $synchronize->doMappingCheck();
             try {
-
-                foreach ($pass as $subscriber) {
-                    $email  = $subscriber['email'];
-                    $status = $subscriber['status'];
-                    $synchronize->switchActionToSubscriberStatus($status, $email, false, $inxmailList);
-                }
-
-            }
-            catch (Exception $e) {
+                Mage::getModel('dndinxmail_subscriber/synchronization')
+                    ->synchronizeCustomers($pass, $inxmailList, $store);
+            } catch (Exception $e) {
                 $data['failed'] = 'true';
                 $data['msg']    = $e->getMessage();
             }
-
         }
 
         $synchronize->closeInxmailSession();
@@ -148,6 +126,10 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
      */
     public function groupsAction()
     {
+        // Emulate store that is synchronized to get correct email subscription by store
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation(Mage_Core_Model_App::ADMIN_STORE_ID);
+
         $hashKey      = $this->getRequest()->getParam('hash');
         $isAllowed    = Mage::helper('dndinxmail_subscriber')->isHashKeyAllowed($hashKey);
         $groupsHelper = Mage::helper('dndinxmail_subscriber/synchronize_groups');
@@ -172,7 +154,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
                 }
             }
 
-            $synchronize->unsubscribeCustomersFromInxmail($unsubscribed);
+            $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribed);
             $synchronize->unsubscribeCustomersFromGroups();
 
         }
@@ -191,7 +173,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         }
 
         $pass = Zend_Json::encode($pass);
-
+        $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
         $this->loadLayout('synchronize');
 
         $block = $this->getLayout()->createBlock('dndinxmail_subscriber/synchronization_groups')->setPass($pass);
@@ -205,6 +187,10 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
      */
     public function passGroupsAction()
     {
+        // Emulate store that is synchronized to get correct email subscription by store
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation(Mage_Core_Model_App::ADMIN_STORE_ID);
+
         $synchronize    = Mage::helper('dndinxmail_subscriber/synchronize');
         $data           = array();
         $data['failed'] = 'false';
@@ -234,11 +220,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
                     if ($firstPass == 'true') $synchronize->truncateSpecificInxmailList($list);
                 }
 
-                Mage::getModel('dndinxmail_subscriber/synchronization')->synchronizeCustomers($pass, $list);
-                foreach ($pass as $email) {
-                    $synchronize->subscribeCustomer($email, false, $list);
-                }
-
+                $synchronize->subscribeByEmails($pass, false, $list);
             }
             catch (Exception $e) {
                 $data['failed'] = 'true';
@@ -248,7 +230,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         }
 
         $synchronize->closeInxmailSession();
-
+        $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
         $this->getResponse()->setBody(Zend_Json::encode($data));
     }
 

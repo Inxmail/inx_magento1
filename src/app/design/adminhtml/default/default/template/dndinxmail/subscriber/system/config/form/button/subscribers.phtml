@@ -1,3 +1,4 @@
+<?php $synchronized = $this->isSynchronized(); ?>
 <script type="text/javascript">
     //<![CDATA[
     function DndInxmailSynchronizeSubscribers() {
@@ -6,15 +7,27 @@
     }
     document.observe("dom:loaded", function() {
         // initially hide all containers for tab content
-        $('inxmail_is_subscribed').invoke('hide');
+        $('inxmail_is_subscribed').observe('change', function(event){
+            var checked = event.target.checked;
+            var migrationButton = $('dndinxmail_subscriber_button');
+            migrationButton.disabled = checked;
+            if (checked) {
+                migrationButton.addClassName('disabled');
+            } else {
+                migrationButton.removeClassName('disabled');
+            }
+        });
     });
     //]]>
 </script>
 
-<?php //if ($this->isSynchronized()): ?>
+<?php if ($synchronized): ?>
     <div style="margin-bottom: 5px;">
-        <input type="checkbox" id="inxmail_is_subscribed" name="inxmail_is_subscribed" checked />
-        Bitte beachten Sie bei erneuter Ausführung der Migration, dass u.U. Empfänger angemeldet werden die Ihre Anmeldung noch nicht bestätigt haben bzw. aus Inxmail gelöscht wurden. Sie sollten diese Aktion nur einmalig je Liste ausführen. Danach werden Anmeldungen / Abmeldungen automatisch an Inxmail übertragen.
+        <input type="checkbox" id="inxmail_is_subscribed" name="inxmail_is_subscribed"  checked />
+        <label for="inxmail_is_subscribed"><?php echo $this->__('Prevent re-execution'); ?></label>
+        <p class="note">
+            <span><?php echo $this->__('Please, by migration rerun, be aware of subscribed recepients who have not yet confirmed registration or deleted from Inxmail. In this case, subscriptions / unsubscriptions are automatically transferred to Inxmail.'); ?></span>
+        </p>
     </div>
-<?php //endif; ?>
+<?php endif; ?>
 <?php echo $this->getButtonHtml() ?>

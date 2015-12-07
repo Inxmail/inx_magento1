@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @category               Module Model
+ * @package                DndInxmail_Subscriber
+ * @dev                    Alexander Velykzhanin
+ * @last_modified          4/12/2015
+ * @copyright              Copyright (c) 2015 Flagbit GmbH & Co. KG
+ * @author                 Flagbit GmbH & Co. KG : https://www.flagbit.de/
+ * @license                http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ */
 class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstract
 {
 
@@ -10,8 +19,9 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
     /**
      * @param array $emails
      * @param $inxmailList
+     * @param $store
      */
-    public function synchronizeCustomers(array $emails, $inxmailList)
+    public function synchronizeCustomers(array $emails, $inxmailList, $store = null)
     {
         if (empty($emails)) {
             return;
@@ -27,55 +37,58 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
             return;
         }
 
+        if (is_null($store)) {
+            $store = Mage::app()->getStore();
+        }
         $customers = $this->_getCustomersByEmails($emails);
+        $subscriberCollection = Mage::getModel('newsletter/subscriber')->getCollection();
+        $subscriberCollection->addFieldToFilter('subscriber_email', array('in' => $emails))
+            ->addStoreFilter($store->getId());
 
         $recipientContext      = $synchronizeHelper->getRecipientContext();
         $recipientMetaData     = $recipientContext->getMetaData();
         $subscriptionAttribute = $recipientMetaData->getSubscriptionAttribute($inxmailList);
         $batchChannel          = $recipientContext->createBatchChannel();
-
-        foreach ($emails as $email) {
-            $vars = array();
+        foreach ($subscriberCollection as $subscriber) {
+            $subscriptionEmail = $subscriber->getEmail();
             $customer = null;
-            if (isset($this->_customers[$email])) {
-                $customer = $this->_customers[$email];
-                $vars = $synchronizeHelper->getCustomerAttributesForInxmail($customer);
-            }
 
             $recipientRowSet = $recipientContext->select(
                 $inxmailList,
                 null,
-                "email LIKE \"" . $email . "\"",
+                "email LIKE \"" . $subscriptionEmail . "\"",
                 null,
                 Inx_Api_Order::ASC
             );
-            $isSubscribed = ($recipientRowSet->next()) ? true : false;
+            $inxmailSubscriber = $recipientRowSet->next();
+            $isSubscribed = ($inxmailSubscriber) ? true : false;
 
-            if (!$isSubscribed) {
-                $batchChannel->createRecipient($email, true);
-            }
+            if ($isSubscribed && !$subscriber->isSubscribed()) {
+                $subscriber->setStatus(Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED)
+                    ->setNotSyncInxmail(true);
+                $subscriber->save();
+            } elseif ($subscriber->isSubscribed()) {
+                $batchChannel->createRecipient($subscriptionEmail, true);
+                $batchChannel->selectRecipient($subscriptionEmail, true);
+                if (isset($customers[$subscriptionEmail])) {
+                    $customer = $customers[$subscriptionEmail];
+                    $vars = $synchronizeHelper->getCustomerAttributesForInxmail($customer);
 
-            $batchChannel->selectRecipient($email, true);
-
-            if (!is_null($customer)) {
-                foreach ($vars as $attributeName => $attributeValue) {
-                    try {
-                        $recipientMetaData->getUserAttribute($attributeName);
-                        $batchChannel->write($recipientMetaData->getUserAttribute($attributeName), $attributeValue);
-                    } catch (Inx_Api_Recipient_AttributeNotFoundException $e) {
-                        continue;
+                    foreach ($vars as $attributeName => $attributeValue) {
+                        try {
+                            $recipientMetaData->getUserAttribute($attributeName);
+                            $batchChannel->write($recipientMetaData->getUserAttribute($attributeName), $attributeValue);
+                        } catch (Inx_Api_Recipient_AttributeNotFoundException $e) {
+                            continue;
+                        }
                     }
                 }
-            }
-
-            if (!$isSubscribed) {
                 $batchChannel->write($subscriptionAttribute, date("c"));
             }
         }
-
         $batchChannel->executeBatch();
 
-        Mage::helper('dndinxmail_subscriber/config')->setIsSynchronized(true);
+        Mage::helper('dndinxmail_subscriber/config')->setIsSynchronized(true, 'stores', $store->getId());
     }
 
     /**
@@ -87,7 +100,9 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
     {
         /** @var Mage_Customer_Model_Resource_Customer_Collection $customerCollection */
         $customerCollection = Mage::getModel('customer/customer')->getCollection();
-        $customerCollection->addFieldToFilter('email', array('in' => $emails));
+        $customerCollection->addNameToSelect()
+            ->addFieldToFilter('email', array('in' => $emails))
+            ->addAttributeToSelect('*');
         $customerCollection->getSelect()
             ->group('e.email');
 

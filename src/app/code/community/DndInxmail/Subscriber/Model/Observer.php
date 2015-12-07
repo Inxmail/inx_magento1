@@ -30,6 +30,9 @@ class DndInxmail_Subscriber_Model_Observer
 
             $event      = $observer->getEvent();
             $subscriber = $event->getDataObject();
+            if ($subscriber->getNotSyncInxmail()) {
+                return false;
+            }
             $email      = $subscriber->getSubscriberEmail();
             $status     = $subscriber->getStatus();
             $storeId    = $subscriber->getStoreId();
@@ -127,7 +130,7 @@ class DndInxmail_Subscriber_Model_Observer
                         $appEmulation = Mage::getSingleton('core/app_emulation');
                         $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($store->getStoreId());
 
-                        $synchronize->unsubscribeCustomersFromInxmail($unsubscribedStore);
+                        $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedStore);
 
                         $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
                     }

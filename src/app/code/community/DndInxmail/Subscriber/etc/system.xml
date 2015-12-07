@@ -105,18 +105,18 @@
                     </fields>
                 </general>
                 <syncrhonize_subscribers translate="label">
-                    <label>Subscribers synchronization</label>
+                    <label>Newsletter subscribers migration to Inxmail</label>
                     <sort_order>30</sort_order>
                     <show_in_default>0</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment>Subscribers synchronization is only available on the store view configuration of your website.</comment>
+                    <comment><![CDATA[The migration of newsletter subscribers to inxmail is a process that should be performed for every store once manually. This process transfer and update all existing newsletter subscribers from magento newsletter system to the defined inxmail list according the following rules:<ul style='list-style-type: circle; padding-left: 2em;'><li>If an email address of a subscriber is already in the list of Inxmail, the registration status in Inxmail is not changed for this subscriber. In this case, the status is taken from Inxmail to Magento (registration status responsibility lies by Inxmail)</li><li>If there is subscriber in Magento, but not in Inxmail (for various reasons), he become subscribed in Inxmail (without opt-in procedure) (login status-responsibility lies on Magento).</li><li>A subscriber who does not have status "registered" by existence check in Inxmail is not transmitted</li></ul>]]></comment>
                     <fields>
                         <synchronize_all translate="label comment">
-                            <label>Synchronize All Subscribers</label>
+                            <label>Migration</label>
                             <frontend_type>button</frontend_type>
                             <frontend_model>dndinxmail_subscriber/adminhtml_system_config_form_button_subscribers</frontend_model>
-                            <comment>Synchronize all Magento subscribers to Inxmail</comment>
+                            <comment>Merge all subscribers from Magento with the given Inxmail list in context of Store-Views</comment>
                             <sort_order>10</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>0</show_in_website>

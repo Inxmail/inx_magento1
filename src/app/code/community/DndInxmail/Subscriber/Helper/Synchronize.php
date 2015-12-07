@@ -203,10 +203,57 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function subscribeCustomer($email, $trigger = true, $inxmailList)
     {
+        return $this->subscribeByEmails($email, $trigger, $inxmailList);
+    }
+
+    /**
+     * Subscribe email addresses to Inxmail
+     * If email is linked to customer send additionnal data else send email as guest
+     *
+     * @param array $emails Email addresses
+     * @param boolean $trigger Trigger message in Inxmail
+     * @param object $inxmailList Inxmail list
+     *
+     * @return boolean
+     */
+    public function subscribeByEmails($emails, $trigger = true, $inxmailList)
+    {
         if (!$session = $this->openInxmailSession()) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
 
             return false;
+        }
+        if (!is_array($emails)) {
+            $emails = array($emails);
+        }
+
+        $recipientContext      = $this->getRecipientContext();
+        $batchChannel    = $recipientContext->createBatchChannel();
+
+        foreach ($emails as $email) {
+            $this->addCustomerToBatch($batchChannel, $email, $trigger, $inxmailList);
+        }
+
+        $batchChannel->executeBatch();
+
+        return true;
+    }
+
+    /**
+     * Add email address to Inxmail batch channel
+     * If email is linked to customer add additionnal data else set email as guest
+     *
+     * @param $batchChannel
+     * @param $email
+     * @param bool $trigger
+     * @param $inxmailList
+     */
+    public function addCustomerToBatch($batchChannel, $email, $trigger = true, $inxmailList)
+    {
+        if (!$session = $this->openInxmailSession()) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+
+            return;
         }
 
         /** @var null|Mage_Customer_Model_Customer $customer */
@@ -222,7 +269,6 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $recipientMetaData     = $recipientContext->getMetaData();
         $subscriptionAttribute = $recipientMetaData->getSubscriptionAttribute($inxmailList);
 
-        $batchChannel    = $recipientContext->createBatchChannel();
         $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
@@ -252,11 +298,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         if (!$isSubscribed) {
             $batchChannel->write($subscriptionAttribute, date("c"));
         }
-
-        $batchChannel->executeBatch();
-
-        return true;
     }
+
 
     /**
      * @param Mage_Customer_Model_Customer $customer
@@ -549,8 +592,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             return array();
         }
 
+        $unsubscribed = array();
         try {
-            $unsubscribed       = array();
             $listContextManager = $session->getListContextManager();
             $inxmailList        = $listContextManager->get($listid);
             $recipientContext   = $this->getRecipientContext();
@@ -625,7 +668,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         $this->closeInxmailSession();
 
-        $this->unsubscribeCustomersFromInxmail($unsubscribed);
+        $this->unsubscribeCustomersFromMagentoByEmails($unsubscribed);
 
         return true;
     }
@@ -637,7 +680,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      * @return boolean
      */
-    public function unsubscribeCustomersFromInxmail($unsubscribed = array())
+    public function unsubscribeCustomersFromMagentoByEmails($unsubscribed = array())
     {
         if (count($unsubscribed) <= 0) return false;
 
@@ -1039,12 +1082,9 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
                 ->addFieldToFilter('subscriber_email', array('in' => $emails));
             $subscriberCollection->getSelect()->group('main_table.subscriber_email');
 
-            foreach ($subscriberCollection as $subscriber) {
-                if (!$subscriber->isSubscribed()) {
-                    continue;
-                }
-                $this->subscribeCustomer($subscriber->getEmail(), false, $inxmailList);
-            }
+            $subscriberEmails = $subscriberCollection->getColumnValues('subscriber_email');
+
+            $this->subscribeByEmails($subscriberEmails, false, $inxmailList);
         }
 
         $this->closeInxmailSession();
