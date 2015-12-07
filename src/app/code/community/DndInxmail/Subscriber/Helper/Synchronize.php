@@ -285,7 +285,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             }
         }
 
-        if (!$isSubscribed) {
+        if (!$isSubscribed && $trigger == false) {
             $batchChannel->write($subscriptionAttribute, date("c"));
         }
 
@@ -1004,6 +1004,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         $contextListManager = $this->getListContextManager();
 
+        $this->_createMissingLists($groupsConfig);
+
         $this->doMappingCheck();
 
         foreach ($groupsConfig as $groupId) {
@@ -1012,13 +1014,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $emails   = $groupHelper->getCustomersFromGroup($groupId);
 
             if (!$list = $contextListManager->findByName($listName)) {
-                $list = $contextListManager->createStandardList();
-                $list->updateName($listName);
-                $description = $groupHelper->getGroupName($groupId);
-                $list->updateDescription($description);
-                $list->commitUpdate();
-            }
-            else {
+                $this->_createMissingListByGroup($groupId);
+            } else {
                 $this->truncateSpecificInxmailList($list);
             }
 
@@ -1043,6 +1040,41 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $this->closeInxmailSession();
 
         return true;
+    }
+
+    /**
+     * @param $groupIds
+     *
+     * @throws Exception
+     */
+    protected function _createMissingLists($groupIds)
+    {
+        $groupHelper = Mage::helper('dndinxmail_subscriber/group');
+        $contextListManager = $this->getListContextManager();
+        foreach ($groupIds as $groupId) {
+            $listName = $groupHelper->formatInxmailListName($groupId);
+            if ($contextListManager->findByName($listName)) {
+                continue;
+            }
+
+            $this->_createMissingListByGroup($groupId);
+        }
+    }
+
+    /**
+     * @param $groupId
+     */
+    protected function _createMissingListByGroup($groupId)
+    {
+        $groupHelper = Mage::helper('dndinxmail_subscriber/group');
+        $contextListManager = $this->getListContextManager();
+        $listName = $groupHelper->formatInxmailListName($groupId);
+
+        $list = $contextListManager->createStandardList();
+        $list->updateName($listName);
+        $description = $groupHelper->getGroupName($groupId);
+        $list->updateDescription($description);
+        $list->commitUpdate();
     }
 
 
