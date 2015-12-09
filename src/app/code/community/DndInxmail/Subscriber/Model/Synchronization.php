@@ -26,12 +26,12 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
         if (empty($emails)) {
             return;
         }
-
+        $logHelper = Mage::helper('dndinxmail_subscriber/log');
         $synchronizeHelper = Mage::helper('dndinxmail_subscriber/synchronize');
         try {
             $synchronizeHelper->openInxmailSession();
         } catch (Exception $e) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+            $logHelper->logExceptionMessage($e, __FUNCTION__);
 
             return;
         }
@@ -85,9 +85,54 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
                 $batchChannel->write($subscriptionAttribute, date("c"));
             }
         }
-        $batchChannel->executeBatch();
+        $results = $batchChannel->executeBatch();
+        if (is_array($results)) {
+            foreach ($results as $result) {
+                $error = $this->getBatchResultError($result);
+                if (!$error) {
+                    continue;
+                }
+                $logHelper->logExceptionData($error . " (Code {$result})", __FUNCTION__);
+            }
+
+        }
 
         Mage::helper('dndinxmail_subscriber/config')->setIsSynchronized(true, 'stores', $store->getId());
+    }
+
+    /**
+     * Transform result code into error message or bool false in case of success
+     *
+     * @param $result
+     *
+     * @return bool|string
+     */
+    public function getBatchResultError($result)
+    {
+        $error = false;
+        $helper = Mage::helper('dndinxmail_subscriber');
+        switch ($result) {
+            case Inx_Api_Recipient_BatchChannel::RESULT_NOT_COMMITTED:
+                $error = $helper->__('Data was not committed.');
+                break;
+            case Inx_Api_Recipient_BatchChannel::RESULT_FAILURE_ILLEGAL_VALUE:
+                $error = $helper->__('Key value is illegal.');
+                break;
+            case Inx_Api_Recipient_BatchChannel::RESULT_FAILURE_BLOCKED_BY_BLACKLIST:
+                $error = $helper->__('Email is blocked by blacklist entry.');
+                break;
+            case Inx_Api_Recipient_BatchChannel::RESULT_FAILURE_DUPLICATE_KEY:
+                $error = $helper->__('Unique key already exists.');
+                break;
+            case Inx_Api_Recipient_BatchChannel::RESULT_FAILURE_KEY_NOT_FOUND:
+                $error = $helper->__('Recipient doesn\'t exist.');
+                break;
+            case Inx_Api_Recipient_BatchChannel::RESULT_PERMISSION_DENIED:
+                $error = $helper->__('Permission is denied to create, update or remove a recipient.');
+                break;
+        }
+
+        return $error;
     }
 
     /**
