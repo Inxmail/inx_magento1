@@ -1,0 +1,18 @@
+<script type="text/javascript">
+    //<![CDATA[
+    var result = '<?php echo $this->getAllPass(); ?>';
+    var segments = typeof JSON != 'undefined' ? JSON.parse(result) : eval('(' + result + ')');
+
+    window.onload = function() {
+        var DndInxmailSynchronize = new DndInxmail.Synchronize();
+        DndInxmailSynchronize.launchSegments(segments);
+    };
+    //]]>
+</script>
+
+<span id="current-group"></span>
+<ul id="results">
+    <li id="percent"></li>
+    <li id="pass"></li>
+</ul>
+<ul id="errors"></ul>
