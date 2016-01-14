@@ -48,21 +48,22 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
         $recipientMetaData     = $recipientContext->getMetaData();
         $subscriptionAttribute = $recipientMetaData->getSubscriptionAttribute($inxmailList);
         $batchChannel          = $recipientContext->createBatchChannel();
+        $filter = '';
         foreach ($subscriberCollection as $subscriber) {
             $subscriptionEmail = $subscriber->getEmail();
-            $customer = null;
-
-            $recipientRowSet = $recipientContext->select(
-                $inxmailList,
-                null,
-                "email LIKE \"" . $subscriptionEmail . "\"",
-                null,
-                Inx_Api_Order::ASC
-            );
-            $inxmailSubscriber = $recipientRowSet->next();
-            $isSubscribed = ($inxmailSubscriber) ? true : false;
-
-            if ($isSubscribed && !$subscriber->isSubscribed()) {
+            $filter .= "email LIKE \"" . $subscriptionEmail . "\" OR ";
+        }
+        $filter = rtrim($filter, "OR ");
+        /** @var Inx_Apiimpl_Recipient_RecipientRowSetImpl $recipientRowSet */
+        $recipientRowSet = $recipientContext->select($inxmailList, null, $filter, null, Inx_Api_Order::ASC);
+        $inxmailEmails = array();
+        $emailAttribute = $recipientMetaData->getUserAttribute('email');
+        while ($recipientRowSet->next()) {
+            $inxmailEmails[] = $recipientRowSet->getString($emailAttribute);
+        }
+        foreach ($subscriberCollection as $subscriber) {
+            $subscriptionEmail = $subscriber->getEmail();
+            if ((array_search($subscriptionEmail, $inxmailEmails) !== false) && !$subscriber->isSubscribed()) {
                 $subscriber->setStatus(Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED)
                     ->setNotSyncInxmail(true);
                 $subscriber->save();
@@ -86,18 +87,24 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
             }
         }
         $results = $batchChannel->executeBatch();
-        if (is_array($results)) {
-            foreach ($results as $result) {
-                $error = $this->getBatchResultError($result);
-                if (!$error) {
-                    continue;
-                }
-                $logHelper->logExceptionData($error . " (Code {$result})", __FUNCTION__);
-            }
-
-        }
+        $this->_logResultErrors($results);
 
         Mage::helper('dndinxmail_subscriber/config')->setIsSynchronized(true, 'stores', $store->getId());
+    }
+
+    protected function _logResultErrors($results)
+    {
+        if (!is_array($results)) {
+            return;
+        }
+        $logHelper = Mage::helper('dndinxmail_subscriber/log');
+        foreach ($results as $result) {
+            $error = $this->getBatchResultError($result);
+            if (!$error) {
+                continue;
+            }
+            $logHelper->logExceptionData($error . " (Code {$result})", __FUNCTION__);
+        }
     }
 
     /**
