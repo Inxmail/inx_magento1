@@ -105,25 +105,25 @@
                     </fields>
                 </general>
                 <syncrhonize_subscribers translate="label">
-                    <label>Newsletter subscribers migration to Inxmail</label>
+                    <label>Migration of the newsletter recipients to Inxmail</label>
                     <sort_order>30</sort_order>
                     <show_in_default>0</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment><![CDATA[The migration of newsletter subscribers to inxmail is a process that should be performed for every store once manually. This process transfer and update all existing newsletter subscribers from magento newsletter system to the defined inxmail list according the following rules:<ul style='list-style-type: circle; padding-left: 2em;'><li>If an email address of a subscriber is already in the list of Inxmail, the registration status in Inxmail is not changed for this subscriber. In this case, the status is taken from Inxmail to Magento (registration status responsibility lies by Inxmail)</li><li>If there is subscriber in Magento, but not in Inxmail (for various reasons), he become subscribed in Inxmail (without opt-in procedure) (login status-responsibility lies on Magento).</li><li>A subscriber who does not have status "registered" by existence check in Inxmail is not transmitted</li></ul>]]></comment>
+                    <comment><![CDATA[The newsletter recipients should be migrated manually to Inxmail once per store view configuration. All recipients who are currently managed in Magento will thereby be merged with the recipients on the corresponding list in Inxmail according to the following rules:<ul style='list-style-type: circle; padding-left: 2em;'><li>If a recipient’s email address already exists on the Inxmail list, the recipient’s subscription status will not be changed in Inxmail. In this case, the status from Inxmail will be used in Magento (Inxmail has control over subscription status).</li><li>If a subscribed recipient in Magento does not exist in Inxmail (there are different reasons for this), then the recipient will be subscribed in Inxmail without the opt-in procedure (Magento has control over subscription status).</li><li>A recipient who does not have the "subscribed" status following an existence check in Inxmail will not be transferred.</li></ul>]]></comment>
                     <fields>
                         <synchronize_all translate="label comment">
                             <label>Migration</label>
                             <frontend_type>button</frontend_type>
                             <frontend_model>dndinxmail_subscriber/adminhtml_system_config_form_button_subscribers</frontend_model>
-                            <comment>Merge all subscribers from Magento with the given Inxmail list in context of Store-Views</comment>
+                            <comment>Merges all recipients of the selected store view from Magento with the corresponding Inxmail list</comment>
                             <sort_order>10</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>1</show_in_store>
                         </synchronize_all>
                         <subscribers_per_pass translate="label comment">
-                            <label>Subscribers per pass</label>
+                            <label>Subscribers per transfer</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
