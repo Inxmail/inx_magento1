@@ -738,6 +738,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             if (!$subscriber instanceof Varien_Object || !$subscriber->getId()) continue;
 
             if ($subscriber->isSubscribed()) {
+                $subscriber->setNotSyncInxmail(true);
                 $subscriber->unsubscribe();
             }
         }
