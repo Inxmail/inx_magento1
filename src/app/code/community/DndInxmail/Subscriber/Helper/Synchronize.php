@@ -668,6 +668,55 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     }
 
     /**
+     * Get unsubscribed customer from inxmail
+     *
+     * @return mixed Unsubscribed emails or false
+     */
+    public function getUnsubscribedAfterDate($storeId, $afterDate)
+    {
+        if (!$session = $this->openInxmailSession()) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+
+            return array();
+        }
+
+        if (!$listid = (int)$this->getSynchronizeListId($storeId)) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## No list defined in configuration', __FUNCTION__);
+
+            return array();
+        }
+
+        $unsubscribed       = array();
+        try {
+            $listContextManager = $session->getListContextManager();
+            $inxmailList        = $listContextManager->get($listid);
+            $recipientContext   = $this->getRecipientContext();
+            $recipientMetaData  = $recipientContext->getMetaData();
+            $emailAttribute     = $recipientMetaData->getEmailAttribute();
+            $subscriptionManager = $session->getSubscriptionManager();
+
+            $logentriesRowSet = $subscriptionManager->getLogEntriesAfterAndList($inxmailList, $afterDate, $recipientContext, array($emailAttribute) );
+
+            while ($logentriesRowSet->next()) {
+                if ($logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::VERIFIED_UNSUBSCRIPTION
+                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::LIST_UNSUBSCRIBE_HEADER_UNSUBSCRIPTION
+                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::MANUAL_UNSUBSCRIPTION
+                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION
+                ) {
+                    $unsubscribed[] = $logentriesRowSet->getEmailAddress();
+                }
+            }
+
+            $logentriesRowSet->close();
+        } catch (Exception $e) {
+        }
+
+        $this->closeInxmailSession();
+
+        return $unsubscribed;
+    }
+
+    /**
      * @return array|bool
      */
     public function unsubscribeCustomersFromGroups()
@@ -726,24 +775,43 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * Unsubscribe Inxmail email in Magento
      *
      * @param array $unsubscribed Unsubscribed emails
+     * @param $storeId
      *
      * @return boolean
      */
-    public function unsubscribeCustomersFromMagentoByEmails($unsubscribed = array())
+    public function unsubscribeCustomersFromMagentoByEmails($unsubscribed = array(), $storeId = null)
     {
         if (count($unsubscribed) <= 0) return false;
+        /** @var Mage_Newsletter_Model_Resource_Subscriber_Collection $subscriberCollection */
+        $subscriberCollection = Mage::getModel('newsletter/subscriber')->getCollection();
+        $subscriberCollection->useOnlySubscribed()
+            ->addFieldToFilter('subscriber_email', array('in' => $unsubscribed));
+        $subscriberCollection->getSelect()->group('main_table.subscriber_email');
 
-        foreach ($unsubscribed as $email) {
-            $subscriber = Mage::getModel('newsletter/subscriber')->loadByEmail($email);
-            if (!$subscriber instanceof Varien_Object || !$subscriber->getId()) continue;
-
-            if ($subscriber->isSubscribed()) {
-                $subscriber->setNotSyncInxmail(true);
-                $subscriber->unsubscribe();
-            }
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
         }
+        if ($storeId != Mage_Core_Model_App::ADMIN_STORE_ID) {
+            $subscriberCollection->addStoreFilter($storeId);
+        }
+        Mage::getSingleton('core/resource_iterator')->walk(
+            $subscriberCollection->getSelect(),
+            array(array($this, 'unsubscribeCustomersFromMagentoByEmailsCallback'))
+        );
 
         return true;
+    }
+
+    /**
+     * @param $args
+     */
+    public function unsubscribeCustomersFromMagentoByEmailsCallback($args)
+    {
+        $subscriber = Mage::getModel('newsletter/subscriber')->setData($args['row']);
+        if ($subscriber->isSubscribed()) {
+            $subscriber->setNotSyncInxmail(true);
+            $subscriber->unsubscribe();
+        }
     }
 
     /**
