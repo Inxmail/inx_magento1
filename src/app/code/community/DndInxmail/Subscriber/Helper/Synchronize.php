@@ -696,17 +696,24 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $subscriptionManager = $session->getSubscriptionManager();
 
             $logentriesRowSet = $subscriptionManager->getLogEntriesAfterAndList($inxmailList, $afterDate, $recipientContext, array($emailAttribute) );
-
+            $logEntries = array();
             while ($logentriesRowSet->next()) {
-                if ($logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::VERIFIED_UNSUBSCRIPTION
-                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::LIST_UNSUBSCRIBE_HEADER_UNSUBSCRIPTION
-                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::MANUAL_UNSUBSCRIPTION
-                    || $logentriesRowSet->getType() == Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION
+                $logEntries[$logentriesRowSet->getEmailAddress()] = $logentriesRowSet->getType();
+            }
+            foreach ($logEntries as $email => $status) {
+                if (in_array(
+                    $status,
+                    array(
+                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::VERIFIED_UNSUBSCRIPTION,
+                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::LIST_UNSUBSCRIBE_HEADER_UNSUBSCRIPTION,
+                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::MANUAL_UNSUBSCRIPTION,
+                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION,
+                    )
+                )
                 ) {
-                    $unsubscribed[] = $logentriesRowSet->getEmailAddress();
+                    $unsubscribed[] = $email;
                 }
             }
-
             $logentriesRowSet->close();
         } catch (Exception $e) {
         }
