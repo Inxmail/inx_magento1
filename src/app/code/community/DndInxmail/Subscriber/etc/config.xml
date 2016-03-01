@@ -13,7 +13,7 @@
 <config>
     <modules>
         <DndInxmail_Subscriber>
-            <version>3.1.0.5</version>
+            <version>3.2.0.0</version>
         </DndInxmail_Subscriber>
     </modules>
     <global>
@@ -123,7 +123,7 @@
     <default>
         <dndinxmail_subscriber_general>
             <syncrhonize_subscribers>
-                <subscribers_per_pass>50</subscribers_per_pass>
+                <subscribers_per_pass>500</subscribers_per_pass>
             </syncrhonize_subscribers>
         </dndinxmail_subscriber_general>
         <dndinxmail_subscriber_crons>
@@ -182,21 +182,29 @@
                 <customer_config_orders_options_single_date>30</customer_config_orders_options_single_date>
             </mapping_groups>
         </dndinxmail_subscriber_mapping>
+        <crontab>
+            <jobs>
+                <dndinxmail_subscriber_synchronize_unsubscribed>
+                    <schedule>
+                        <cron_expr>0 * * * *</cron_expr>
+                    </schedule>
+                </dndinxmail_subscriber_synchronize_unsubscribed>
+                <dndinxmail_subscriber_synchronize_customer_group>
+                    <schedule>
+                        <cron_expr>0 1 * * *</cron_expr>
+                    </schedule>
+                </dndinxmail_subscriber_synchronize_customer_group>
+            </jobs>
+        </crontab>
     </default>
     <crontab>
         <jobs>
             <dndinxmail_subscriber_synchronize_unsubscribed>
-                <schedule>
-                    <cron_expr>0 * * * *</cron_expr>
-                </schedule>
                 <run>
                     <model>dndinxmail_subscriber/observer::synchronizeUnsubscribed</model>
                 </run>
             </dndinxmail_subscriber_synchronize_unsubscribed>
             <dndinxmail_subscriber_synchronize_customer_group>
-                <schedule>
-                    <cron_expr>0 1 * * *</cron_expr>
-                </schedule>
                 <run>
                     <model>dndinxmail_subscriber/observer::synchronizeCustomerGroup</model>
                 </run>

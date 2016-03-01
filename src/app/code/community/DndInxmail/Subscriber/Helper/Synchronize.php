@@ -5,7 +5,7 @@
  * @package                DndInxmail_Subscriber
  * @dev                    Merlin
  * @dev                    Alexander Velykzhanin
- * @last_modified          05/08/2015
+ * @last_modified          13/10/2015
  * @copyright              Copyright (c) 2012 Agence Dn'D
  * @author                 Agence Dn'D - Conseil en creation de site e-Commerce Magento : http://www.dnd.fr/
  * @license                http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
@@ -49,6 +49,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * @var null
      */
     protected $_inxmailSession = null; // Inxmail session
+
     /**
      * @var null
      */
@@ -64,11 +65,6 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     protected $_dynamicAttributes = array(); // Mapping dynamic attributes
 
     /**
-     * @var null
-     */
-    protected $_customerCollection = null; // Customer collection for dynamic attributes
-
-    /**
      * Contains cache for loaded attributes
      *
      * @var array
@@ -78,12 +74,16 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     /**
      * Open an Inxmail session
      *
+     * @param bool $ignoreException
+     *
      * @return mixed Inxmail session or false
+     *
+     * @throws Exception
+     * @throws Inx_Api_LoginException
      */
-    public function openInxmailSession()
+    public function openInxmailSession($ignoreException = true)
     {
         if (!$this->isInxmailSession()) {
-
             $url  = $this->getConfig(self::DNDINXMAIL_API_URL);
             $user = $this->getConfig(self::DNDINXMAIL_API_USER);
             $pass = $this->getConfig(self::DNDINXMAIL_API_PASSWORD);
@@ -94,21 +94,38 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
                 $this->_inxmailSession = Inx_Api_Session::createRemoteSession($url, $user, $pass);
             }
             catch (Inx_Api_LoginException $e) {
+                $message = Mage::helper('dndinxmail_subscriber/log')->__(
+                    'Inxmail API Error: %s (Code: %s)',
+                    $e->getMessage(),
+                    $e->getCode()
+                );
+                Mage::helper('dndinxmail_subscriber/log')->logExceptionData($message, __FUNCTION__);
                 if (!Mage::helper('dndinxmail_subscriber/error')->getIsSilentError()) {
-                    $message = Mage::helper('dndinxmail_subscriber/log')->__('Inxmail API Error: %s', $e->getMessage());
                     Mage::getSingleton('adminhtml/session')->addError($message);
-                    Mage::helper('dndinxmail_subscriber/log')->logExceptionData($e->getTraceAsString(), __FUNCTION__);
-                    Mage::helper('dndinxmail_subscriber/log')->logData('## URL: ' . $url . ' || USER: ' . $user . ' || PASS: ' . $pass, __FUNCTION__);
+                    Mage::helper('dndinxmail_subscriber/log')->logData('## URL: ' . $url . ' || USER: ' . $user, __FUNCTION__);
+                }
+
+                if (!$ignoreException) {
+                    $ex = new Inx_Api_LoginException(sprintf('Inxmail API Error: %s', $e->getMessage()), $e->getCode());
+
+                    throw $ex;
                 }
 
                 return false;
             }
             catch (Exception $e) {
+                $message = Mage::helper('dndinxmail_subscriber/log')->__(
+                    'Inxmail API Error: %s',
+                    $e->getMessage()
+                );
+                Mage::helper('dndinxmail_subscriber/log')->logExceptionData($message, __FUNCTION__);
                 if (!Mage::helper('dndinxmail_subscriber/error')->getIsSilentError()) {
-                    $message = Mage::helper('dndinxmail_subscriber/log')->__('Inxmail API Error: %s', $e->getMessage());
                     Mage::getSingleton('adminhtml/session')->addError($message);
-                    Mage::helper('dndinxmail_subscriber/log')->logExceptionData($e->getMessage(), __FUNCTION__);
-                    Mage::helper('dndinxmail_subscriber/log')->logData('## URL: ' . $url . ' || USER: ' . $user . ' || PASS: ' . $pass, __FUNCTION__);
+                    Mage::helper('dndinxmail_subscriber/log')->logData('## URL: ' . $url . ' || USER: ' . $user, __FUNCTION__);
+                }
+
+                if (!$ignoreException) {
+                    throw $e;
                 }
 
                 return false;
@@ -208,62 +225,88 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function subscribeCustomer($email, $trigger = true, $inxmailList)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+        }
+
+        return $this->subscribeByEmails($email, $trigger, $inxmailList);
+    }
+
+    /**
+     * Subscribe email addresses to Inxmail
+     * If email is linked to customer send additionnal data else send email as guest
+     *
+     * @param array $emails Email addresses
+     * @param boolean $trigger Trigger message in Inxmail
+     * @param object $inxmailList Inxmail list
+     *
+     * @return boolean
+     */
+    public function subscribeByEmails($emails, $trigger = true, $inxmailList)
+    {
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
+        if (!is_array($emails)) {
+            $emails = array($emails);
+        }
 
-        $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
+        $recipientContext      = $this->getRecipientContext();
+        $batchChannel    = $recipientContext->createBatchChannel();
+
+        foreach ($emails as $email) {
+            $this->addCustomerToBatch($batchChannel, $email, $trigger, $inxmailList);
+        }
+
+        $batchChannel->executeBatch();
+
+        return true;
+    }
+
+    /**
+     * Add email address to Inxmail batch channel
+     * If email is linked to customer add additionnal data else set email as guest
+     *
+     * @param $batchChannel
+     * @param $email
+     * @param bool $trigger
+     * @param $inxmailList
+     */
+    public function addCustomerToBatch($batchChannel, $email, $trigger = true, $inxmailList)
+    {
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+
+            return;
+        }
+
         /** @var null|Mage_Customer_Model_Customer $customer */
         $customer      = $this->getCustomerByEmail($email);
         $vars          = array();
 
         if ($customer != false) {
-            $fields = $mappingHelper->getMappingFields();
-            foreach ($fields as $magentoField => $config) {
-                $inxmailColumn = $config['inxmail_column'];
-                if ($mappingHelper->isDynamicAttribute($magentoField)) {
-                    $dynamicData = $this->getDynamicData($magentoField, $email);
-                    if ($dynamicData !== false) {
-                        $vars[$inxmailColumn] = $dynamicData;
-                    }
-
-                    continue;
-                }
-                $attributeType = $config['attribute_type'];
-
-                $value = null;
-                if ($attributeType === 'customer') {
-                    $value = $customer->getData($magentoField);
-                } elseif ($attributeType === 'customer_address') {
-                    $customerAddress = $customer->getDefaultBillingAddress();
-
-                    if ($customerAddress && $customerAddress->getId()) {
-                        $value = $customerAddress->getData($magentoField);
-                    }
-                }
-
-                if ($value != null) {
-                    $value = $this->_processAttributesValue($magentoField, $value, $attributeType);
-                    $vars[$inxmailColumn] = $value;
-                }
-            }
+            $vars = $this->getCustomerAttributesForInxmail($customer);
         }
-
-        $this->_customerCollection = null;
 
         $recipientContext      = $this->getRecipientContext();
         $subscriptionManager   = $session->getSubscriptionManager();
         $recipientMetaData     = $recipientContext->getMetaData();
         $subscriptionAttribute = $recipientMetaData->getSubscriptionAttribute($inxmailList);
 
-        $batchChannel    = $recipientContext->createBatchChannel();
         $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
         if (!$isSubscribed && $trigger == true) {
-            $subscriptionManager->processSubscription("Magento", null, $inxmailList, $email);
+            $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
+            $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email);
         }
 
         if (!$isSubscribed && $trigger == false) {
@@ -284,13 +327,53 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             }
         }
 
-        if (!$isSubscribed) {
+        if (!$isSubscribed && $trigger == false) {
             $batchChannel->write($subscriptionAttribute, date("c"));
         }
+    }
 
-        $batchChannel->executeBatch();
 
-        return true;
+    /**
+     * @param Mage_Customer_Model_Customer $customer
+     *
+     * @return array
+     */
+    public function getCustomerAttributesForInxmail(Mage_Customer_Model_Customer $customer)
+    {
+        $vars = array();
+
+        $email = $customer->getEmail();
+        $mappingHelper = Mage::helper('dndinxmail_subscriber/mapping');
+        $fields = $mappingHelper->getMappingFields();
+        foreach ($fields as $magentoField => $config) {
+            $inxmailColumn = $config['inxmail_column'];
+            if ($mappingHelper->isDynamicAttribute($magentoField)) {
+                $dynamicData = $this->getDynamicData($magentoField, $email);
+                if ($dynamicData !== false) {
+                    $vars[$inxmailColumn] = $dynamicData;
+                }
+
+                continue;
+            }
+            $attributeType = $config['attribute_type'];
+
+            $value = null;
+            if ($attributeType === 'customer') {
+                $value = $customer->getData($magentoField);
+            } elseif ($attributeType === 'customer_address') {
+                $customerAddress = $customer->getDefaultBillingAddress();
+
+                if ($customerAddress && $customerAddress->getId()) {
+                    $value = $customerAddress->getData($magentoField);
+                }
+            }
+
+            if ($value != null) {
+                $value = $this->_processAttributesValue($magentoField, $value, $attributeType);
+                $vars[$inxmailColumn] = $value;
+            }
+        }
+        return $vars;
     }
 
     /**
@@ -304,8 +387,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function unsubscribeCustomer($email, $trigger = true, $inxmailList)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
@@ -320,7 +405,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $batchChannel = $recipientContext->createBatchChannel();
 
         if ($trigger) {
-            $subscriptionManager->processUnsubscription("Magento", null, $inxmailList, $email);
+            $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
+            $subscriptionManager->processUnsubscription($sourceIdentifier, null, $inxmailList, $email);
         }
         else {
             $batchChannel->selectRecipient($email);
@@ -343,8 +429,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function removeCustomer($email, $inxmailList)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
@@ -404,8 +492,11 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function truncateInxmailList()
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+
             throw new Exception('Inxmail session does not exist');
         }
 
@@ -453,8 +544,11 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function truncateSpecificInxmailList($inxmailList)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+
             throw new Exception('Inxmail session does not exist');
         }
 
@@ -496,8 +590,11 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             throw new Exception('Error truncating Inxmail list');
         }
 
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+
             throw new Exception('Inxmail session does not exist');
         }
 
@@ -528,8 +625,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getUnsubscribedCustomers($storeId)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $session = $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return array();
         }
@@ -540,8 +639,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             return array();
         }
 
+        $unsubscribed = array();
         try {
-            $unsubscribed       = array();
             $listContextManager = $session->getListContextManager();
             $inxmailList        = $listContextManager->get($listid);
             $recipientContext   = $this->getRecipientContext();
@@ -578,8 +677,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $groupsConfig = $groupHelper->getCustomerGroupsConfig();
         if (count($groupsConfig) <= 0) return array();
 
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
@@ -616,7 +717,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         $this->closeInxmailSession();
 
-        $this->unsubscribeCustomersFromInxmail($unsubscribed);
+        $this->unsubscribeCustomersFromMagentoByEmails($unsubscribed);
 
         return true;
     }
@@ -628,7 +729,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      * @return boolean
      */
-    public function unsubscribeCustomersFromInxmail($unsubscribed = array())
+    public function unsubscribeCustomersFromMagentoByEmails($unsubscribed = array())
     {
         if (count($unsubscribed) <= 0) return false;
 
@@ -651,8 +752,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getInxmailColumns()
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return array(
                 array(
@@ -700,8 +803,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getInxmailLists()
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return array(
                 array(
@@ -839,7 +944,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function getDynamicData($attribute, $email)
     {
-        $collection = ($this->_customerCollection == null) ? Mage::getResourceModel('customer/customer_collection')->addAttributeToFilter('email', array('eq' => $email)) : $this->_customerCollection;
+        $collection = Mage::getResourceModel('customer/customer_collection')->addAttributeToFilter('email', array('eq' => $email));
 
         $entityType  = Mage::getModel('eav/entity_type')->loadByCode('order');
         $entityTable = $collection->getTable($entityType->getEntityTable());
@@ -929,8 +1034,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function createInxmailList($listName, $description = null)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
@@ -958,8 +1065,10 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      */
     public function deleteInxmailList($listName)
     {
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
@@ -994,13 +1103,17 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $groupsConfig = $groupHelper->getCustomerGroupsConfig();
         if (count($groupsConfig) <= 0) return false;
 
-        if (!$session = $this->openInxmailSession()) {
-            Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);
+        try {
+            $this->openInxmailSession(false);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
             return false;
         }
 
         $contextListManager = $this->getListContextManager();
+
+        $this->_createMissingLists($groupsConfig);
 
         $this->doMappingCheck();
 
@@ -1010,13 +1123,8 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $emails   = $groupHelper->getCustomersFromGroup($groupId);
 
             if (!$list = $contextListManager->findByName($listName)) {
-                $list = $contextListManager->createStandardList();
-                $list->updateName($listName);
-                $description = $groupHelper->getGroupName($groupId);
-                $list->updateDescription($description);
-                $list->commitUpdate();
-            }
-            else {
+                $this->_createMissingListByGroup($groupId);
+            } else {
                 $this->truncateSpecificInxmailList($list);
             }
 
@@ -1024,22 +1132,55 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
             $inxmailList = $contextListManager->get($list->getId());
 
-            foreach ($emails as $email) {
+            /** @var Mage_Newsletter_Model_Resource_Subscriber_Collection $subscriberCollection */
+            $subscriberCollection = Mage::getModel('newsletter/subscriber')->getCollection();
+            $subscriberCollection->useOnlySubscribed()
+                ->addFieldToFilter('subscriber_email', array('in' => $emails));
+            $subscriberCollection->getSelect()->group('main_table.subscriber_email');
 
-                $subscriber = Mage::getModel('newsletter/subscriber')->loadByEmail($email);
-                if (!$subscriber instanceof Varien_Object || !$subscriber->getSubscriberId()) {
-                    continue;
-                }
-                if (!$subscriber->isSubscribed()) continue;
+            $subscriberEmails = $subscriberCollection->getColumnValues('subscriber_email');
 
-                $this->subscribeCustomer($email, false, $inxmailList);
-            }
-
+            $this->subscribeByEmails($subscriberEmails, false, $inxmailList);
         }
 
         $this->closeInxmailSession();
 
         return true;
+    }
+
+    /**
+     * @param $groupIds
+     *
+     * @throws Exception
+     */
+    protected function _createMissingLists($groupIds)
+    {
+        $groupHelper = Mage::helper('dndinxmail_subscriber/group');
+        $contextListManager = $this->getListContextManager();
+        foreach ($groupIds as $groupId) {
+            $listName = $groupHelper->formatInxmailListName($groupId);
+            if ($contextListManager->findByName($listName)) {
+                continue;
+            }
+
+            $this->_createMissingListByGroup($groupId);
+        }
+    }
+
+    /**
+     * @param $groupId
+     */
+    protected function _createMissingListByGroup($groupId)
+    {
+        $groupHelper = Mage::helper('dndinxmail_subscriber/group');
+        $contextListManager = $this->getListContextManager();
+        $listName = $groupHelper->formatInxmailListName($groupId);
+
+        $list = $contextListManager->createStandardList();
+        $list->updateName($listName);
+        $description = $groupHelper->getGroupName($groupId);
+        $list->updateDescription($description);
+        $list->commitUpdate();
     }
 
 

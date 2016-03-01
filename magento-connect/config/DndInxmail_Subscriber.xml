@@ -135,6 +135,7 @@ Comprehensive success measurement directly after the mailing has been dispatched
          <target>mage</target>
          <target>magelib</target>
          <target>mageskin</target>
+         <target>mage</target>
       </target>
       <path>
          <path/>
@@ -148,6 +149,7 @@ Comprehensive success measurement directly after the mailing has been dispatched
          <path>js/dndinxmail/synchronize.js</path>
          <path>Inx</path>
          <path>frontend/base/default/dndinxmail</path>
+         <path>shell/dndinxmail</path>
       </path>
       <type>
          <type>file</type>
@@ -159,6 +161,7 @@ Comprehensive success measurement directly after the mailing has been dispatched
          <type>file</type>
          <type>dir</type>
          <type>file</type>
+         <type>dir</type>
          <type>dir</type>
          <type>dir</type>
       </type>
@@ -174,8 +177,10 @@ Comprehensive success measurement directly after the mailing has been dispatched
          <include/>
          <include/>
          <include/>
+         <include/>
       </include>
       <ignore>
+         <ignore/>
          <ignore/>
          <ignore/>
          <ignore/>
