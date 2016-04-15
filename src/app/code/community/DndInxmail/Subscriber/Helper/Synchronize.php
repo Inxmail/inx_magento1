@@ -72,6 +72,19 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     protected $_attributes = array();
 
     /**
+     * @var array
+     */
+    protected $_staticAttributes = array(
+        'entity_id',
+        'updated_at',
+        'is_active',
+        'created_at',
+        'group_id',
+        'store_id',
+        'website_id',
+    );
+
+    /**
      * Open an Inxmail session
      *
      * @param bool $ignoreException
@@ -1284,7 +1297,9 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $customerAttribute = Mage::getModel('eav/entity_attribute')->loadByCode('customer', $magentoField);
             $customerAddressAttribute = Mage::getModel('eav/entity_attribute')
                 ->loadByCode('customer_address', $magentoField);
-            if (!$customerAttribute->getId() && !$customerAddressAttribute->getId()) {
+            if (!$customerAttribute->getId() && !$customerAddressAttribute->getId()
+                && !in_array($magentoField, $this->_staticAttributes)
+            ) {
                 $errors[] = sprintf(
                     "'%s' magento attribute not found during synchronization for '%s' column",
                     $magentoField,
