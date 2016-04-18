@@ -12,6 +12,7 @@
 class DndInxmail_Subscriber_Helper_Flag extends Mage_Core_Helper_Abstract
 {
     const UNSUBSCRIBED_TIME = 'dndinxmail_subscriber_last_unsubscribed_time';
+    const UNSUBSCRIBED_TIME_BY_STORE = 'dndinxmail_subscriber_last_unsubscribed_time_by_store';
 
     /**
      * @return Mage_Core_Model_Flag
@@ -22,10 +23,24 @@ class DndInxmail_Subscriber_Helper_Flag extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $storeId
+     * @return Mage_Core_Model_Flag
+     */
+    public function getLastUnsubscribedTimeFlagByStore()
+    {
+        return Mage::getModel('core/flag', array('flag_code' => self::UNSUBSCRIBED_TIME_BY_STORE))->loadSelf();
+    }
+
+    /**
+     * @param $storeId
      * @return int|null
      */
-    public function getLastUnsubscribedTime()
+    public function getLastUnsubscribedTime($storeId = null)
     {
+        $timeByStore = $this->getLastUnsubscribedTimeByStore($storeId);
+        if ($timeByStore) {
+            return $timeByStore;
+        }
         $flag = $this->getLastUnsubscribedTimeFlag();
         if (!$flag->getId()) {
             return null;
@@ -35,17 +50,43 @@ class DndInxmail_Subscriber_Helper_Flag extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param null $time
+     * @param $storeId
+     *
+     * @return int|null
+     */
+    public function getLastUnsubscribedTimeByStore($storeId)
+    {
+        $flag = $this->getLastUnsubscribedTimeFlagByStore();
+        if (!$flag->getId()) {
+            return null;
+        }
+
+        $data = $flag->getFlagData();
+        if (!is_array($data) || !isset($data[$storeId])) {
+            return null;
+        }
+
+        return (int) $data[$storeId];
+    }
+
+    /**
+     * @param null|int $time
+     * @param null|int $storeId
      *
      * @throws Exception
      */
-    public function saveLastUnsubscribedTimeFlag($time = null)
+    public function saveLastUnsubscribedTimeFlag($time = null, $storeId = null)
     {
         if (!$time) {
             $time = time();
         }
 
-        $flag = $this->getLastUnsubscribedTimeFlag();
-        $flag->setFlagData($time)->save();
+        $flag = $this->getLastUnsubscribedTimeFlagByStore($storeId);
+        $data = $flag->getFlagData();
+        if (!is_array($data)) {
+            $data = array();
+        }
+        $data[$storeId] = $time;
+        $flag->setFlagData($data)->save();
     }
 }

@@ -59,6 +59,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
             Mage::getSingleton('core/session')->addError($message);
             $this->_redirect('dndinxmail_subscriber_front/messages/error/');
         }
+        $pass['sync_start_time'] = time();
 
         $pass = Zend_Json::encode($pass);
 
@@ -115,6 +116,14 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
                 $data['failed'] = 'true';
                 $data['msg']    = $e->getMessage();
             }
+        }
+        $lastPass = $this->getRequest()->getParam('last_pass');
+        if ($lastPass) {
+            $time = $this->getRequest()->getParam('sync_start_time');
+            if (!$time) {
+                $time = time();
+            }
+            Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($time , $store->getStoreId());
         }
 
         $synchronize->closeInxmailSession();
