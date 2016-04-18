@@ -120,30 +120,32 @@ class DndInxmail_Subscriber_Model_Observer
 
             $synchronize = Mage::helper('dndinxmail_subscriber/synchronize');
             $currentDate = time();
-            $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getLastUnsubscribedTime();
             foreach (Mage::app()->getWebsites() as $website) {
                 foreach ($website->getGroups() as $group) {
                     $stores = $group->getStores();
                     foreach ($stores as $store) {
+                        $storeId = $store->getStoreId();
+                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')
+                            ->getLastUnsubscribedTime($storeId);
                         if (is_null($lastUnsubscribedTime)) {
-                            $unsubscribedCustomers = $synchronize->getUnsubscribedCustomers($store->getStoreId());
+                            $unsubscribedCustomers = $synchronize->getUnsubscribedCustomers($storeId);
                         } else {
                             $lastUnsubscribedDate = date('c', $lastUnsubscribedTime - 60);
                             $unsubscribedCustomers = $synchronize->getUnsubscribedAfterDate(
-                                $store->getStoreId(),
+                                $storeId,
                                 $lastUnsubscribedDate
                             );
                         }
 
                         // Emulate store that is synchronized to get correct email subscription by store
                         $appEmulation = Mage::getSingleton('core/app_emulation');
-                        $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($store->getStoreId());
-                        $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedCustomers, $store->getStoreId());
+                        $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
+                        $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedCustomers, $storeId);
                         $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
+                        Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($currentDate, $storeId);
                     }
                 }
             }
-            Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($currentDate);
 
             $synchronize->unsubscribeCustomersFromGroups();
 

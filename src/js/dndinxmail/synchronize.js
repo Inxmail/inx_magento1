@@ -23,6 +23,7 @@ DndInxmail.Synchronize.prototype = {
     listName: null,
     groups: null,
     storeId: null,
+    startTime: null,
     scriptType: 'default',
 
     /*
@@ -76,22 +77,26 @@ DndInxmail.Synchronize.prototype = {
     launchSubscribers: function(request, store) {
         this.passes = request;
         this.total = request['total'];
+        this.startTime = request['sync_start_time'];
         this.storeId = store;
         this.startLog('subscribers');
         this.synchronizePassSubscribers(request[0]);
     },
 
     synchronizePassSubscribers: function(pass) {
-
         if(typeof pass != 'undefined') {
 
             var current = Object.toJSON(pass);
             var passUrl = this.passSubscribersAction + '/store/' + this.storeId;
             var _self = this;
-
+            var parameters = {pass: current};
+            if (typeof _self.passes[_self.currentPass + 1] == 'undefined') {
+                parameters['last_pass'] = true;
+                parameters['sync_start_time'] = this.startTime;
+            }
             new Ajax.Request(passUrl, {
                 method: 'post',
-                parameters: {pass: current},
+                parameters: parameters,
                 onLoading: function(transport) {
                     _self.outputSucces(_self.currentPass + 1, _self.total);
                 },
