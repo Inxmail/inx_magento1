@@ -58,6 +58,7 @@ class DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber extends Mage_Ne
         ));
 
         if ($result) {
+            $result = $this->_processResult($result);
             return $result;
         }
 
@@ -72,10 +73,24 @@ class DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber extends Mage_Ne
         ));
 
         if ($result) {
+            $result = $this->_processResult($result);
             return $result;
         }
 
         return array();
     }
 
+    /**
+     * @param $result
+     *
+     * @return array
+     */
+    protected function _processResult($result)
+    {
+        if (is_array($result) && Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptionControl()) {
+            $result['import_mode'] = true;
+        }
+
+        return $result;
+    }
 }

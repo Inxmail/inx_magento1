@@ -19,7 +19,7 @@ class DndInxmail_Subscriber_Model_Observer
      *
      * @return boolean
      */
-    public function observeSubscriber($observer)
+    public function observeSubscriber(Varien_Event_Observer $observer)
     {
         try {
             if (!Mage::helper('dndinxmail_subscriber')->isDndInxmailEnabled()) {
@@ -28,8 +28,11 @@ class DndInxmail_Subscriber_Model_Observer
 
             $synchronize = Mage::helper('dndinxmail_subscriber/synchronize');
 
-            $event      = $observer->getEvent();
-            $subscriber = $event->getDataObject();
+            $subscriber = $observer->getDataObject();
+
+            // Set import mode to not send any transactional emails related to newsletter subscription
+            $this->disableEmails($observer);
+
             if ($subscriber->getNotSyncInxmail()) {
                 return false;
             }
@@ -58,6 +61,20 @@ class DndInxmail_Subscriber_Model_Observer
             Mage::helper('dndinxmail_subscriber/log')->logExceptionData($e->getMessage(), __FUNCTION__);
 
             return false;
+        }
+    }
+
+    /**
+     * Set import mode to not send any transactional emails related to newsletter subscription
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function disableEmails(Varien_Event_Observer $observer)
+    {
+        // Set import mode to not send any transactional emails related to newsletter subscription
+        if (Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptionControl()) {
+            $subscriber = $observer->getDataObject();
+            $subscriber->setImportMode(true);
         }
     }
 
