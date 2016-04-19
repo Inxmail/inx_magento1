@@ -48,6 +48,14 @@
             </dndinxmail_subscriber>
         </helpers>
         <events>
+            <newsletter_subscriber_load_after>
+                <observers>
+                    <dndinxmail_subscriber_disable_emails>
+                        <class>dndinxmail_subscriber/observer</class>
+                        <method>disableEmails</method>
+                    </dndinxmail_subscriber_disable_emails>
+                </observers>
+            </newsletter_subscriber_load_after>
             <newsletter_subscriber_delete_before>
                 <observers>
                     <dndinxmail_subscriber_synchronize_subscriber>
@@ -122,6 +130,9 @@
     </admin>
     <default>
         <dndinxmail_subscriber_general>
+            <general>
+                <optin_control>2</optin_control>
+            </general>
             <syncrhonize_subscribers>
                 <subscribers_per_pass>500</subscribers_per_pass>
             </syncrhonize_subscribers>

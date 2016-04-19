@@ -121,3 +121,5 @@
 "Perform migration now","Perform migration now"
 "Merges all recipients of the selected store view from Magento with the corresponding Inxmail list","Merges all recipients of the selected store view from Magento with the corresponding Inxmail list"
 "Subscribers per transfer","Subscribers per transfer"
+"If opt-in control is managed by ‘Inxmail Professional’, the settings in Magento for newsletter management (System -> Configuration -> Customers -> Newsletter) are ignored. In this case, Magento will not send any emails for the newsletter registration process. This is the recommended setting. If, however, you want ‘Magento’ to be the managing system, please follow the instructions in the user manual.","If opt-in control is managed by ‘Inxmail Professional’, the settings in Magento for newsletter management (System -> Configuration -> Customers -> Newsletter) are ignored. In this case, Magento will not send any emails for the newsletter registration process. This is the recommended setting. If, however, you want ‘Magento’ to be the managing system, please follow the instructions in the user manual."
+"Opt-in control","Opt-in control"
