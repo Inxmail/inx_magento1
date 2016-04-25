@@ -123,7 +123,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
             if (!$time) {
                 $time = time();
             }
-            Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($time , $store->getStoreId());
+            Mage::helper('dndinxmail_subscriber/flag')->saveUnsubscribedTimeFlag($time , $store->getStoreId());
         }
 
         $synchronize->closeInxmailSession();
