@@ -164,7 +164,13 @@ class DndInxmail_Subscriber_Model_Observer
                 }
             }
 
-            $synchronize->unsubscribeCustomersFromGroups();
+            $currentDate = time();
+            $groupUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getGroupUnsubscribedTime();
+            if (!is_null($groupUnsubscribedTime)) {
+                $groupUnsubscribedTime -= 60;
+            }
+            $synchronize->unsubscribeCustomersFromGroups($groupUnsubscribedTime);
+            Mage::helper('dndinxmail_subscriber/flag')->saveGroupUnsubscribedTimeFlag($currentDate);
 
             return true;
         }
