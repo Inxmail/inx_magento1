@@ -192,8 +192,9 @@ class DndInxmail_Subscriber_Model_Observer
             if (!Mage::helper('dndinxmail_subscriber')->isDndInxmailEnabled()) {
                 return false;
             }
-
+            $currentDate = time();
             Mage::helper('dndinxmail_subscriber/synchronize')->synchronizeCustomerGroupToInxmail();
+            Mage::helper('dndinxmail_subscriber/flag')->saveGroupUnsubscribedTimeFlag($currentDate);
 
             return true;
         }

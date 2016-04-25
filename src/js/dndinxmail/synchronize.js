@@ -127,6 +127,7 @@ DndInxmail.Synchronize.prototype = {
     launchGroups: function(request) {
         this.passes = request;
         this.totalGroups = request['total'];
+        this.startTime = request['sync_start_time'];
         this.startLog('groups');
         this.synchronizeGroups(this.passes[0]);
     },
@@ -149,14 +150,19 @@ DndInxmail.Synchronize.prototype = {
             var _self = this;
             var firstPass = (this.currentPass == 0) ? 'true' : 'false';
 
+            var parameters = {
+                list: _self.listName,
+                pass: current,
+                first: firstPass
+            };
+            if (typeof _self.passes[_self.currentPass + 1] == 'undefined') {
+                parameters['last_pass'] = true;
+                parameters['sync_start_time'] = this.startTime;
+            }
 
             new Ajax.Request(passUrl, {
                 method: 'post',
-                parameters: {
-                    list: _self.listName,
-                    pass: current,
-                    first: firstPass
-                },
+                parameters: parameters,
                 onLoading: function(transport) {
                     _self.outputSucces(_self.currentPass + 1, _self.total);
                 },
