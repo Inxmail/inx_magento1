@@ -143,6 +143,9 @@
             </crons_synchronize_groups>
         </dndinxmail_subscriber_crons>
         <dndinxmail_subscriber_datasource>
+            <general>
+                <images_folder>inxmail</images_folder>
+            </general>
             <feed_oneproduct>
                 <img_width>100</img_width>
                 <img_height>100</img_height>
