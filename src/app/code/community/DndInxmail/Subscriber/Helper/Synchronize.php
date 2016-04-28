@@ -317,7 +317,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
-        if (!$isSubscribed && $trigger == true) {
+        if ($trigger == true) {
             $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
             $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email);
         }
