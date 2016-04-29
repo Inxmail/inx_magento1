@@ -142,8 +142,7 @@ class DndInxmail_Subscriber_Model_Observer
                     $stores = $group->getStores();
                     foreach ($stores as $store) {
                         $storeId = $store->getStoreId();
-                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')
-                            ->getLastUnsubscribedTime($storeId);
+                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getUnsubscribedTime($storeId);
                         if (is_null($lastUnsubscribedTime)) {
                             $unsubscribedCustomers = $synchronize->getUnsubscribedCustomers($storeId);
                         } else {
@@ -159,7 +158,7 @@ class DndInxmail_Subscriber_Model_Observer
                         $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
                         $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedCustomers, $storeId);
                         $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
-                        Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($currentDate, $storeId);
+                        Mage::helper('dndinxmail_subscriber/flag')->saveUnsubscribedTimeFlag($currentDate, $storeId);
                     }
                 }
             }
