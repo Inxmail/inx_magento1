@@ -64,6 +64,14 @@
                     </dndinxmail_subscriber_synchronize_subscriber>
                 </observers>
             </newsletter_subscriber_delete_before>
+            <newsletter_subscriber_save_after>
+                <observers>
+                    <dndinxmail_subscriber_synchronize_subscriber>
+                        <class>dndinxmail_subscriber/observer</class>
+                        <method>disableEmails</method>
+                    </dndinxmail_subscriber_synchronize_subscriber>
+                </observers>
+            </newsletter_subscriber_save_after>
             <newsletter_subscriber_save_commit_after>
                 <observers>
                     <dndinxmail_subscriber_synchronize_subscriber>

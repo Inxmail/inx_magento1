@@ -128,9 +128,9 @@
                             <frontend_model>dndinxmail_subscriber/adminhtml_system_config_form_button_subscribers</frontend_model>
                             <comment>Merges all recipients of the selected store view from Magento with the corresponding Inxmail list</comment>
                             <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
+                            <show_in_default>0</show_in_default>
                             <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </synchronize_all>
                         <subscribers_per_pass translate="label comment">
                             <label>Subscribers per transfer</label>
