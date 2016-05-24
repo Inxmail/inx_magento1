@@ -142,8 +142,7 @@ class DndInxmail_Subscriber_Model_Observer
                     $stores = $group->getStores();
                     foreach ($stores as $store) {
                         $storeId = $store->getStoreId();
-                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')
-                            ->getLastUnsubscribedTime($storeId);
+                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getUnsubscribedTime($storeId);
                         if (is_null($lastUnsubscribedTime)) {
                             $unsubscribedCustomers = $synchronize->getUnsubscribedCustomers($storeId);
                         } else {
@@ -159,12 +158,18 @@ class DndInxmail_Subscriber_Model_Observer
                         $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
                         $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedCustomers, $storeId);
                         $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
-                        Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($currentDate, $storeId);
+                        Mage::helper('dndinxmail_subscriber/flag')->saveUnsubscribedTimeFlag($currentDate, $storeId);
                     }
                 }
             }
 
-            $synchronize->unsubscribeCustomersFromGroups();
+            $currentDate = time();
+            $groupUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getGroupUnsubscribedTime();
+            if (!is_null($groupUnsubscribedTime)) {
+                $groupUnsubscribedTime -= 60;
+            }
+            $synchronize->unsubscribeCustomersFromGroups($groupUnsubscribedTime);
+            Mage::helper('dndinxmail_subscriber/flag')->saveGroupUnsubscribedTimeFlag($currentDate);
 
             return true;
         }
@@ -186,8 +191,9 @@ class DndInxmail_Subscriber_Model_Observer
             if (!Mage::helper('dndinxmail_subscriber')->isDndInxmailEnabled()) {
                 return false;
             }
-
+            $currentDate = time();
             Mage::helper('dndinxmail_subscriber/synchronize')->synchronizeCustomerGroupToInxmail();
+            Mage::helper('dndinxmail_subscriber/flag')->saveGroupUnsubscribedTimeFlag($currentDate);
 
             return true;
         }

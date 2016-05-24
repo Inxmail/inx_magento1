@@ -13,7 +13,7 @@
 <config>
     <modules>
         <DndInxmail_Subscriber>
-            <version>3.2.0.1</version>
+            <version>3.3.0.0</version>
         </DndInxmail_Subscriber>
     </modules>
     <global>
@@ -64,6 +64,14 @@
                     </dndinxmail_subscriber_synchronize_subscriber>
                 </observers>
             </newsletter_subscriber_delete_before>
+            <newsletter_subscriber_save_after>
+                <observers>
+                    <dndinxmail_subscriber_synchronize_subscriber>
+                        <class>dndinxmail_subscriber/observer</class>
+                        <method>disableEmails</method>
+                    </dndinxmail_subscriber_synchronize_subscriber>
+                </observers>
+            </newsletter_subscriber_save_after>
             <newsletter_subscriber_save_commit_after>
                 <observers>
                     <dndinxmail_subscriber_synchronize_subscriber>
@@ -143,6 +151,9 @@
             </crons_synchronize_groups>
         </dndinxmail_subscriber_crons>
         <dndinxmail_subscriber_datasource>
+            <general>
+                <images_folder>inxmail</images_folder>
+            </general>
             <feed_oneproduct>
                 <img_width>100</img_width>
                 <img_height>100</img_height>
