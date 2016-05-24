@@ -72,7 +72,9 @@ class DndInxmail_Subscriber_Model_Observer
     public function disableEmails(Varien_Event_Observer $observer)
     {
         // Set import mode to not send any transactional emails related to newsletter subscription
-        if (Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptionControl()) {
+        if (Mage::helper('dndinxmail_subscriber')->isDndInxmailEnabled()
+            && Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptinControl()
+        ) {
             $subscriber = $observer->getDataObject();
             $subscriber->setImportMode(true);
         }

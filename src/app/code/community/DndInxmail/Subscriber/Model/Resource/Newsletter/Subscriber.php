@@ -87,7 +87,7 @@ class DndInxmail_Subscriber_Model_Resource_Newsletter_Subscriber extends Mage_Ne
      */
     protected function _processResult($result)
     {
-        if (is_array($result) && Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptionControl()) {
+        if (is_array($result) && Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptinControl()) {
             $result['import_mode'] = true;
         }
 

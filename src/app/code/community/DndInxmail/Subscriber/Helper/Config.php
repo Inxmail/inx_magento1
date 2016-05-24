@@ -30,7 +30,7 @@ class DndInxmail_Subscriber_Helper_Config extends DndInxmail_Subscriber_Helper_A
     /**
      * @return bool
      */
-    public function isInxmailUsedOptionControl()
+    public function isInxmailUsedOptinControl()
     {
         return ((int)$this->getOptinControl() === self::OPTIN_CONTROL_INXMAIL);
     }
