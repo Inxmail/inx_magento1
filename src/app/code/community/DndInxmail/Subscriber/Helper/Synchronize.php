@@ -317,7 +317,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
-        if (!$isSubscribed && $trigger == true) {
+        if ($trigger == true) {
             $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
             $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email);
         }
@@ -714,16 +714,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
                 $logEntries[$logentriesRowSet->getEmailAddress()] = $logentriesRowSet->getType();
             }
             foreach ($logEntries as $email => $status) {
-                if (in_array(
-                    $status,
-                    array(
-                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::VERIFIED_UNSUBSCRIPTION,
-                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::LIST_UNSUBSCRIBE_HEADER_UNSUBSCRIPTION,
-                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::MANUAL_UNSUBSCRIPTION,
-                        Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION,
-                    )
-                )
-                ) {
+                if ($this->_isUnsubscribedStatus($status)) {
                     $unsubscribed[] = $email;
                 }
             }
@@ -737,58 +728,69 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
     }
 
     /**
+     * @param $time
+     *
      * @return array|bool
      */
-    public function unsubscribeCustomersFromGroups()
+    public function unsubscribeCustomersFromGroups($time = null)
     {
-        $groupHelper = Mage::helper('dndinxmail_subscriber/group');
+        return Mage::helper('dndinxmail_subscriber/synchronize_groups')->unsubscribeCustomersFromGroups($time);
+    }
 
-        $groupsConfig = $groupHelper->getCustomerGroupsConfig();
-        if (count($groupsConfig) <= 0) return array();
+    /**
+     * @param $inxmailList
+     * @param $time
+     *
+     * @return array
+     */
+    public function getUnsubscribedEmailsForListAfterTime($inxmailList, $time)
+    {
+        $unsubscribed = array();
+        $logEntries = $this->_getUnsubscribedLogsForListAfterTime($inxmailList, $time);
+        foreach ($logEntries as $email => $status) {
+            if ($this->_isUnsubscribedStatus($status)) {
+                $unsubscribed[] = $email;
+            }
+        }
 
+        return $unsubscribed;
+    }
+
+    /**
+     * @param $inxmailList
+     * @param $time
+     *
+     * @return array
+     */
+    protected function _getUnsubscribedLogsForListAfterTime($inxmailList, $time)
+    {
         try {
-            $this->openInxmailSession(false);
+            $session = $this->openInxmailSession(false);
         } catch (Exception $e) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
 
-            return false;
+            return array();
         }
+        $afterDate = date('c', $time);
 
-        try {
+        $recipientContext   = $this->getRecipientContext();
+        $recipientMetaData  = $recipientContext->getMetaData();
+        $emailAttribute     = $recipientMetaData->getEmailAttribute();
+        $subscriptionManager = $session->getSubscriptionManager();
 
-            $contextListManager = $this->getListContextManager();
-            $recipientContext   = $this->getRecipientContext();
-            $recipientMetaData  = $recipientContext->getMetaData();
-            $emailAttribute     = $recipientMetaData->getEmailAttribute();
-            $batchChannel       = $recipientContext->createBatchChannel();
-            $unsubscribed       = array();
-
-            foreach ($groupsConfig as $groupId) {
-
-                $listName = $groupHelper->formatInxmailListName($groupId);
-
-                if ($inxmailList = $contextListManager->findByName($listName)) {
-                    $recipientRowSet = $recipientContext->selectUnsubscriber($inxmailList, null, null, $emailAttribute, Inx_Api_Order::ASC);
-                    while ($recipientRowSet->next()) {
-                        $unsubscribed[] = $recipientRowSet->getString($emailAttribute);
-                    }
-                }
-
-            }
-
-            $batchChannel->executeBatch();
-            $recipientContext->close();
-
+        $logentriesRowSet = $subscriptionManager->getLogEntriesAfterAndList(
+            $inxmailList,
+            $afterDate,
+            $recipientContext,
+            array($emailAttribute)
+        );
+        $logEntries = array();
+        while ($logentriesRowSet->next()) {
+            $logEntries[$logentriesRowSet->getEmailAddress()] = $logentriesRowSet->getType();
         }
-        catch (Exception $e) {
-            return false;
-        }
+        $logentriesRowSet->close();
 
-        $this->closeInxmailSession();
-
-        $this->unsubscribeCustomersFromMagentoByEmails($unsubscribed);
-
-        return true;
+        return $logEntries;
     }
 
     /**
@@ -1378,4 +1380,21 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
         return ($this->getConfig(self::DNDINXMAIL_INXMAIL_LIST_ID, $storeId) == '' || $this->getConfig(self::DNDINXMAIL_INXMAIL_LIST_ID, $storeId) == null) ? false : $this->getConfig(self::DNDINXMAIL_INXMAIL_LIST_ID, $storeId);
     }
 
+    /**
+     * @param $status
+     *
+     * @return bool
+     */
+    protected function _isUnsubscribedStatus($status)
+    {
+        return in_array(
+            $status,
+            array(
+                Inx_Api_Subscription_SubscriptionLogEntryRowSet::VERIFIED_UNSUBSCRIPTION,
+                Inx_Api_Subscription_SubscriptionLogEntryRowSet::LIST_UNSUBSCRIBE_HEADER_UNSUBSCRIPTION,
+                Inx_Api_Subscription_SubscriptionLogEntryRowSet::MANUAL_UNSUBSCRIPTION,
+                Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION,
+            )
+        );
+    }
 }
