@@ -14,6 +14,7 @@ class DndInxmail_Subscriber_Helper_Flag extends Mage_Core_Helper_Abstract
     const UNSUBSCRIBED_TIME = 'dndinxmail_subscriber_last_unsubscribed_time';
     const UNSUBSCRIBED_TIME_BY_STORE = 'dndinxmail_subscriber_last_unsubscribed_time_by_store';
     const GROUP_UNSUBSCRIBED_TIME = 'dndinxmail_subscriber_group_unsubscribed_time';
+    const ADMIN_NOTIFICATIONS = 'dndinxmail_subscriber_notifications';
 
     /**
      * @return Mage_Core_Model_Flag
@@ -21,6 +22,36 @@ class DndInxmail_Subscriber_Helper_Flag extends Mage_Core_Helper_Abstract
     public function getUnsubscribedTimeFlag()
     {
         return Mage::getModel('core/flag', array('flag_code' => self::UNSUBSCRIBED_TIME))->loadSelf();
+    }
+
+    public function getAdminNotificationsFlag()
+    {
+        return Mage::getModel('core/flag', array('flag_code' => self::ADMIN_NOTIFICATIONS))->loadSelf();
+    }
+
+    public function getAdminNotifications()
+    {
+        $flag = $this->getAdminNotificationsFlag();
+
+        $data = $flag->getFlagData();
+        if (!isset($data['admin_notifications'])) {
+            return null;
+        }
+
+        return $data['admin_notifications'];
+    }
+
+    /**
+     * @return $this
+     * @throws Exception
+     */
+    public function saveAdminNotifications($notifications)
+    {
+        $flag = $this->getAdminNotificationsFlag();
+        $data = array('admin_notifications' => $notifications);
+        $flag->setFlagData($data)->save();
+
+        return $this;
     }
 
     /**
