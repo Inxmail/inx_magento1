@@ -215,6 +215,16 @@ class DndInxmail_Subscriber_Model_Observer
 
     public function setEmailTrigger()
     {
-        Mage::register(self::TRIGER_EMAIL_REGISTRY, true);
+        $request        = Mage::app()->getRequest();
+        $routeName      = $request->getRequestedRouteName();
+        $controllerName = $request->getRequestedControllerName();
+        $actionName     = $request->getRequestedActionName();
+        if ($routeName == 'checkout'
+            || ($routeName == 'customer' && $controllerName == 'account' && $actionName == 'createpost')
+            || ($routeName == 'newsletter' && $controllerName == 'subscriber' && $actionName == 'new')
+            || ($routeName == 'newsletter' && $controllerName == 'manage' && $actionName == 'save')
+        ) {
+            Mage::register(self::TRIGER_EMAIL_REGISTRY, true);
+        }
     }
 }
