@@ -685,7 +685,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      * @return mixed Unsubscribed emails or false
      */
-    public function getUnsubscribedAfterTime($storeId, $afterDate)
+    public function getUnsubscribedAfterDate($storeId, $afterDate)
     {
         if (!$session = $this->openInxmailSession()) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionData('## Inxmail session does not exist', __FUNCTION__);

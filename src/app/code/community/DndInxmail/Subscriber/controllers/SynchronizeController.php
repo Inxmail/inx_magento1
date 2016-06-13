@@ -223,7 +223,7 @@ class DndInxmail_Subscriber_SynchronizeController extends Mage_Core_Controller_F
         if ($data['failed'] == 'false') {
 
             try {
-
+                $synchronize->doMappingCheck();
                 $contextListManager = $session->getListContextManager();
                 $listName           = $this->getRequest()->getParam('list');
                 if (!$list = $contextListManager->findByName($listName)) {

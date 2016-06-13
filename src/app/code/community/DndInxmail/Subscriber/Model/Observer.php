@@ -72,7 +72,9 @@ class DndInxmail_Subscriber_Model_Observer
     public function disableEmails(Varien_Event_Observer $observer)
     {
         // Set import mode to not send any transactional emails related to newsletter subscription
-        if (Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptionControl()) {
+        if (Mage::helper('dndinxmail_subscriber')->isDndInxmailEnabled()
+            && Mage::helper('dndinxmail_subscriber/config')->isInxmailUsedOptinControl()
+        ) {
             $subscriber = $observer->getDataObject();
             $subscriber->setImportMode(true);
         }
@@ -142,8 +144,7 @@ class DndInxmail_Subscriber_Model_Observer
                     $stores = $group->getStores();
                     foreach ($stores as $store) {
                         $storeId = $store->getStoreId();
-                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')
-                            ->getLastUnsubscribedTime($storeId);
+                        $lastUnsubscribedTime = Mage::helper('dndinxmail_subscriber/flag')->getUnsubscribedTime($storeId);
                         if (is_null($lastUnsubscribedTime)) {
                             $unsubscribedCustomers = $synchronize->getUnsubscribedCustomers($storeId);
                         } else {
@@ -159,7 +160,7 @@ class DndInxmail_Subscriber_Model_Observer
                         $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
                         $synchronize->unsubscribeCustomersFromMagentoByEmails($unsubscribedCustomers, $storeId);
                         $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
-                        Mage::helper('dndinxmail_subscriber/flag')->saveLastUnsubscribedTimeFlag($currentDate, $storeId);
+                        Mage::helper('dndinxmail_subscriber/flag')->saveUnsubscribedTimeFlag($currentDate, $storeId);
                     }
                 }
             }
