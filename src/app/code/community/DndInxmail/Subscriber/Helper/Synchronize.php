@@ -40,10 +40,6 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      */
     const DNDINXMAIL_CUSTOMER_MAPPING_STATUS_DELETED = 'deleted'; // Customer mapping deleted status
-    /**
-     * Stores synchronization error notifications
-     */
-    const DND_INXMAIL_ADMIN_NOTIFICATION = 'dndinxmail_subscriber_general/general/notifications';
 
     /**
      * @var null
@@ -1322,7 +1318,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             }
         }
 
-        $currentNotifications = Mage::getStoreConfig(self::DND_INXMAIL_ADMIN_NOTIFICATION);
+        $currentNotifications = Mage::helper('dndinxmail_subscriber/flag')->getAdminNotifications();
         if ($hasErrors && !empty($errors)) {
             foreach ($errors as $error) {
                 $logHelper->logData($error);
@@ -1331,9 +1327,7 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         $errorsJson = Mage::helper('core')->jsonEncode($errors);
         if ($currentNotifications !== $errorsJson) {
-            $config = new Mage_Core_Model_Config();
-            $config->saveConfig(self::DND_INXMAIL_ADMIN_NOTIFICATION, $errorsJson);
-            $config->cleanCache();
+            Mage::helper('dndinxmail_subscriber/flag')->saveAdminNotifications($errorsJson);
         }
 
         return $hasErrors;

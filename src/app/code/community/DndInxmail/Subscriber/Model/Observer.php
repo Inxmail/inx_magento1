@@ -11,6 +11,7 @@
  */
 class DndInxmail_Subscriber_Model_Observer
 {
+    const TRIGER_EMAIL_REGISTRY = 'dndinxmail_trigger_email';
 
     /**
      * Observe action when a new subscriber is created and subscribe/unsubscribe his address
@@ -36,6 +37,11 @@ class DndInxmail_Subscriber_Model_Observer
             if ($subscriber->getNotSyncInxmail()) {
                 return false;
             }
+            $trigger = false;
+            if (Mage::registry(self::TRIGER_EMAIL_REGISTRY)) {
+                $trigger = true;
+            }
+
             $email      = $subscriber->getSubscriberEmail();
             $status     = $subscriber->getStatus();
             $storeId    = $subscriber->getStoreId();
@@ -47,11 +53,12 @@ class DndInxmail_Subscriber_Model_Observer
             if (!$listid = (int)$synchronize->getSynchronizeListId($storeId)) {
                 return false;
             }
-
+            $synchronize->doMappingCheck();
+            
             $listContextManager = $session->getListContextManager();
             $inxmailList        = $listContextManager->get($listid);
 
-            Mage::helper('dndinxmail_subscriber/synchronize')->switchActionToSubscriberStatus($status, $email, true, $inxmailList);
+            Mage::helper('dndinxmail_subscriber/synchronize')->switchActionToSubscriberStatus($status, $email, $trigger, $inxmailList);
 
             $synchronize->closeInxmailSession();
 
@@ -206,4 +213,8 @@ class DndInxmail_Subscriber_Model_Observer
         }
     }
 
+    public function setEmailTrigger()
+    {
+        Mage::register(self::TRIGER_EMAIL_REGISTRY, true);
+    }
 }
