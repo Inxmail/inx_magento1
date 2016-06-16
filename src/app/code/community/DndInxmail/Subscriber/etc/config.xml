@@ -48,22 +48,14 @@
             </dndinxmail_subscriber>
         </helpers>
         <events>
-            <controller_action_predispatch_newsletter_subscriber_new>
+            <controller_action_predispatch>
                 <observers>
                     <dndinxmail_subscriber_set_email_trigger>
                         <class>dndinxmail_subscriber/observer</class>
                         <method>setEmailTrigger</method>
                     </dndinxmail_subscriber_set_email_trigger>
                 </observers>
-            </controller_action_predispatch_newsletter_subscriber_new>
-            <controller_action_predispatch_customer_account_createpost>
-                <observers>
-                    <dndinxmail_subscriber_set_email_trigger>
-                        <class>dndinxmail_subscriber/observer</class>
-                        <method>setEmailTrigger</method>
-                    </dndinxmail_subscriber_set_email_trigger>
-                </observers>
-            </controller_action_predispatch_customer_account_createpost>
+            </controller_action_predispatch>
             <newsletter_subscriber_load_after>
                 <observers>
                     <dndinxmail_subscriber_disable_emails>
