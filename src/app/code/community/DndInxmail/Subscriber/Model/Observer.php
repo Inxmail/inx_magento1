@@ -219,7 +219,8 @@ class DndInxmail_Subscriber_Model_Observer
         $routeName      = $request->getRequestedRouteName();
         $controllerName = $request->getRequestedControllerName();
         $actionName     = $request->getRequestedActionName();
-        if ($routeName == 'checkout'
+        $isLoggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+        if ((!$isLoggedIn && $routeName == 'checkout')
             || ($routeName == 'customer' && $controllerName == 'account' && $actionName == 'createpost')
             || ($routeName == 'newsletter' && $controllerName == 'subscriber' && $actionName == 'new')
             || ($routeName == 'newsletter' && $controllerName == 'manage' && $actionName == 'save')
