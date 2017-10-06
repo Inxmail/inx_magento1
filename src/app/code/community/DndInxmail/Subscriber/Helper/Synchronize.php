@@ -1356,6 +1356,14 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
                 break;
 
             case Mage_Newsletter_Model_Subscriber::STATUS_NOT_ACTIVE:
+                $config = Mage::helper('dndinxmail_subscriber/config');
+
+                if ($config->isInxmailUsedOptinControl()){
+                    $this->subscribeCustomer($email, $trigger, $inxmailList);
+                }
+
+                break;
+
             case Mage_Newsletter_Model_Subscriber::STATUS_UNCONFIRMED:
                 break;
 
