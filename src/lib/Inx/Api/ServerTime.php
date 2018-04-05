@@ -3,7 +3,7 @@
  * @package Inxmail
  */
 /**
- * The <i>Inx_Api_ServerTime</code> represents the server time. With this, you are able to translate the date from your time
+ * The <i>Inx_Api_ServerTime</i> represents the server time. With this, you are able to translate the date from your time
  * zone to the time zone of the server. Copyright (c) 2008 Inxmail GmbH. All Rights Reserved.
  * 
  * @since API 1.4.4

@@ -17,6 +17,7 @@
  * <li><i>The subscription attribute</i>: Contains the subscription date of the recipient - Individual for every list</li>
  * <li><i>The last modification attribute</i>: Contains the date of the last modification of the recipient</li>
  * <li><i>The hard bounce attribute</i>: Contains the number of hard bounces received for the recipient</li>
+ * <li><i>The tracking permission attribute</i>: Contains the tracking permission state of the recipient - Individual for every list</li>
  * </ul>
  * </li>
  * <li>User attributes are created by Inxmail users and may be freely removed or renamed. 
@@ -40,6 +41,7 @@
  * <li><i>HARDBOUNCE_ATTRIBUTE_TYPE</i>: Contains the number of hard bounces received for a recipient</li>
  * <li><i>FEATURE_ATTRIBUTE_TYPE</i>: An attribute associated with a feature (agent)</li>
  * <li><i>USER_ATTRIBUTE_TYPE</i>: An user defined attribute</li>
+ * <li><i>TRACKING_PERMISSION_ATTRIBUTE_TYPE</i>: An attribute which indicates the tracking permission state for a specific list</li>
  * </ul>
  * </li>
  * <li><i>The data type</i>: The different data types are:
@@ -177,6 +179,14 @@ interface Inx_Api_Recipient_Attribute
 	* @since API 1.6.0
 	*/
 	const HARDBOUNCE_ATTRIBUTE_TYPE = 8;
+	
+	/**
+	 * Constant for attributes containing list specific tracking permission information
+	 *
+	 * @var int
+	 * @since API 1.14.1
+	 */
+	const TRACKING_PERMISSION_ATTRIBUTE_TYPE = 9;
 
 	
 	/**
@@ -205,6 +215,7 @@ interface Inx_Api_Recipient_Attribute
 	 * <li><i>SUBSCRIPTION_ATTRIBUTE_TYPE</i>
 	 * <li><i>LAST_MODIFIED_ATTRIBUTE_TYPE</i>
 	 * <li><i>FEATURE_ATTRIBUTE_TYPE</i>
+	 * <li><i>TRACKING_PERMISSION_ATTRIBUTE_TYPE</i>
 	 * </ul>
 	 * 
 	 * @return int the attribute type of this attribute.

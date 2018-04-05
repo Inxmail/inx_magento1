@@ -19,11 +19,18 @@
  
  class Inx_Apiimpl_SoapSession extends Inx_Apiimpl_AbstractSession 
  {
- 	const API_ID = "v1.10.0|php5";
+ 	const API_ID = "v1.17.0|php5";
  	
  	public function __construct($sApplicationUrl, $sUsername,
 			$sPassword, $blPwdEncrypted=false, $sLoginToken = null, $pluginSecretId = null) {
 
+                $this->_sConnectionUrl = $sApplicationUrl;
+                
+                if(substr($this->_sConnectionUrl, -1)!=='/')
+                {
+                    $this->_sConnectionUrl .= '/';
+                }
+            
 		$this->_sApplicationUrl = rtrim($sApplicationUrl, '/') . '/api/';
 		if(empty($sLoginToken))
  			$this->_login($sUsername, $sPassword, $blPwdEncrypted, self::API_ID);
@@ -44,21 +51,43 @@
 			else
 				$sWsdlLocation = dirname(__FILE__).DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR . $sServiceName . '.wsdl';
 			
-			// Magento compilation FIX
-			if (defined('COMPILER_INCLUDE_PATH')) {
-				$sWsdlLocation = Mage::getBaseDir('lib').DIRECTORY_SEPARATOR.'Inx'.DIRECTORY_SEPARATOR.'Apiimpl'.DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR . $sServiceName . '.wsdl';
-			}
-			// / Magento compilation FIX
-			
 			if (file_exists($sWsdlLocation)) {
 				$aArgs = array();
 				//$aArgs['trace'] = 1;//DEBUG
 				$aArgs['location'] = $sApiServletUrl; 
 				$aArgs['uri'] = self::$_aServiceDescriptors[$sServiceName];
 
-				if ($proxy_host = self::getProperty('http.proxyHost')) {
-					$aArgs['proxy_host'] = $proxy_host;
-				}
+                if ($proxy_host = self::getProperty('http.proxyHost')) {
+                    $aArgs['proxy_host'] = $proxy_host;
+
+                    if ($sEnableSNI = self::getProperty('http.enableSNI')) {
+                        if ($sEnableSNI === 'true') {
+                            $hostname = parse_url($sApiServletUrl, PHP_URL_HOST);
+
+                            $context = stream_context_create(
+                                array(
+                                    'ssl' => array(
+                                        'SNI_server_name' => $hostname,
+                                        'SNI_enabled' => TRUE,
+                                    )
+                                )
+                            );
+
+                            $aArgs['stream_context'] = $context;
+
+                        } else if ($sEnableSNI === 'false') {
+                            $context = stream_context_create(
+                                array(
+                                    'ssl' => array(
+                                        'SNI_enabled' => FALSE
+                                    )
+                                )
+                            );
+
+                            $aArgs['stream_context'] = $context;
+                        }
+                    }
+                }
 				
 				if ($proxy_port = self::getProperty('http.proxyPort')) {
 					$aArgs['proxy_port'] = $proxy_port;

@@ -268,4 +268,7 @@ interface Inx_Api_UserRights
 	
 	/** The right to access the global settings. */
 	const USER_ACCESS_GLOBAL_SETTINGS = "com.inxmail.xpro.agent.UserAgent.global_settings_access";
+
+	/** The right to access the 'split test' feature. */
+	const SPLIT_TEST_FEATURE_USE = "com.inxmail.xpro.server.agent.SplitTestAgentImpl.use";
 }

@@ -279,6 +279,20 @@
       <wsdl:part name="selectByListIdReturn" type="impl:ResultSetData"/>
    </wsdl:message>  
    
+   <wsdl:message name="selectBounceGenericRequest">
+      <wsdl:part name="sc" type="inx:SessionCxt"/>
+      <wsdl:part name="listIds" type="inx:ArrayOf_xsd_int"/>
+      <wsdl:part name="mailingIds" type="inx:ArrayOf_xsd_int"/>
+      <wsdl:part name="categoryIds" type="inx:ArrayOf_xsd_int"/>
+	  <wsdl:part name="startDate" type="inx:TDatetime"/>	
+	  <wsdl:part name="endDate" type="inx:TDatetime"/>
+      <wsdl:part name="recCtxRefId" type="xsd:string"/>
+      <wsdl:part name="attrs" type="inx:ArrayOf_xsd_int"/>
+   </wsdl:message>
+   <wsdl:message name="selectBounceGenericResponse">
+	  <wsdl:part name="selectBounceGenericReturn" type="impl:ResultSetData"/>
+   </wsdl:message>
+   
    <wsdl:message name="fetchRequest">
       <wsdl:part name="sc" type="inx:SessionCxt"/>
       <wsdl:part name="remoteRefId" type="xsd:string"/>
@@ -376,6 +390,11 @@
       <wsdl:operation name="selectByListId" parameterOrder="sc listId recCtxRefId attrs">
          <wsdl:input name="selectByListIdRequest" message="impl:selectByListIdRequest"/>
          <wsdl:output name="selectByListIdResponse" message="impl:selectByListIdResponse"/>
+      </wsdl:operation>
+      
+      <wsdl:operation name="selectBounceGeneric" parameterOrder="sc listIds mailingIds categoryIds startDate endDate recCtxRefId attrs">
+      	<wsdl:input name="selectBounceGenericRequest" message="impl:selectBounceGenericRequest"/>
+      	<wsdl:output name="selectBounceGenericResponse" message="impl:selectBounceGenericResponse"/>
       </wsdl:operation>
 
       <wsdl:operation name="removeSelection" parameterOrder="sc remoteRefId indices">
@@ -520,6 +539,20 @@
          </wsdl:output>
 
      </wsdl:operation>
+
+		<wsdl:operation name="selectBounceGeneric">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="selectBounceGenericRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://bounce2.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+			<wsdl:output name="selectBounceGenericResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://bounce2.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+		</wsdl:operation>	
 
      <wsdl:operation name="selectByListId">
 

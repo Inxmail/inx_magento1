@@ -4,6 +4,11 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingImpl implements Inx_Api_TriggerMa
 	private $sc;
 
 	private $mService;
+        
+        /**
+         * @var type Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl
+         */
+        private $_oTriggerMailingManager;
 
 	public $data;
 
@@ -14,11 +19,13 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingImpl implements Inx_Api_TriggerMa
 	public $changedAttrs;
 
 
-	public function __construct( Inx_Apiimpl_SessionContext $sc, stdClass $data = null, $iListContextId = null, 
-                $iFeatureId = null, Inx_Api_TriggerMailing_Descriptor_TriggerDescriptor $triggerDescriptor = null )
+	public function __construct( Inx_Apiimpl_SessionContext $sc, 
+                Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl $oTriggerMailingManager, stdClass $data = null, 
+                $iListContextId = null, $iFeatureId = null, Inx_Api_TriggerMailing_Descriptor_TriggerDescriptor $triggerDescriptor = null )
 	{
 		$this->sc = $sc;
 		$this->mService = $this->sc->getService( Inx_Apiimpl_SessionContext::TRIGGER_MAILING_SERVICE );
+                $this->_oTriggerMailingManager = $oTriggerMailingManager;
 
                 if($data != null)
                 {
@@ -619,6 +626,18 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingImpl implements Inx_Api_TriggerMa
 	{
 		return Inx_Apiimpl_TConvert::convert( $this->data->nextSending );
 	}
+        
+        
+        public function findSendings() 
+        {
+                return $this->_oTriggerMailingManager->findSendingsByMailing($this->getId());
+        }
+        
+        
+        public function findLastSending() 
+        {
+                return $this->_oTriggerMailingManager->findLastSendingForMailing($this->getId());
+        }
 
 
 	public function getId()
@@ -696,7 +715,8 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingImpl implements Inx_Api_TriggerMa
 	}
 
 
-	public static function convert( Inx_Apiimpl_SessionContext $sc, array $data )
+	public static function convert( Inx_Apiimpl_SessionContext $sc, array $data, 
+                Inx_Apiimpl_TriggerMailing_TriggerMailingManagerImpl $oTriggerMailingManager )
 	{
                 if( empty($data) )
 		{
@@ -709,7 +729,8 @@ class Inx_Apiimpl_TriggerMailing_TriggerMailingImpl implements Inx_Api_TriggerMa
 		{
 			try
 			{
-				$ms[$i] = new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl( $sc, $data[$i] );
+				$ms[$i] = new Inx_Apiimpl_TriggerMailing_TriggerMailingImpl( $sc, 
+                                        $oTriggerMailingManager, $data[$i] );
 			}
 			catch( Inx_Api_DataException $x )
 			{

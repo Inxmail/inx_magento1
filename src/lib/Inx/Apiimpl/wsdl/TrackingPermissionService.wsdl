@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+        targetNamespace="http://trackingpermission.apiservice.xpro.inxmail.com"
+        xmlns:impl="http://trackingpermission.apiservice.xpro.inxmail.com"
+        xmlns:inx="http://apiservice.xpro.inxmail.com"
+        xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://apiservice.xpro.inxmail.com">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+            <complexType name="ArrayOf_xsd_string">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_xsd_int">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType"
+                                   wsdl:arrayType="xsd:int[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_xsd_long">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType"
+                                   wsdl:arrayType="xsd:long[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="SessionCxt">
+                <sequence>
+                    <element name="sid" type="xsd:string"/>
+                    <element name="relRefIds" nillable="true" type="inx:ArrayOf_xsd_string"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TString">
+                <sequence>
+                    <element name="value" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TBoolean">
+                <sequence>
+                    <element name="value" type="xsd:boolean"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TInteger">
+                <sequence>
+                    <element name="value" type="xsd:int"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TDouble">
+                <sequence>
+                    <element name="value" type="xsd:double"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TDatetime">
+                <sequence>
+                    <element name="value" type="xsd:dateTime"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TDate">
+                <sequence>
+                    <element name="value" type="xsd:date"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TTime">
+                <sequence>
+                    <element name="value" type="xsd:time"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="ArrayOf_TString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TString[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TBoolean">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TBoolean[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TInteger">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TInteger[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TDouble">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TDouble[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TDatetime">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TDatetime[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TDate">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TDate[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOf_TTime">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TTime[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+        </schema>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://trackingpermission.apiservice.xpro.inxmail.com">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+            <complexType name="ResultSetData">
+                <sequence>
+                    <element name="remoteRefId" type="xsd:string"/>
+                    <element name="size" type="xsd:int"/>
+                    <element name="data" nillable="true" type="impl:ArrayOfTrackingPermissionData"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TrackingPermissionData">
+                <sequence>
+                    <element name="id" type="xsd:long" />
+                    <element name="recipientId" type="xsd:int"/>
+                    <element name="listId" type="xsd:int" />
+                </sequence>
+            </complexType>
+
+            <complexType name="ArrayOfTrackingPermissionData">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="impl:TrackingPermissionData[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ExceptionDesc">
+                <sequence>
+                    <element name="type" type="xsd:int"/>
+                    <element name="source" type="xsd:int"/>
+                    <element name="msg" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="TrackingPermissionDataHolder">
+                <sequence>
+                    <element name="value" nillable="true" type="impl:TrackingPermissionData"/>
+                    <element name="excDesc" nillable="true" type="impl:ExceptionDesc"/>
+                </sequence>
+            </complexType>
+
+        </schema>
+
+    </wsdl:types>
+
+    <wsdl:message name="getRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="id" type="xsd:long"/>
+    </wsdl:message>
+    <wsdl:message name="getResponse">
+        <wsdl:part name="getReturn" type="impl:TrackingPermissionData"/>
+    </wsdl:message>
+
+    <wsdl:message name="findRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt" />
+        <wsdl:part name="trackingPermissionsIds" type="inx:ArrayOf_xsd_long"/>
+        <wsdl:part name="recipientIds" type="inx:ArrayOf_xsd_int" />
+        <wsdl:part name="listIds" type="inx:ArrayOf_xsd_int" />
+        <wsdl:part name="orderAttribute" type="xsd:int"/>
+        <wsdl:part name="orderType" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="findResponse">
+        <wsdl:part name="findReturn" type="impl:ResultSetData" />
+    </wsdl:message>
+
+    <wsdl:message name="removeRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="id" type="xsd:long"/>
+    </wsdl:message>
+    <wsdl:message name="removeResponse">
+        <wsdl:part name="removeReturn" type="xsd:boolean"/>
+    </wsdl:message>
+
+    <wsdl:message name="fetchBOsRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt" />
+        <wsdl:part name="remoteRefId" type="xsd:string" />
+        <wsdl:part name="index" type="xsd:int" />
+        <wsdl:part name="direction" type="xsd:int" />
+    </wsdl:message>
+    <wsdl:message name="fetchBOsResponse">
+        <wsdl:part name="fetchBOsReturn" type="impl:ArrayOfTrackingPermissionData" />
+    </wsdl:message>
+
+    <wsdl:message name="removeBOsRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt" />
+        <wsdl:part name="remoteRefId" type="xsd:string" />
+        <wsdl:part name="indices" type="inx:ArrayOf_TInteger" />
+    </wsdl:message>
+    <wsdl:message name="removeBOsResponse">
+        <wsdl:part name="removeBOsReturn" type="xsd:int" />
+    </wsdl:message>
+
+    <wsdl:message name="grantTrackingPermissionRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="recipientId" type="xsd:int"/>
+        <wsdl:part name="listId" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="grantTrackingPermissionResponse">
+        <wsdl:part name="grantTrackingPermissionReturn" type="impl:TrackingPermissionDataHolder"/>
+    </wsdl:message>
+
+    <wsdl:message name="revokeTrackingPermissionRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="recipientId" type="xsd:int"/>
+        <wsdl:part name="listId" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="revokeTrackingPermissionResponse">
+        <wsdl:part name="revokeTrackingPermissionReturn" type="impl:TrackingPermissionDataHolder"/>
+    </wsdl:message>
+
+    <wsdl:portType name="TrackingPermissionService">
+
+        <wsdl:operation name="get" parameterOrder="sc id">
+            <wsdl:input name="getRequest" message="impl:getRequest"/>
+            <wsdl:output name="getResponse" message="impl:getResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="find"
+                        parameterOrder="sc trackingPermissionsIds recipientIds listIds orderAttribute orderType">
+            <wsdl:input name="findRequest" message="impl:findRequest"/>
+            <wsdl:output name="findResponse" message="impl:findResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="remove" parameterOrder="sc id">
+            <wsdl:input name="removeRequest" message="impl:removeRequest"/>
+            <wsdl:output name="removeResponse" message="impl:removeResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="fetchBOs" parameterOrder="sc remoteRefId index direction">
+            <wsdl:input name="fetchBOsRequest" message="impl:fetchBOsRequest" />
+            <wsdl:output name="fetchBOsResponse" message="impl:fetchBOsResponse" />
+        </wsdl:operation>
+
+        <wsdl:operation name="removeBOs" parameterOrder="sc remoteRefId indices">
+            <wsdl:input name="removeBOsRequest" message="impl:removeBOsRequest" />
+            <wsdl:output name="removeBOsResponse" message="impl:removeBOsResponse" />
+        </wsdl:operation>
+
+        <wsdl:operation name="grantTrackingPermission" parameterOrder="sc recipientId listId">
+            <wsdl:input name="grantTrackingPermissionRequest" message="impl:grantTrackingPermissionRequest"/>
+            <wsdl:output name="grantTrackingPermissionResponse"
+                         message="impl:grantTrackingPermissionResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="revokeTrackingPermission" parameterOrder="sc recipientId listId">
+            <wsdl:input name="revokeTrackingPermissionRequest" message="impl:revokeTrackingPermissionRequest"/>
+            <wsdl:output name="revokeTrackingPermissionResponse"
+                         message="impl:revokeTrackingPermissionResponse"/>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+    <wsdl:binding name="TrackingPermissionServiceSoapBinding" type="impl:TrackingPermissionService">
+
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="get">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="getRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="getResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="find">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="findRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="findResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="remove">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="removeRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="removeResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="fetchBOs">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="fetchBOsRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="fetchBOsResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="removeBOs">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="removeBOsRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="removeBOsResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="grantTrackingPermission">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="grantTrackingPermissionRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="grantTrackingPermissionResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="revokeTrackingPermission">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="revokeTrackingPermissionRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="revokeTrackingPermissionResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+    <wsdl:service name="TrackingPermissionServiceSoap">
+
+        <wsdl:port name="TrackingPermissionService" binding="impl:TrackingPermissionServiceSoapBinding">
+
+            <wsdlsoap:address location="http://localhost:80/inxmail/api/TrackingPermissionService"/>
+
+        </wsdl:port>
+
+    </wsdl:service>
+
+</wsdl:definitions>

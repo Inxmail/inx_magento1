@@ -5,7 +5,7 @@
  */
 
 /**
- * The <code>TriggerMailingConstants</code> define some parameters for trigger mailings. The constants are used
+ * The <i>TriggerMailingConstants</i> define some parameters for trigger mailings. The constants are used
  * internally only.
  * 
  * @author chge, 02.08.2012

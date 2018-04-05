@@ -24,11 +24,11 @@ class Inx_Api_Mailing_MailingStateException extends Exception
     private $_blLocked;
     
     /**
-     * Creates a <code>MailingStateException</code> with the given detail message, current state and locking state.
+     * Creates a <i>MailingStateException</i> with the given detail message, current state and locking state.
      *
      * @param string $sMsg the detail message.
      * @param int $iCurrentState the current state of the affected mailing.
-     * @param bool $blLocked <code>true</code> if the mailing is locked, <code>false</code> otherwise.
+     * @param bool $blLocked <i>true</i> if the mailing is locked, <i>false</i> otherwise.
      */
     public function __construct( $sMsg = null, $iCurrentState = null, $blLocked = null )
     {

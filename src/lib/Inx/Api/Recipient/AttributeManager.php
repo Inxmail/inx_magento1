@@ -124,7 +124,7 @@ interface Inx_Api_Recipient_AttributeManager
 	 *
 	 * @param array $aAttributes a list of <i>Inx_Api_Recipient_Attribute</i>s to show or hide.
 	 * @param int $iListId the id of the list in which the attributes shall be shown or hidden.
-	 * @param bool $blVisible <i>true</i> if the attributes shall be shown, <i>false</codei> if they shall be hidden.
+	 * @param bool $blVisible <i>true</i> if the attributes shall be shown, <i>false</i> if they shall be hidden.
 	 * @throws Inx_Api_APIException if at least one attribute can not be shown / hidden.
 	 * @since API 1.9.0
 	 */

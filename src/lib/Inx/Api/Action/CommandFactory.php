@@ -189,14 +189,44 @@ interface Inx_Api_Action_CommandFactory
 	 */
 	public function createSendMailCmd( $iListContextId, $iMailingId );
 
-        /**
-	 * Creates an <i>Inx_Api_Action_SendActionMailCommand</i> which sends the specified action mailing 
-         * from the corresponding list context to the recipient.
-	 * 
+    /**
+     * Creates an <i>Inx_Api_Action_SendActionMailCommand</i> which sends the specified action mailing
+     * from the corresponding list context to the recipient.
+     *
 	 * @param int $iListContextId id of the standard or filter list context containing the action mailing.
 	 * @param int $iActionMailingId the id of the action mailing to send.
 	 * @return Inx_Api_Action_SendActionMailCommand a new <i>Inx_Api_Action_SendActionMailCommand</i>.
 	 * @since API 1.10.0
 	 */
 	public function createSendActionMailCmd( $iListContextId, $iActionMailingId );
+
+    /**
+     * Creates a <i>Inx_Api_Action_GrantTrackingPermissionCommand</i> which grants the tracking permission for the specified list
+     *
+     * @param int $iListContextId the id of the standard list context to which to give the tracking permission to
+     * @return a new <i>Inx_Api_Action_GrantTrackingPermissionCommand</i>.
+     * @since API 1.16.0
+     */
+    public function createGrantTrackingPermissionCmd( $iListContextId );
+
+
+    /**
+     * Creates a <i>Inx_Api_Action_RevokeTrackingPermissionCommand</i> which revokes the tracking permission from the specified list
+     *
+     * @param int $iListContextId the id of the standard list context of which to revoke the tracking permission from
+     * @return a new <i>Inx_Api_Action_RevokeTrackingPermissionCommand</i>.
+     * @since API 1.16.0
+     */
+    public function createRevokeTrackingPermissionCmd( $iListContextId );
+
+
+    /**
+     * Creates a <i>Inx_Api_Action_TransferTrackingPermissionCommand</i> which transfers the tracking permission from the specified source list to a specified target list.
+     *
+     * @param int $iiTargetListId the id of the target list to which the tracking permission will be transferred to
+     * @param int $iSourceListId list id from where the tracking permission is transferred from. If <i>$iSourceListId</i> is <i>null</i> the tracking permission will be transferred from the list where the event has been triggered to the specified target list.
+     * @return a new <i>Inx_Api_Action_TransferTrackingPermissionCommand</i>.
+     * @since API 1.16.0
+     */
+    public function createTransferTrackingPermissionCmd( $iTargetListId, $iSourceListId = null );
 }

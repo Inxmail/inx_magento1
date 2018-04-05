@@ -11,6 +11,7 @@
  * changes will be passed to the server. Rollback is done by the <i>reload()</i> 
  * method, which reloads the object and discards all uncomitted changes. 
  * 
+ * @see Inx_Api_ReadOnlyBusinessObject
  * @version $Revision: 9482 $ $Date: 2007-12-18 16:42:11 +0200 (An, 18 Grd 2007) $ $Author: vladas $
  * @package Inxmail
  */

@@ -32,7 +32,7 @@ interface Inx_Api_DesignTemplate_Template
 	public function getId();
 
 	/**
-	 * Returns all text <code>Style</code>s in this template. The default text style, which should be used for a
+	 * Returns all text <i>Style</i>s in this template. The default text style, which should be used for a
 	 * multipart mailing, if there is no appropriate text style for the chosen HTML style, is the first in the array.
 	 * 
 	 * @return array all text <i>Inx_Api_DesignTemplate_Style</i>s of this template. 

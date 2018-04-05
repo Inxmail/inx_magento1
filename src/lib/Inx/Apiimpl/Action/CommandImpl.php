@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <code>CommandImpl</code>
+ * <i>CommandImpl</i>
  * 
  * @since API 1.2.0
  * @version $Revision: 9739 $ $Date: 2008-01-23 14:44:04 +0200 (Tr, 23 Sau 2008) $ $Author: aurimas $
@@ -31,9 +31,18 @@ abstract class Inx_Apiimpl_Action_CommandImpl implements Inx_Api_Action_Command
 	/** Action: unsubscribe member */
 	const UNSUBSCRIBE_MEMBER_CMD_TYPE = 6;
 
-        /** Action: Send an action mail */
-        const SEND_ACTION_MAIL_CMD_TYPE = 7;
-	
+    /** Action: Send an action mail */
+    const SEND_ACTION_MAIL_CMD_TYPE = 7;
+
+    /** Action: grant tracking permission */
+    const GRANT_TRACKING_PERMISSION_CMD_TYPE = 8;
+
+    /** Action: revoke tracking permission */
+    const REVOKE_TRACKING_PERMISSION_CMD_TYPE = 9;
+
+    /** Action: transfer tracking permission */
+    const TRANSFER_TRACKING_PERMISSION_CMD_TYPE = 10;
+
 	const ONE = 1;
 
 	const TWO = 2;
@@ -137,7 +146,16 @@ abstract class Inx_Apiimpl_Action_CommandImpl implements Inx_Api_Action_Command
 		            break;		            
 		        case self::UNSUBSCRIBE_MEMBER_CMD_TYPE:
 		            $cs[$key] = new Inx_Apiimpl_Action_CommandImpl_UnsubscriptionCmd($val);
-		            break;		            
+		            break;
+                case self::GRANT_TRACKING_PERMISSION_CMD_TYPE:
+                    $cs[$key] = new Inx_Apiimpl_Action_CommandImpl_GrantTrackingPermissionCmd($val);
+                    break;
+                case self::REVOKE_TRACKING_PERMISSION_CMD_TYPE:
+                    $cs[$key] = new Inx_Apiimpl_Action_CommandImpl_RevokeTrackingPermissionCmd($val);
+                    break;
+                case self::TRANSFER_TRACKING_PERMISSION_CMD_TYPE:
+                    $cs[$key] = new Inx_Apiimpl_Action_CommandImpl_TransferTrackingPermissionCmd($val);
+                    break;
 		        default:
 		            $cs[$key] = new Inx_Apiimpl_Action_CommandImpl_UnknownCmd($val);
 		            break;

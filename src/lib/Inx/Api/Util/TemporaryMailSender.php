@@ -44,7 +44,7 @@
  * You can mix using this method and explicitly specifying a recipient address to send a mailing to a recipient
  * (possibly unknown to Inxmail) which was personalized for a different recipient.
  * <p>
- * <strong>Note:</strong> Be aware that the <i>bool</i> returned by the send method does not state if the mail has really been sent. 
+ * <b>Note:</b> Be aware that the <i>bool</i> returned by the send method does not state if the mail has really been sent.
  * The method may return <i>true</i> even though no recipient address was specified, thus the mail was not sent to any recipient. 
  * The only requirement is that the sender address has been set and the content is not <i>null</i> or empty. 
  * The sender address may also be determined by the list provided on the creation of the mail, as long as the address is configured.
@@ -74,9 +74,9 @@ interface Inx_Api_Util_TemporaryMailSender
      * It is possible to override the recipient address using <i>Inx_Api_Util_TemporaryMail::updateRecipientAddress($sRecipientAddress)</i>. 
      * Using this approach you can send a mail to a recipient which is personalized for a different recipient.
      * <p>
-     * <strong>Note:</strong> If the recipient id is ommitted, you are required to specify a recipient address. 
+     * <b>Note:</b> If the recipient id is ommitted, you are required to specify a recipient address.
 	 * <p>
-	 * <strong>Note:</strong> This method may return <i>true</i> even if the recipient address was explicitly set to <i>null</i>.
+	 * <b>Note:</b> This method may return <i>true</i> even if the recipient address was explicitly set to <i>null</i>.
 	 * 
 	 * @param Inx_Api_Util_TemporaryMail $oMail the mail to be sent.
 	 * @param int $iRecipientId the recipient for whom the mail shall be personalized and probably send to. May be ommitted.

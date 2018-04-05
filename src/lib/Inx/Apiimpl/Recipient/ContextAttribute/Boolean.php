@@ -23,12 +23,12 @@ class Inx_Apiimpl_Recipient_ContextAttribute_Boolean extends Inx_Apiimpl_Recipie
 		return false;
 	}
 
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$this->updateBoolean( $oRecipientData, $aChangedAttrs, $value );
 	}
 
-	public function updateBoolean( $oRecipientData, &$aChangedAttrs, $blValue )
+	public function updateBoolean( $oRecipientData, array &$aChangedAttrs, $blValue )
 	{
 		$oRecipientData->booleanData[$this->_iTypeAttrIndex] = new stdClass();
 		$oRecipientData->booleanData[$this->_iTypeAttrIndex]->value = $blValue;

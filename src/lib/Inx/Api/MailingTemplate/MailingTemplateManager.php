@@ -82,7 +82,7 @@ interface Inx_Api_MailingTemplate_MailingTemplateManager extends Inx_Api_BOManag
 	 * </pre>
 	 * 
 	 * @param Inx_Api_List_ListContext $oListContext all mailing templates assigned to this list will be fetched. 
-	 * 			This parameter may <strong>not</strong> be <i>null</i>. 
+	 * 			This parameter may <b>not</b> be <i>null</i>.
 	 * 			If you wish to retrieve all mailing templates, use <i>selectAll()</i> instead.
 	 * @param int $iOrderAttribute the id of the attribute used to order the result (only
 	 *            <i>Inx_Api_MailingTemplate_MailingTemplate::ATTRIBUTE_NAME</i>). 

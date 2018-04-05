@@ -14,7 +14,7 @@
  * <li>Request the approval of a mailing
  * <li>Approve or revoke the approval for the mailing
  * </ul>
- * <strong>Handling mailing content</strong>
+ * <b>Handling mailing content</b>
  * <p>
  * Content is put into mailings using content handlers. There are a number of such handlers:
  * <ul>
@@ -38,7 +38,7 @@
  * $oMailing->commitUpdate();
  * </pre>
  * 
- * <strong>Approval and controlling dispatch</strong>
+ * <b>Approval and controlling dispatch</b>
  * <p>
  * The following methods can be used for the approval of mailings:
  * <ul>
@@ -86,8 +86,8 @@
  * mailing->unscheduleMailing();
  * </pre>
  * <p>
- * <strong>Note:</strong> For existing mailings, always call <code>lock()</code> before updating it, and
- * <code>unlock()</code> after committing changes!
+ * <b>Note:</b> For existing mailings, always call <i>lock()</i> before updating it, and
+ * <i>unlock()</i> after committing changes!
  * <p>
  * For an example on how to retrieve and create mailings, see the <i>Inx_Api_Mailing_MailingManager</i> documentation.
  * <p>
@@ -566,7 +566,7 @@ interface Inx_Api_Mailing_Mailing extends Inx_Api_BusinessObject
 	/**
 	 * Returns the sending filter concatenation type of this mailing.
 	 * 
-	 * @return <code>FILTER_AND</code> or <code>FILTER_OR</code> or <code>FILTER_NOT_IN</code> or 0 if it is not set
+	 * @return <i>FILTER_AND</i> or <i>FILTER_OR</i> or <i>FILTER_NOT_IN</i> or 0 if it is not set
 	 * @since API 1.6.0
 	 */
 	public function getFilterConcatinationType();
@@ -576,8 +576,8 @@ interface Inx_Api_Mailing_Mailing extends Inx_Api_BusinessObject
 	 * Sets a couple of sending filter to this mailing.
 	 * 
 	 * @param filterIds array of the filter ids, null for no filter is set
-	 * @param concatinationType sets how the filter should be concatinated, <code>FILTER_AND</code>,
-	 *            <code>FILTER_OR</code>, <code>FILTER_NOT_IN</code>
+	 * @param concatinationType sets how the filter should be concatinated, <i>FILTER_AND</i>,
+	 *            <i>FILTER_OR</i>, <i>FILTER_NOT_IN</i>
 	 * @since API 1.6.0
 	 */
 	public function updateFilterIds( $filterIds, $iConcatinationType );
@@ -678,7 +678,27 @@ interface Inx_Api_Mailing_Mailing extends Inx_Api_BusinessObject
 	 * @throws Inx_Api_DataException
 	 */
 	public function getSendingInfo();
+        
+        
+        /**
+	 * Returns an <i>Inx_Api_ROBOResultSet</i> containing all sendings of this mailing.
+	 * 
+	 * @return Inx_Api_ROBOResultSet A <i>ROBOResultSet</i> containing all sendings of this mailing.
+	 * @since API 1.11.1
+	 */
+        public function findSendings();
+        
+        
+        /**
+	 * Returns the <i>Inx_Api_Sending_Sending</i> object for the last sending of this mailing, if any.
+	 * 
+	 * @return Inx_Api_Sending_Sending The <i>Sending</i> object for the last sending of this mailing, 
+         * if any, <i>null</i> otherwise.
+	 * @since API 1.11.1
+	 */
+        public function findLastSending();
 	
+        
 	/**
 	 * Returns the create date of the mailing
 	 * 

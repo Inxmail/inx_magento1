@@ -80,6 +80,21 @@ interface Inx_Api_Recipient_RecipientMetaData
 	public function getSubscriptionAttribute( Inx_Api_List_ListContext $oList );
 
 	/**
+	 * Returns the tracking permission attribute for the specified list.
+	 * A recipient has a tracking permission attribute for each standard list.
+	 *
+	 * @param Inx_Api_List_ListContext $oList the list context
+	 * @return Inx_Api_Recipient_Attribute the attribute object
+	 * @throws Inx_Api_Recipient_AttributeNotFoundException if the list is not a standard list.
+	 * @throws Inx_Api_Recipient_TrackingPermissionNotFetchedException if the underlying 
+         * <i>Inx_Api_Recipient_RecipientContext</i> does not contain tracking permission attributes, 
+         * see <i>Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()</i>.
+         * 
+	 * @since API 1.15.0
+	 */
+	public function getTrackingPermissionAttribute( Inx_Api_List_ListContext $oList );
+
+	/**
 	 * Returns the attribute specified by the given id.
 	 *
 	 * @param int $iAttributeId the id of the attribute to retrieve.

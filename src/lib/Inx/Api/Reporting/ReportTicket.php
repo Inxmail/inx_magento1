@@ -48,7 +48,7 @@
  * To download the report, just poll for the <i>DownloadableResult</i> to become something different from <i>null</i>
  * and use the provided <i>Inx_Api_InputStream</i> to download the report.
  * <p>
- * <strong>Note:</strong> An <i>Inx_Api_Reporting_ReportTicket</i> object <strong>must</strong> be closed once it is not needed
+ * <b>Note:</b> An <i>Inx_Api_Reporting_ReportTicket</i> object <b>must</b> be closed once it is not needed
  * anymore to prevent memory leaks and other potentially harmful side effects.
  * <p>
  * For a more complete example on how to generate and retrieve reports, see the <i>Inx_Api_Reporting_ReportEngine</i> documentation.
@@ -83,7 +83,7 @@ interface Inx_Api_Reporting_ReportTicket
 	/**
      * Closes this <i>Inx_Api_Reporting_ReportTicket</i> and releases any resources on
      * the server associated with this object.
-     * An <i>Inx_Api_Reporting_ReportTicket</i> object <strong>must</strong> be closed once it is not needed
+     * An <i>Inx_Api_Reporting_ReportTicket</i> object <b>must</b> be closed once it is not needed
  	 * anymore to prevent memory leaks and other potentially harmful side effects.
      */
 	public function close();

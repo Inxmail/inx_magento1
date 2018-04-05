@@ -39,7 +39,7 @@ class Inx_Apiimpl_Core_RemoteInputStream extends Inx_Api_InputStream
     
     /**
      * The current position in the buffer. This is the index of the next 
-     * character to be read from the <code>buf</code> array.
+     * character to be read from the <i>buf</i> array.
      * 
      * @var int 
      */
@@ -53,7 +53,7 @@ class Inx_Apiimpl_Core_RemoteInputStream extends Inx_Api_InputStream
     public function __construct( Inx_Apiimpl_RemoteRef $oRemoteRef )
 	{
 	    $this->_oRemoteRef = $oRemoteRef; 
-		$this->_oService = $oRemoteRef->getService( Inx_Apiimpl_RemoteRef::CORE_SERVICE );
+		$this->_oService = $oRemoteRef->getService( Inx_Apiimpl_RemoteRef::CORE2_SERVICE );
 	}
 
     

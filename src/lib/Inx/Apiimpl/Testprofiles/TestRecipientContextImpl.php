@@ -1,7 +1,7 @@
 <?php 
 
 /**
- * The implementation of <code>RecipientContext</code>
+ * The implementation of <i>RecipientContext</i>
  * <P>
  * Copyright (c) 2005 Inxmail GmbH. All Rights Reserved.
  * 

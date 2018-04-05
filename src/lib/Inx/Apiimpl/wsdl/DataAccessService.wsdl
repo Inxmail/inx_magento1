@@ -733,6 +733,35 @@
 			type="impl:ClickRowSetData" />
 
 	</wsdl:message>
+	
+	<wsdl:message name="selectClickGenericRequest">
+
+        <wsdl:part name="sc" type="inx:SessionCxt" />
+
+        <wsdl:part name="mailingIds" type="inx:ArrayOf_xsd_int" />
+        
+        <wsdl:part name="linkIds" type="inx:ArrayOf_xsd_int" />
+        
+        <wsdl:part name="recipientIds" type="inx:ArrayOf_xsd_int" />
+        
+        <wsdl:part name="linkTypes" type="inx:ArrayOf_xsd_int" />
+
+		<wsdl:part name="startDate" type="inx:TDatetime"/>
+		
+		<wsdl:part name="endDate" type="inx:TDatetime"/>
+
+        <wsdl:part name="recCtxRefId" type="xsd:string" />
+
+        <wsdl:part name="attrs" type="inx:ArrayOf_xsd_int" />
+
+    </wsdl:message>
+
+    <wsdl:message name="selectClickGenericResponse">
+
+        <wsdl:part name="selectClickGenericReturn"
+            type="impl:ClickRowSetData" />
+
+    </wsdl:message>
 
 	<wsdl:message name="fetchClickRequest">
 		<wsdl:part name="sc" type="inx:SessionCxt" />
@@ -1004,7 +1033,18 @@
 			<wsdl:output name="selectClickByRecipientMailingAfterResponse"
 				message="impl:selectClickByRecipientMailingAfterResponse" />
 
-		</wsdl:operation>		
+		</wsdl:operation>	
+		
+		<wsdl:operation name="selectClickGeneric"
+			parameterOrder="sc mailingIds linkIds recipientIds linkTypes startDate endDate recCtxRefId attrs">
+
+			<wsdl:input name="selectClickGenericRequest"
+				message="impl:selectClickGenericRequest" />
+
+			<wsdl:output name="selectClickGenericResponse"
+				message="impl:selectClickGenericResponse" />
+
+		</wsdl:operation>	
 		
 
 		<wsdl:operation name="fetchClick"
@@ -1251,6 +1291,20 @@
 					namespace="http://dataaccess.apiservice.xpro.inxmail.com" />
 			</wsdl:input>
 			<wsdl:output name="selectClickByRecipientMailingAfterResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://dataaccess.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+		</wsdl:operation>	
+		
+		<wsdl:operation name="selectClickGeneric">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="selectClickGenericRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://dataaccess.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+			<wsdl:output name="selectClickGenericResponse">
 				<wsdlsoap:body use="encoded"
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
 					namespace="http://dataaccess.apiservice.xpro.inxmail.com" />

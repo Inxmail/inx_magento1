@@ -8,7 +8,7 @@
  * Examples for such target groups are 'All recipients who read HTML format', 'Women', 'Men', 'People interested in 
  * product X', 'Recipients born after 1970', and so on.
  * <p>
- * The <i>Inx_Api_Filter_FilterManager</i> can be used to create and retrieve <code>Filter</code>s (target groups). 
+ * The <i>Inx_Api_Filter_FilterManager</i> can be used to create and retrieve <i>Filter</i>s (target groups).
  * The following snippet creates a global <i>Inx_Api_Filter_Filter</i>:
  * 
  * <pre>

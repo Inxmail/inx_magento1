@@ -15,6 +15,9 @@
  * <li><i>Inx_Api_Action_SetValueCommand</i> - Set an attribute value of the recipient.
  * <li><i>Inx_Api_Action_SubscriptionCommand</i> - Subscribe the recipient.
  * <li><i>Inx_Api_Action_UnsubscriptionCommand</i> - Unsubscribe the recipient.
+ * <li><i>Inx_Api_Action_GrantTrackingPermissionCommand</i> - Grant tracking permission.
+ * <li><i>Inx_Api_Action_RevokeTrackingPermissionCommand</i> - Revoke tracking permission.
+ * <li><i>Inx_Api_Action_TransferTrackingPermissionCommand</i> - Transfer tracking permission.
  * </ul>
  * <p>
  * For an example on how to use commands and actions, see the <i>Inx_Api_Action_ActionManager</i> documentation.
