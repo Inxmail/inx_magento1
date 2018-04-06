@@ -13,7 +13,7 @@
 <config>
     <modules>
         <DndInxmail_Subscriber>
-            <version>3.3.0.0</version>
+            <version>4.0.0.0</version>
         </DndInxmail_Subscriber>
     </modules>
     <global>
