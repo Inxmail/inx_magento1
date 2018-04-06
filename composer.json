@@ -1,8 +1,10 @@
 {
-  "name": "flagbit/magento-inxmail",
-  "license": "proprietary",
+  "name": "inxmail/magento-module",
   "type": "magento-module",
   "description": "Inxmail Magento Module",
+  "license": [
+    "OSL-3.0"
+  ],
   "require": {
     "magento-hackathon/magento-composer-installer": "*",
     "php": ">=5.2.0"
