@@ -46,7 +46,7 @@
   *
   * @see Inx_Api_TrackingPermission_TrackingPermission
   * @see Inx_Api_TrackingPermission_TrackingPermissionQuery
-  * @since 1.17.0
+  * @since API 1.17.0
   */
 interface Inx_Api_TrackingPermission_TrackingPermissionManager extends Inx_Api_BOManager
 {
@@ -74,4 +74,12 @@ interface Inx_Api_TrackingPermission_TrackingPermissionManager extends Inx_Api_B
      * @throws Inx_Api_UpdateException if the request cannot be completed, for example because the recipient was not found
      */
     public function revokeTrackingPermission( $iRecipientId, $iListId );
+
+    /**
+     * Creates and initializes a new <i>Inx_Api_TrackingPermission_TrackingPermissionLogQuery</i> object without any query filter.
+     *
+     * @return Inx_Api_TrackingPermission_TrackingPermissionLogQuery a new initialized <i>Inx_Api_TrackingPermission_TrackingPermissionLogQuery</i>
+     * @since API 1.18.0
+     */
+    public function createLogQuery();
 }

@@ -134,4 +134,9 @@ class Inx_Apiimpl_TrackingPermission_TrackingPermissionManagerImpl implements In
             $this->_oSession->notify($e);
         }
     }
+
+    public function createLogQuery()
+    {
+        return new Inx_Apiimpl_TrackingPermission_TrackingPermissionLogQueryImpl($this->_oSession, $this->_oService);
+    }
 }

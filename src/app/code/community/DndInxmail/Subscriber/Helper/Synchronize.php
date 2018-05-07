@@ -209,11 +209,11 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      *
      * @return mixed RecipientContext object or false
      */
-    public function getRecipientContext()
+    public function getRecipientContext($trackingPermission = false)
     {
         if ($this->isInxmailSession()) {
             if ($this->_recipientContext == null) {
-                $this->_recipientContext = $this->getInxmailSession()->createRecipientContext();
+                $this->_recipientContext = $this->getInxmailSession()->createRecipientContext($trackingPermission);
             }
 
             return $this->_recipientContext;
@@ -259,14 +259,16 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $this->openInxmailSession(false);
         } catch (Exception $e) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
-
             return false;
         }
+
         if (!is_array($emails)) {
             $emails = array($emails);
         }
 
+        /** @var \Inx_Api_Recipient_RecipientContext $recipientContext */
         $recipientContext      = $this->getRecipientContext();
+        /** @var \Inx_Api_Recipient_BatchChannel $batchChannel */
         $batchChannel    = $recipientContext->createBatchChannel();
 
         foreach ($emails as $email) {
@@ -282,14 +284,15 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
      * Add email address to Inxmail batch channel
      * If email is linked to customer add additionnal data else set email as guest
      *
-     * @param $batchChannel
-     * @param $email
+     * @param \Inx_Api_Recipient_BatchChannel $batchChannel
+     * @param string $email
      * @param bool $trigger
-     * @param $inxmailList
+     * @param \Inx_Api_List_ListContext $inxmailList
      */
     public function addCustomerToBatch($batchChannel, $email, $trigger = true, $inxmailList)
     {
         try {
+            /** @var \Inx_Api_Session $session */
             $session = $this->openInxmailSession(false);
         } catch (Exception $e) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
@@ -305,17 +308,29 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
             $vars = $this->getCustomerAttributesForInxmail($customer);
         }
 
+        $trackingPermissionMagento = $this->getMageTrackingPermission($email);
+        $trackingPermission = Inx_Api_TrackingPermission_TrackingPermissionState::DENIED();
+        if ($trackingPermissionMagento) {
+            $trackingPermission = Inx_Api_TrackingPermission_TrackingPermissionState::GRANTED();
+        }
+
+        /** @var \Inx_Api_Recipient_RecipientContext $recipientContext */
         $recipientContext      = $this->getRecipientContext();
+        /** @var \Inx_Api_Subscription_SubscriptionManager $subscriptionManager*/
         $subscriptionManager   = $session->getSubscriptionManager();
+        /** @var \Inx_Api_Recipient_RecipientMetaData $recipientMetaData */
         $recipientMetaData     = $recipientContext->getMetaData();
+        /** @var Inx_Api_Recipient_Attribute $subscriptionAttribute */
         $subscriptionAttribute = $recipientMetaData->getSubscriptionAttribute($inxmailList);
+        /** @var \Inx_Api_TrackingPermission_TrackingPermissionManager $trackingPermissionManager */
+        $trackingPermissionManager = $session->getTrackingPermissionManager();
 
         $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
         $isSubscribed    = ($recipientRowSet->next()) ? true : false;
 
         if ($trigger == true) {
             $sourceIdentifier = Mage::helper('dndinxmail_subscriber/version')->getSourceIdentifierString();
-            $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email);
+            $subscriptionManager->processSubscription($sourceIdentifier, null, $inxmailList, $email, array(), $trackingPermission);
         }
 
         if (!$isSubscribed && $trigger == false) {
@@ -338,6 +353,16 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
 
         if (!$isSubscribed && $trigger == false) {
             $batchChannel->write($subscriptionAttribute, date("c"));
+        }
+
+        if ($isSubscribed && $trigger == false) {
+            $inxId = $recipientRowSet->getInteger($recipientMetaData->getIdAttribute());
+            $inxmailListId = $inxmailList->getId();
+            if ($trackingPermissionMagento) {
+                $trackingPermissionManager->grantTrackingPermission($inxId, $inxmailListId);
+            } else {
+                $trackingPermissionManager->revokeTrackingPermission($inxId, $inxmailListId);
+            }
         }
     }
 
@@ -1398,5 +1423,60 @@ class DndInxmail_Subscriber_Helper_Synchronize extends DndInxmail_Subscriber_Hel
                 Inx_Api_Subscription_SubscriptionLogEntryRowSet::NOT_IN_LIST_UNSUBSCRIPTION,
             )
         );
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return bool
+     */
+    protected function getMageTrackingPermission($email) {
+        $subscriber = Mage::getModel('newsletter/subscriber')->loadByEmail($email);
+        return $subscriber ? (bool)$subscriber->getInxTrackingPermission() : false;
+    }
+
+    /**
+     * @param string $email
+     * @param int $inxmailListId
+     * @param bool $granted
+     *
+     * @throws \Inx_Api_DataException
+     * @throws \Inx_Api_Recipient_SelectException
+     * @throws \Inx_Api_UpdateException
+     */
+    public function commitTrackingPermission($email, $inxmailListId, $granted = false)
+    {
+        try {
+            /** @var \Inx_Api_Session $session */
+            $session = $this->openInxmailSession(true);
+        } catch (Exception $e) {
+            Mage::helper('dndinxmail_subscriber/log')->logExceptionMessage($e, __FUNCTION__);
+
+            return;
+        }
+
+        /** @var \Inx_Api_Recipient_RecipientContext $recipientContext */
+        $recipientContext = $this->getRecipientContext();
+        /** @var \Inx_Api_Subscription_SubscriptionManager $subscriptionManager*/
+        $recipientMetaData = $recipientContext->getMetaData();
+        /** @var \Inx_Api_TrackingPermission_TrackingPermissionManager $trackingPermissionManager */
+        $trackingPermissionManager = $session->getTrackingPermissionManager();
+        /** @var \Inx_Api_List_ListContextManager $listContextManager */
+        $listContextManager = $session->getListContextManager();
+        /** @var \Inx_Api_List_ListContext $inxmailList */
+        $inxmailList = $listContextManager->get($inxmailListId);
+
+        $recipientRowSet = $recipientContext->select($inxmailList, null, "email LIKE \"" . $email . "\"", null, Inx_Api_Order::ASC);
+        $isSubscribed    = ($recipientRowSet->next()) ? true : false;
+
+        if($isSubscribed) {
+            $inxId = $recipientRowSet->getInteger($recipientMetaData->getIdAttribute());
+
+            if ($granted) {
+                $trackingPermissionManager->grantTrackingPermission($inxId, $inxmailListId);
+            } else {
+                $trackingPermissionManager->revokeTrackingPermission($inxId, $inxmailListId);
+            }
+        }
     }
 }

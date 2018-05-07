@@ -19,7 +19,7 @@
  
  class Inx_Apiimpl_SoapSession extends Inx_Apiimpl_AbstractSession 
  {
- 	const API_ID = "v1.17.0|php5";
+ 	const API_ID = "v1.19.1|php5";
  	
  	public function __construct($sApplicationUrl, $sUsername,
 			$sPassword, $blPwdEncrypted=false, $sLoginToken = null, $pluginSecretId = null) {

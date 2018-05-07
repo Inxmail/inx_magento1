@@ -1,0 +1,13 @@
+<?php
+// Full subscribt with permission set
+/*
+ * This is an example code to facilitate implementation if you want to use the tracking permission features of Inxmail Professional. Inxmail will not provide any guidance on how to collect the tracking permission and its evaluation within your magento installation. Further, this code does not ensure that your shop is EU-GDPR compliant. By using this code you are aware of this and accept it.
+ */
+?>
+<h1 style="color: #ff0000">Example Code - This block does not ensure that your shop is EU-GDPR compliant</h1>
+<li class="control">
+    <label for="inx_tracking_permission"><?php echo $this->__('Give Inxmail tracking permission') ?></label>
+    <div class="input-box">
+        <input type="checkbox" name="inx_tracking_permission" id="inx_tracking_permission" value="1" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Give Inxmail tracking persmission')) ?>"<?php if($this->getInxTrackingPermission()): ?> checked="checked"<?php endif; ?> class="checkbox" />
+    </div>
+</li>

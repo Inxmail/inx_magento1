@@ -64,6 +64,12 @@
                 </sequence>
             </complexType>
 
+            <complexType name="TLong">
+                <sequence>
+                    <element name="value" type="xsd:long"/>
+                </sequence>
+            </complexType>
+
             <complexType name="TDouble">
                 <sequence>
                     <element name="value" type="xsd:double"/>
@@ -188,6 +194,39 @@
                 </sequence>
             </complexType>
 
+            <complexType name="TrackingPermissionLogRowSetData">
+                <sequence>
+                    <element name="remoteRefId" type="xsd:string"/>
+                    <element name="rowCount" type="xsd:int"/>
+                    <element name="data" nillable="true"
+                             type="impl:ArrayOfTrackingPermissionLogDTO"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="ArrayOfTrackingPermissionLogDTO">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType"
+                                   wsdl:arrayType="impl:TrackingPermissionLogDTO[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="TrackingPermissionLogDTO">
+                <sequence>
+                    <element name="id" type="xsd:long"/>
+                    <element name="recipientId" type="xsd:int"/>
+                    <element name="listId" type="xsd:int"/>
+                    <element name="newState" type="xsd:int"/>
+                    <element name="originatorType" type="xsd:int"/>
+                    <element name="originatorIdentity" nillable="true" type="inx:TString"/>
+                    <element name="originatorDeterminedAddress" nillable="true" type="inx:TString"/>
+                    <element name="originatorSuppliedAddress" nillable="true" type="inx:TString"/>
+                    <element name="originatorMessage" nillable="true" type="inx:TString"/>
+                    <element name="timestamp" type="inx:TDatetime"/>
+                </sequence>
+            </complexType>
+
         </schema>
 
     </wsdl:types>
@@ -257,6 +296,30 @@
         <wsdl:part name="revokeTrackingPermissionReturn" type="impl:TrackingPermissionDataHolder"/>
     </wsdl:message>
 
+    <wsdl:message name="findTrackingPermissionLogRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="recipientIds" type="inx:ArrayOf_xsd_int"/>
+        <wsdl:part name="listIds" type="inx:ArrayOf_xsd_int"/>
+        <wsdl:part name="startDate" type="inx:TDatetime"/>
+        <wsdl:part name="endDate" type="inx:TDatetime"/>
+        <wsdl:part name="afterId" type="inx:TLong"/>
+        <wsdl:part name="orderAttribute" type="xsd:int"/>
+        <wsdl:part name="orderType" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="findTrackingPermissionLogResponse">
+        <wsdl:part name="findTrackingPermissionLogReturn" type="impl:TrackingPermissionLogRowSetData"/>
+    </wsdl:message>
+
+    <wsdl:message name="fetchTrackingPermissionLogRequest">
+        <wsdl:part name="sc" type="inx:SessionCxt"/>
+        <wsdl:part name="remoteRefId" type="xsd:string"/>
+        <wsdl:part name="index" type="xsd:int"/>
+        <wsdl:part name="direction" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="fetchTrackingPermissionLogResponse">
+        <wsdl:part name="fetchTrackingPermissionLogResponseReturn" type="impl:ArrayOfTrackingPermissionLogDTO"/>
+    </wsdl:message>
+
     <wsdl:portType name="TrackingPermissionService">
 
         <wsdl:operation name="get" parameterOrder="sc id">
@@ -295,6 +358,20 @@
             <wsdl:input name="revokeTrackingPermissionRequest" message="impl:revokeTrackingPermissionRequest"/>
             <wsdl:output name="revokeTrackingPermissionResponse"
                          message="impl:revokeTrackingPermissionResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="findTrackingPermissionLog"
+                        parameterOrder="sc recipientIds listIds startDate endDate afterId orderAttribute orderType">
+            <wsdl:input name="findTrackingPermissionLogRequest" message="impl:findTrackingPermissionLogRequest"/>
+            <wsdl:output name="findTrackingPermissionLogResponse" message="impl:findTrackingPermissionLogResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="fetchTrackingPermissionLog"
+                        parameterOrder="sc remoteRefId index direction">
+            <wsdl:input name="fetchTrackingPermissionLogRequest"
+                        message="impl:fetchTrackingPermissionLogRequest"/>
+            <wsdl:output name="fetchTrackingPermissionLogResponse"
+                         message="impl:fetchTrackingPermissionLogResponse"/>
         </wsdl:operation>
 
     </wsdl:portType>
@@ -403,6 +480,39 @@
                                namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
             </wsdl:output>
 
+        </wsdl:operation>
+
+        <wsdl:operation name="findTrackingPermissionLog">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="findTrackingPermissionLogRequest">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="findTrackingPermissionLogResponse">
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://trackingpermission.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
+
+        </wsdl:operation>
+
+        <wsdl:operation name="fetchTrackingPermissionLog">
+
+            <wsdlsoap:operation soapAction=""/>
+
+            <wsdl:input name="fetchTrackingPermissionLogRequest">
+                <wsdlsoap:body use="encoded"
+                               encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://dataaccess4.apiservice.xpro.inxmail.com"/>
+            </wsdl:input>
+
+            <wsdl:output name="fetchTrackingPermissionLogResponse">
+                <wsdlsoap:body use="encoded"
+                               encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://dataaccess4.apiservice.xpro.inxmail.com"/>
+            </wsdl:output>
         </wsdl:operation>
 
     </wsdl:binding>
