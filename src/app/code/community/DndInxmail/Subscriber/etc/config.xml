@@ -13,7 +13,7 @@
 <config>
     <modules>
         <DndInxmail_Subscriber>
-            <version>3.3.0.0</version>
+            <version>4.0.0.1</version>
         </DndInxmail_Subscriber>
     </modules>
     <global>
@@ -33,6 +33,9 @@
                 <setup>
                     <module>DndInxmail_Subscriber</module>
                     <class>Mage_Customer_Model_Resource_Setup</class>
+                    <connection>
+                        <use>core_setup</use>
+                    </connection>
                 </setup>
             </dndinxmail_subscriber_setup>
         </resources>

@@ -5,6 +5,8 @@
 /**
  * The <i>Inx_Api_BOManager</i> interface defines the basic requirements of a business object manager, including retrieval
  * and removal of the managed objects.
+ * 
+ * @see Inx_Api_ROBOManager
  * @package Inxmail
  * @version $Revision: 9497 $ $Date: 2007-12-19 17:03:25 +0200 (Tr, 19 Grd 2007) $ $Author: aurimas $
  */

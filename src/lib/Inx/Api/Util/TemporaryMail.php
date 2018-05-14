@@ -19,7 +19,7 @@
  * The sender address, on the other hand, does not have to be specified as long as it is configured in the list 
  * that was passed on the creation of the temporary mailing.
  * <p>
- * <strong>Note:</strong> While it is discouraged to explicitly set the recipient address of a standard
+ * <b>Note:</b> While it is discouraged to explicitly set the recipient address of a standard
  * <i>Inx_Api_Mailing_Mailing</i>, this is a technical requirement for the <i>TemporaryMail</i>. 
  * You won't be able to send a temporary mail to a recipient not registered in Inxmail without specifying the sender 
  * address, though the send method will return <i>true</i>. 

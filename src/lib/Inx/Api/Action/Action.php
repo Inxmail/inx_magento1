@@ -19,6 +19,9 @@
  * <li><i>Inx_Api_Action_SetValueCommand</i> - Set an attribute value of the recipient.
  * <li><i>Inx_Api_Action_SubscriptionCommand</i> - Subscribe the recipient.
  * <li><i>Inx_Api_Action_UnsubscriptionCommand</i> - Unsubscribe the recipient.
+ * <li><i>Inx_Api_Action_GrantTrackingPermissionCommand</i> - Grant tracking permission.
+ * <li><i>Inx_Api_Action_RevokeTrackingPermissionCommand</i> - Revoke tracking permission.
+ * <li><i>Inx_Api_Action_TransferTrackingPermissionCommand</i> - Transfer tracking permission.
  * </ul>
  * These commands are created by the <i>Inx_Api_Action_CommandFactory</i> which can be obtained from the 
  * <i>Inx_Api_Action_ActionManager</i>.
@@ -43,6 +46,8 @@
  * <li>EVENT_TYPE_SINGLE_MAIL_SENT - A single mail was sent.
  * <li>EVENT_TYPE_SUBSCRIBE - A recipient was successfully subscribed.
  * <li>EVENT_TYPE_UNSUBSCRIBE - A recipient was successfully unsubscribed.
+ * <li>EVENT_TYPE_TRACKING_PERMISSION_GRANTED - A recipient granted tracking permission.
+ * <li>EVENT_TYPE_TRACKING_PERMISSION_DENIED - A recipient revoked tracking permission.
  * </ul>
  * <p>
  * Note: The usage of <i>Inx_Api_Action_Action</i>s requires the api user right: <i>Inx_Api_UserRights::ACTION_FEATURE_USE</i>
@@ -60,28 +65,33 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
 {
     /**
      * Constant for the name attribute. 
-     * Used by the <code>UpdateException</code> to indicate the error source.
+     * Used by the <i>Inx_Api_UpdateException</i> to indicate the error source.
 	 */
     const ATTRIBUTE_NAME = 0;
 
     /**
      * Constant for the event type attribute. 
-     * Used by the <code>UpdateException</code> to indicate the error source.
+     * Used by the <i>Inx_Api_UpdateException</i> to indicate the error source.
      */
     const ATTRIBUTE_EVENT_TYPE = 1;
     
     /**
      * Constant for the list context attribute. 
-     * Used by the <code>UpdateException</code> to indicate the error source.
+     * Used by the <i>Inx_Api_UpdateException</i> to indicate the error source.
 	 */
     const ATTRIBUTE_LIST_CONTEXT_ID = 2;
     
     /**
      * Constant for the commands attribute. 
-     * Used by the <code>UpdateException</code> to indicate the error source.
+     * Used by the <i>Inx_Api_UpdateException</i> to indicate the error source.
 	 */
     const ATTRIBUTE_COMMANDS = 3;
  
+ 	/**
+	 * Constant for the executeAlways attribute. Used by the <i>Inx_Api_UpdateException</i> to indicate the error source.
+	 *	 	 
+	 */
+	const ATTRIBUTE_EXECUTE_ALWAYS = 4;
     
 	/** Constant for event type: CLICK - A link in an email is clicked. */
 	const EVENT_TYPE_CLICK = 1;
@@ -118,6 +128,12 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
 	
 	/** Constant for event type: UNSUBSCRIBE - A recipient was successfully unsubscribed. */
 	const EVENT_TYPE_UNSUBSCRIBE = 41;
+
+	/** Constant for event type: TRACKING_PERMISSION_GRANTED - A recipient granted tracking permission. */
+	const EVENT_TYPE_TRACKING_PERMISSION_GRANTED = 50;
+
+	/** Constant for event type: TRACKING_PERMISSION_DENIED - A recipient revoked tracking permission. */
+	const EVENT_TYPE_TRACKING_PERMISSION_DENIED = 51;
     
     
     /**
@@ -129,7 +145,10 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
     
     
     /**
-	 * Sets the name of this action.
+	 * Sets the name of this action.<br>
+	 * Please note, that as of Inxmail Professional version 4.4.1, creating an action with the same name as an existing 
+	 * action will cause an <i>Inx_Api_UpdateException</i> to be thrown on commit. Updating an existing action to a new 
+	 * name that is already in use also triggers an <i>Inx_Api_UpdateException</i>.
 	 * 
 	 * @param string $sName	the unique name of this action.
 	 */
@@ -146,7 +165,7 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
 	
     /**
      *  Returns the event type of this action. 
-     *  Can be one of the event type constants defined in the <code>Action</code> interface.
+     *  Can be one of the event type constants defined in the <i>Action</i> interface.
      * 
      * @return	int the event type.
      */
@@ -155,7 +174,7 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
     
     /**
      * Sets the event type of this action. 
-     * Can be one of the event type constants defined in the <code>Action</code> interface.
+     * Can be one of the event type constants defined in the <i>Action</i> interface.
      * 
      * @param int $iEventType	the event type.
      */
@@ -176,5 +195,22 @@ interface Inx_Api_Action_Action extends Inx_Api_BusinessObject
      * @param array $aCmds the commands.
      */
     public function updateCommands( $aCmds );
+    
+    /**
+     * Returns whether the commands will always be executed, even if the recipient hasn't given permission to track his
+	 * activities.	 
+	 * @return bool the execute always flag
+	 */
+    public function isExecuteAlways();
+
+	/**
+	 * Sets whether the commands will always be executed, even if the recipient hasn't given permission to track
+	 * his activities.<br/>
+	 * Please note that it depends on the nature and intent of the commands whether this permission is applicable and
+	 * necessary.
+	 * @param bool $bExecuteAlways the execute always flag 
+	 */	
+	public function updateExecuteAlways( $bExecuteAlways );
+	
 
 }

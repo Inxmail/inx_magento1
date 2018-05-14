@@ -23,12 +23,12 @@ class Inx_Apiimpl_Recipient_ContextAttribute_Datetime extends Inx_Apiimpl_Recipi
 		return  $oRecipientData->datetimeData[$this->_iTypeAttrIndex]->value;
 	}
 
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$this->updateDatetime( $oRecipientData, $aChangedAttrs, $value );
 	}
 
-	public function updateDatetime( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateDatetime( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$oRecipientData->datetimeData[$this->_iTypeAttrIndex] = new stdClass;
 	    $oRecipientData->datetimeData[$this->_iTypeAttrIndex]->value = $value;

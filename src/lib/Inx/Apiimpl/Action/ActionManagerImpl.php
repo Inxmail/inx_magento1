@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <code>Inx_Apiimpl_Action_ActionManagerImpl</code>
+ * <i>Inx_Apiimpl_Action_ActionManagerImpl</i>
  * 
  * @since API 1.2.0
  * @version $Revision: 9739 $ $Date: 2008-01-23 14:44:04 +0200 (Tr, 23 Sau 2008) $ $Author: aurimas $
@@ -27,7 +27,7 @@ class Inx_Apiimpl_Action_ActionManagerImpl implements Inx_Api_Action_ActionManag
 	public function __construct( Inx_Apiimpl_SessionContext $sc )
 	{
 		$this->_oSessionContext = $sc;
-		$this->_oService = $sc->getService( Inx_Apiimpl_SessionContext::ACTION_SERVICE );
+		$this->_oService = $sc->getService( Inx_Apiimpl_SessionContext::ACTION2_SERVICE );
 	}
 
 	

@@ -28,7 +28,7 @@
  * Using a non unique attribute as key will return any of the matching recipients (undetermined). 
  * Also, the creation of recipients using a different key attribute is not possible.
  * <p>
- * Note: Resubscription is not supported by <code>BatchChannel</code>. 
+ * Note: Resubscription is not supported by <i>BatchChannel</i>.
  * If you wish to resubscribe a recipient, use <i>In_Api_Recipient_UnsubscriptionRecipientRowSet::resubscribe($sDate)</i> instead.
  * <p>
  * The following snippet shows how to add two new addresses and change their "Firstname" and "Lastname" attributes. 
@@ -56,7 +56,7 @@
  * If the parameter is set to <i>false</i> the <i>BatchChannel</i> will attempt to create the recipient. 
  * If the recipient is not already existing it will be created and selected. 
  * However, if the recipient exists already, the result will be <i>RESULT_FAILURE_DUPLICATE_KEY</i> and the recipient will 
- * <strong>not</strong> be selected. 
+ * <b>not</b> be selected.
  * Therefore, all succeeding operations on this recipient will not be committed (<i>RESULT_NOT_COMMITTED</i>).
  * <p>
  * The selection and removal of recipients works very much the same, except that <i>removeRecipient($sKeyValue)</i> will 
@@ -72,7 +72,7 @@
  * Each command to the BatchChannel results in a value in the returned integer array. 
  * By scanning the array, you can find out which of the commands have been executed, and which have not.
  * <p>
- * The values produced by <code>removeRecipient()</code>:
+ * The values produced by <i>removeRecipient()</i>:
  * <ul>
  * <LI>The recipientId is returned if the recipient is removed
  * <LI><i>RESULT_FAILURE_KEY_NOT_FOUND</i> is returned if the recipient doesn't exists
@@ -182,7 +182,7 @@ interface Inx_Api_Recipient_BatchChannel
 	 * <li>Recipient does not exist, parameter is <i>true</i>: The recipient will be created and selected.
 	 * <li>Recipient already exists, parameter is <i>true</i>: The recipient will not be created but selected.
 	 * </ul>
-	 * <strong>Note:</strong> If a key different from the email address is used by this <i>Inx_Api_Recipient_BatchChannel</i> 
+	 * <b>Note:</b> If a key different from the email address is used by this <i>Inx_Api_Recipient_BatchChannel</i>
 	 * this method will not create any recipient. 
 	 * To use this method you must use the email address as recipient key.
 	 * <p>
@@ -220,7 +220,7 @@ interface Inx_Api_Recipient_BatchChannel
 	 * Unsubscribes the current recipient from the specified list. 
 	 * Requires a previously invoked select or create command and the recipient must be a member of the list.
 	 * 
-	 * @param lc the list from which the recipient should be unsubscribed.
+	 * @param Inx_Api_List_ListContext lc the list from which the recipient should be unsubscribed.
 	 * @since API 1.6.0
 	 */
 	public function unsubscribe( Inx_Api_List_ListContext $lc );
@@ -231,12 +231,25 @@ interface Inx_Api_Recipient_BatchChannel
 	 * Use the <i>write()</i> method to overwrite the unsubscription of the recipient or use
 	 * <i>Inx_Api_Recipient_UnsubscriptionRecipientRowSet::resubscribe($sDate)</i> instead.
 	 * 
-	 * @param lc the list to which the recipient should be subscribed.
-	 * @param subscriptionDate the subscription date. May <strong>not</strong> be <i>null</i>.
+	 * @param Inx_Api_List_ListContext lc the list to which the recipient should be subscribed.
+	 * @param subscriptionDate the subscription date. May <b>not</b> be <i>null</i>.
 	 * @since API 1.6.0
 	 */
 	public function subscribeIfNotUnsubscribed( Inx_Api_List_ListContext $lc, $subscriptionDate );
-	
+
+
+	/**
+	 * Add tracking permission of a recipient for the given list. She/He must be subscribed to the list.
+	 *
+	 * @param Inx_Api_List_ListContext $lc the list for which the tracking permission is given
+	 * @param Inx_Api_TrackingPermission_TrackingPermissionState $oState the state of the tracking permission.
+	 * @throws Inx_Api_Recipient_TrackingPermissionNotFetchedException if the underlying 
+         * <i>Inx_Api_Recipient_RecipientContext</i> does not contain tracking permission attributes, see
+	 * <i>Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()</i>.
+         * 
+	 * @since API 1.15.0
+	 */
+	public function writeTrackingPermission( Inx_Api_List_ListContext $lc, Inx_Api_TrackingPermission_TrackingPermissionState $oState );
 	
 	
 	/**

@@ -5,7 +5,7 @@
  */
 
 /**
- * The <code>TriggerMailingExceptionType</code> defines the type or category of an exception that occurred while
+ * The <i>TriggerMailingExceptionType</i> defines the type or category of an exception that occurred while
  * processing a request.
  * 
  * @author chge, 02.08.2012
@@ -101,10 +101,10 @@ final class Inx_Api_TriggerMail_TriggerMailingExceptionType
 
 
 	/**
-	 * Returns the ID of the <code>TriggerMailingExceptionType</code>. The ID is used for transmission purposes and
+	 * Returns the ID of the <i>TriggerMailingExceptionType</i>. The ID is used for transmission purposes and
 	 * should not be used inside client code.
 	 * 
-	 * @return the ID of the <code>TriggerMailingExceptionType</code>.
+	 * @return the ID of the <i>TriggerMailingExceptionType</i>.
 	 */
 	public function getId()
 	{
@@ -113,11 +113,11 @@ final class Inx_Api_TriggerMail_TriggerMailingExceptionType
 
 
 	/**
-	 * Returns the <code>TriggerMailingExceptionType</code> corresponding to the given ID. If the ID is unknown, the
+	 * Returns the <i>TriggerMailingExceptionType</i> corresponding to the given ID. If the ID is unknown, the
 	 * UNKNOWN type will be used. The ID is used for transmission purposes and should not be used inside client code.
 	 * 
-	 * @param id the ID of the <code>TriggerMailingExceptionType</code> to retrieve.
-	 * @return the <code>TriggerState</code> TriggerMailingExceptionType to the given ID.
+	 * @param id the ID of the <i>TriggerMailingExceptionType</i> to retrieve.
+	 * @return the <i>TriggerState</i> TriggerMailingExceptionType to the given ID.
 	 */
 	public static function byId( $iId )
 	{

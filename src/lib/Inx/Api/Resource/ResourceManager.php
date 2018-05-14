@@ -73,7 +73,7 @@ interface Inx_Api_Resource_ResourceManager extends Inx_Api_BOManager
      * Uploads a file resource to Inxmail.
      * The sharing type depends on the type of the $mOwner parameter:
      * <ol>
-     * <li>If you pass a <code>null</code> value, the resource will be shared with all other mailings in the system (i.e.
+     * <li>If you pass a <i>null</i> value, the resource will be shared with all other mailings in the system (i.e.
 	 * sharingType is <i>Inx_Api_Resource_Resource::SHARING_TYPE_SYSTEM</i>).
 	 * <li>If you pass an instance of <i>Inx_Api_Mailing_Mailing</i>, the resource will not be shared with other mailings 
 	 * (i.e. sharingType is <i>Inx_Api_Resource_Resource::SHARING_TYPE_MAILING</i>).

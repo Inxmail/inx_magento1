@@ -34,8 +34,8 @@ class Inx_Apiimpl_Recipient_BatchChannelImpl implements Inx_Api_Recipient_BatchC
 		
 	const BATCH_CHANNEL_CMD_UNSUBSCRIBE = 
 		Inx_Apiimpl_Recipient_Constants::BATCH_CHANNEL_CMD_UNSUBSCRIBE;
-	
-		
+
+
 	protected $_oRecipientManager;
 	
 	protected $_oService;
@@ -154,6 +154,27 @@ class Inx_Apiimpl_Recipient_BatchChannelImpl implements Inx_Api_Recipient_BatchC
 		$this->add( $this->_oRecipientManager->getSubscriptionAttribute( $lc ), $subscriptionDate );
 	}
 
+	public function writeTrackingPermission( Inx_Api_List_ListContext $lc, Inx_Api_TrackingPermission_TrackingPermissionState $oState )
+	{
+                if(!$this->_oRecipientManager->includesTrackingPermissions())
+                {
+                    throw new Inx_Api_Recipient_TrackingPermissionNotFetchedException();
+                }
+            
+		if( is_null($lc) )
+	        throw new Inx_Api_IllegalArgumentException( "ListContext mustn't be null" );
+	    if( $oState->getId() === Inx_Api_TrackingPermission_TrackingPermissionState::UNKNOWN()->getId() )
+	        throw new Inx_Api_IllegalArgumentException("permission state must be 'GRANTED' or 'DENIED'");
+
+        $oAttr = null;
+        try {
+            $oAttr = $this->_oRecipientManager->getTrackingPermissionAttribute( $lc );
+        } catch ( Inx_Api_Recipient_AttributeNotFoundException $e ) {
+            throw new Inx_Api_IllegalArgumentException( "List not found" );
+        }
+        $this->write( $oAttr, $oState->getId() );
+	}
+
 
 	public function unsubscribe( Inx_Api_List_ListContext $lc )
 	{
@@ -163,7 +184,7 @@ class Inx_Apiimpl_Recipient_BatchChannelImpl implements Inx_Api_Recipient_BatchC
 	        throw new Inx_Api_IllegalStateException( 
 	        	"no recipient is selected, first call selectRecipient() or createRecipient()" );
 		$this->_aCmds[] = self::BATCH_CHANNEL_CMD_UNSUBSCRIBE;
-		$this->add( $this->_oRecipientManager->getSubscriptionAttribute( $lc ), date("c") );
+		$this->add( $this->_oRecipientManager->getSubscriptionAttribute( $lc ), date('c') );
 	}
 	
 

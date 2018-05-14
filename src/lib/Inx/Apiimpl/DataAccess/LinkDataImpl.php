@@ -16,7 +16,7 @@ class Inx_Apiimpl_DataAccess_LinkDataImpl implements Inx_Api_DataAccess_LinkData
 	public function __construct( Inx_Apiimpl_SessionContext $oSC, $blNewBehavior )
 	{
 		$this->_oSessionContext = $oSC;
-		$this->_oService = $oSC->getService( Inx_Apiimpl_SessionContext::DATAACCESS_SERVICE );
+		$this->_oService = $oSC->getService( Inx_Apiimpl_SessionContext::DATAACCESS4_SERVICE );
 		$this->_blNewBehavior = $blNewBehavior;
 	}
 
@@ -43,19 +43,22 @@ class Inx_Apiimpl_DataAccess_LinkDataImpl implements Inx_Api_DataAccess_LinkData
 		}
 	}
 
-	public function selectByMailing( $iMailingId )
+	public function selectByMailing( $iMailingId, $bPermanentLinksOnly = false )
 	{
-	    if (!is_int($iMailingId)) {
+		if (!is_int($iMailingId)) {
 		    throw new Inx_Api_IllegalArgumentException('Integer parameter $iMailingId expected, got '.gettype($iMailingId));
 		}
-	    try
+		if (!is_bool($bPermanentLinksOnly)) {
+		    throw new Inx_Api_IllegalArgumentException('Boolean parameter $bPermanentLinksOnly expected, got '.gettype($bPermanentLinksOnly));
+		}
+		try
 		{
 			$oResult = null;
 			
-			if ($this->_blNewBehavior)
-				$oResult = $this->_oService->selectNewLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
+			if ($bPermanentLinksOnly)
+				$oResult = $this->selectPermanentLinks( $iMailingId);
 			else
-				$oResult = $this->_oService->selectLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
+				$oResult = $this->selectNonPermanentLinks( $iMailingId);
 			return new Inx_Apiimpl_DataAccess_LinkDataRowSetImpl($this->_oSessionContext,$oResult);
 		}
 		catch( Inx_Api_RemoteException $e )
@@ -63,6 +66,22 @@ class Inx_Apiimpl_DataAccess_LinkDataImpl implements Inx_Api_DataAccess_LinkData
 			$this->_oSessionContext->notify( $e );
 			return null;
 		}
+	}
+	
+	private function selectNonPermanentLinks( $iMailingId )
+	{
+		if ($this->_blNewBehavior)
+			return $this->_oService->selectNewLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
+		else
+			return $this->_oService->selectLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
+	}
+
+	private function selectPermanentLinks( $iMailingId )
+	{
+		if ($this->_blNewBehavior)
+			return $this->_oService->selectNewPermanentLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
+		else
+			return $this->_oService->selectPermanentLinkByMailingRequest( $this->_oSessionContext->createCxt(), $iMailingId);
 	}
 
 	public function selectByRecipient( $iRecipient )
@@ -87,12 +106,18 @@ class Inx_Apiimpl_DataAccess_LinkDataImpl implements Inx_Api_DataAccess_LinkData
 		}
 	}
 
-
-	public function selectByLinkName( $linkName )
+	public function selectByLinkName( $linkName, $bPermanentLinksOnly = false )
 	{
-	    try
+		if (!is_bool($bPermanentLinksOnly)) {
+		    throw new Inx_Api_IllegalArgumentException('Boolean parameter $bPermanentLinksOnly expected, got '.gettype($bPermanentLinksOnly));
+		}
+		try
 		{
-			$oResult = $this->_oService->selectLinkByLinkNameRequest($this->_oSessionContext->createCxt(), $linkName);
+			$oResult = null;
+			if ($bPermanentLinksOnly)
+				$oResult = $this->_oService->selectPermanentLinkByLinkNameRequest($this->_oSessionContext->createCxt(), $linkName);
+			else
+				$oResult = $this->_oService->selectLinkByLinkNameRequest($this->_oSessionContext->createCxt(), $linkName);
 			$oDesc = $oResult->excDesc;	
 			if( !empty($oDesc) )
 				throw new Inx_Api_IllegalArgumentException('Wrong parameter, can not null or zero string');
@@ -104,4 +129,8 @@ class Inx_Apiimpl_DataAccess_LinkDataImpl implements Inx_Api_DataAccess_LinkData
 			return null;
 		}
 	}
+        
+        public function createQuery() {                
+            return new Inx_Apiimpl_DataAccess_LinkDataQueryImpl( $this->_oSessionContext );
+        }
 }

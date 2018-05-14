@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The implementation of <code>RecipientContext</code>
+ * The implementation of <i>RecipientContext</i>
  * 
  * <P>Copyright (c) 2005 Inxmail GmbH. All Rights Reserved.
  * @version $Revision: 4690 $ $Date: 2006-09-20 07:24:45 +0000 (Mi, 20 Sep 2006) $ $Author: bgn $
@@ -42,9 +42,11 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 
 	/** Count of updateable attributes (without id attribute) */
 	protected $_iUpdAttrCount;
+        
+        private $_blIncludesTrackingPermissions;
 	
     
-	public function __construct( $oSessionContext, $oRecipientContextData )
+	public function __construct( $oSessionContext, $oRecipientContextData, $blIncludesTrackingPermissions )
 	{
 		parent::__construct( $oSessionContext, $oRecipientContextData->remoteRefId);
 		$this->_oService = $oSessionContext->getService( Inx_Apiimpl_SessionContext::RECIPIENT_SERVICE );
@@ -58,11 +60,12 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 		$this->_iDateAttrCount = $oRecipientContextData->dateAttrCount;
 		$this->_iTimeAttrCount = $oRecipientContextData->timeAttrCount;
 		$this->_iDatetimeAttrCount = $oRecipientContextData->datetimeAttrCount;
+                $this->_blIncludesTrackingPermissions = $blIncludesTrackingPermissions;
 		
-		$this->_updAttrCount = $this->_iStringAttrCount + $this->_iBooleanAttrCount + $this->_iIntegerAttrCount + $this->_iDoubleAttrCount
+		$this->_iUpdAttrCount = $this->_iStringAttrCount + $this->_iBooleanAttrCount + $this->_iIntegerAttrCount + $this->_iDoubleAttrCount
 			+ $this->_iDateAttrCount + $this->_iTimeAttrCount + $this->_iDatetimeAttrCount;
 		
-		$attrCount = $this->_updAttrCount + 1;
+		$attrCount = $this->_iUpdAttrCount + 1;
 
 		$this->_aAttributes = array_fill(0, $attrCount, null);
 		$this->_aAttrNameMap = array_fill(0, $attrCount * 2, null);
@@ -172,6 +175,36 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 			return null;
 		}
 	}
+        
+        
+        public function findByIds( $aRecipientIds ) 
+        {
+                try
+                {
+                    $data = $this->_oService->findByIds( $this->_sessionId(), $this->_refId(), $aRecipientIds );
+                    return new Inx_Apiimpl_Recipient_RecipientRowSetImpl( $this, $data );
+                }
+                catch( Inx_Api_RemoteException $x )
+                {
+                    $this->_notify( $x );
+                    return null;
+                }        
+        }
+        
+        
+        public function findBySending($iSendingId) 
+        {
+            try
+            {
+                $data = $this->_oService->findBySending( $this->_sessionId(), $this->_refId(), $iSendingId );
+                return new Inx_Apiimpl_Recipient_RecipientRowSetImpl( $this, $data );
+            }
+            catch( Inx_Api_RemoteException $x )
+            {
+                $this->_notify( $x );
+                return null;
+            } 
+        }
 	
 	
 	public function selectUnsubscriber(Inx_Api_List_ListContext $oList, Inx_Api_Filter_Filter $oFilter=null, $sAdditionalFilter=null,
@@ -203,7 +236,7 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 
 	
     /**
-     * @see Inx_Api_Recipient_RecipientContext#setAttributeValue(com.inxmail.xpro.api.recipient.Attribute, java.lang.Object)
+     * @see Inx_Api_Recipient_RecipientContext#setAttributeValue(Inx_Api_Recipient_Attribute, stdClass)
      * @return boolean
      */
     public function setAttributeValue( Inx_Api_Recipient_Attribute $attr, stdClass $newValue )
@@ -268,7 +301,7 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 	}
 	
 	/**
-	 * @see Inx_Api_Recipient_RecipientContext#createBatchChannel(com.inxmail.xpro.api.recipient.Attribute)
+	 * @see Inx_Api_Recipient_RecipientContext#createBatchChannel(Inx_Api_Recipient_Attribute)
 	 * @return Inx_Api_Recipient_BatchChannel
 	 */	
 	public function createBatchChannel( Inx_Api_Recipient_Attribute $oSelectAttribute = null )
@@ -474,7 +507,7 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 	}
 	
 	/**
-	 * @see Inx_Api_Recipient_RecipientMetaData#getUserAttribute(java.lang.String)
+	 * @see Inx_Api_Recipient_RecipientMetaData#getUserAttribute(string)
 	 * @return Attribute
 	 * @throws Inx_Api_Recipient_AttributeNotFoundException
 	 */
@@ -491,7 +524,7 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 
 
 	/**
-	 * @see Inx_Api_Recipient_RecipientMetaData#getSubscriptionAttribute(com.inxmail.xpro.api.list.ListContext)
+	 * @see Inx_Api_Recipient_RecipientMetaData#getSubscriptionAttribute(Inx_Api_List_ListContext)
 	 * @return Attribute
 	 * @throws Inx_Api_Recipient_AttributeNotFoundException
 	 */
@@ -502,6 +535,26 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 			return $this->_aAttrNameMap[$key];
 		}
 		throw new Inx_Api_Recipient_AttributeNotFoundException( "suscription attribute from list: " . $oList->getName() );
+	}
+
+
+	/**
+	 * @see Inx_Api_Recipient_RecipientMetaData#getTrackingPermissionAttribute(Inx_Api_List_ListContext)
+	 * @return Attribute
+	 * @throws Inx_Api_Recipient_AttributeNotFoundException
+	 */
+	public function getTrackingPermissionAttribute( Inx_Api_List_ListContext $oList )
+	{
+                if(!$this->_blIncludesTrackingPermissions)
+                {
+                    throw new Inx_Api_Recipient_TrackingPermissionNotFetchedException();
+                }
+            
+		$key = "trackingpermission_" . $oList->getId();
+		if (array_key_exists($key, $this->_aAttrNameMap) && $this->_aAttrNameMap[$key]!=null) {
+			return $this->_aAttrNameMap[$key];
+		}
+		throw new Inx_Api_Recipient_AttributeNotFoundException( "permission attribute from list: " . $oList->getName() );
 	}
 
 
@@ -540,6 +593,12 @@ class Inx_Apiimpl_Recipient_RecipientContextImpl extends Inx_Apiimpl_RemoteObjec
 	{
 		return new Inx_Apiimpl_Recipient_RecipientContextImpl_AttributeIterator($this->_aAttributes);
 	}
+        
+        
+        public function includesTrackingPermissions()
+        {
+            return $this->_blIncludesTrackingPermissions;
+        }
 
 	
 	protected function initAllAttributes( stdClass $oRCData )

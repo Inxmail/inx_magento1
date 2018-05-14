@@ -353,6 +353,14 @@
 
    </wsdl:message>
 
+   <wsdl:message name="fetchRecipientContextWithTrackingPermissionRequest">
+
+       <wsdl:part name="sid" type="xsd:string"/>
+
+       <wsdl:part name="includeTrackingPermissions" type="xsd:boolean"/>
+
+   </wsdl:message>
+
    <wsdl:message name="deleteRecipientsRequest">
 
       <wsdl:part name="sid" type="xsd:string"/>
@@ -378,6 +386,12 @@
    <wsdl:message name="fetchRecipientContextResponse">
 
       <wsdl:part name="fetchRecipientContextReturn" type="impl:RecipientContextData"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="fetchRecipientContextWithTrackingPermissionResponse">
+
+       <wsdl:part name="fetchRecipientContextWithTrackingPermissionReturn" type="impl:RecipientContextData"/>
 
    </wsdl:message>
 
@@ -535,6 +549,38 @@
    
    </wsdl:message>
    
+   <wsdl:message name="findByIdsRequest">
+   
+   		<wsdl:part name="sid" type ="xsd:string"/>
+   		
+   		<wsdl:part name="remoteRefId" type="xsd:string"/>
+   		
+   		<wsdl:part name="recipientIds" type="inx:ArrayOf_xsd_int"/>
+   		
+   </wsdl:message>
+   
+   <wsdl:message name="findByIdsResponse">
+   
+   		<wsdl:part name="findByIdsReturn" type="impl:RowSetData"/>
+   
+   </wsdl:message>
+   
+   <wsdl:message name="findBySendingRequest">
+   
+   		<wsdl:part name="sid" type="xsd:string"/>
+   		
+   		<wsdl:part name="remoteRefId" type="xsd:string"/>
+   		
+   		<wsdl:part name="sendingId" type="xsd:long"/>
+   
+   </wsdl:message>
+   
+   <wsdl:message name="findBySendingResponse">
+   
+   		<wsdl:part name="findBySendingReturn" type="impl:RowSetData"/>
+   
+   </wsdl:message>
+   
    <wsdl:message name="createRowSetRequest">
 
       <wsdl:part name="sid" type="xsd:string"/>
@@ -640,6 +686,22 @@
 
       </wsdl:operation>
       
+      <wsdl:operation name="findByIds" parameterOrder="sid remoteRefId recipientIds">
+      
+      		<wsdl:input name="findByIdsRequest" message="impl:findByIdsRequest"/>
+      		
+      		<wsdl:output name="findByIdsResponse" message="impl:findByIdsResponse"/>
+      
+      </wsdl:operation>
+      
+      <wsdl:operation name="findBySending" parameterOrder="sid remoteRefId sendingId">
+      
+      		<wsdl:input name="findBySendingRequest" message="impl:findBySendingRequest"/>
+      		
+      		<wsdl:output name="findBySendingResponse" message="impl:findBySendingResponse"/>
+      
+      </wsdl:operation>
+      
       <wsdl:operation name="createRowSet" parameterOrder="sid remoteRefId">
       
          <wsdl:input name="createRowSetRequest" message="impl:createRowSetRequest"/>
@@ -685,6 +747,14 @@
          <wsdl:input name="fetchRecipientContextRequest" message="impl:fetchRecipientContextRequest"/>
 
          <wsdl:output name="fetchRecipientContextResponse" message="impl:fetchRecipientContextResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="fetchRecipientContextWithTrackingPermission" parameterOrder="sid includeTrackingPermissions">
+
+          <wsdl:input name="fetchRecipientContextWithTrackingPermissionRequest" message="impl:fetchRecipientContextWithTrackingPermissionRequest"/>
+
+          <wsdl:output name="fetchRecipientContextWithTrackingPermissionResponse" message="impl:fetchRecipientContextWithTrackingPermissionResponse"/>
 
       </wsdl:operation>
 
@@ -850,6 +920,42 @@
 
       </wsdl:operation>
       
+      <wsdl:operation name="findByIds">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="findByIdsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="findByIdsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>     
+      
+      <wsdl:operation name="findBySending">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="findBySendingRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="findBySendingResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>    
+      
       <wsdl:operation name="findAllByKeys">
 
          <wsdlsoap:operation soapAction=""/>
@@ -973,6 +1079,24 @@
             <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
 
          </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="fetchRecipientContextWithTrackingPermission">
+
+          <wsdlsoap:operation soapAction=""/>
+
+          <wsdl:input name="fetchRecipientContextWithTrackingPermissionRequest">
+
+              <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+          </wsdl:input>
+
+          <wsdl:output name="fetchRecipientContextWithTrackingPermissionResponse">
+
+              <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://recipient.apiservice.xpro.inxmail.com"/>
+
+          </wsdl:output>
 
       </wsdl:operation>
 

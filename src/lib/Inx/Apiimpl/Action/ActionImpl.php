@@ -1,6 +1,6 @@
 <?php
 /**
- * <code>Inx_Apiimpl_Action_ActionImpl</code>
+ * <i>Inx_Apiimpl_Action_ActionImpl</i>
  * 
  * @since API 1.2.0
  * @version $Revision: 9739 $ $Date: 2008-01-23 14:44:04 +0200 (Tr, 23 Sau 2008) $ $Author: aurimas $
@@ -23,6 +23,10 @@ class Inx_Apiimpl_Action_ActionImpl implements Inx_Api_Action_Action
     {
 	    $this->_oSessionContext = $sc;
 	    $this->_oActionData = $oActionData;
+	    if(!isset($this->_oActionData->executeAlways))
+	    {
+	        $this->_oActionData->executeAlways = false;
+	    }
 	}
     
 	/**
@@ -111,6 +115,23 @@ class Inx_Apiimpl_Action_ActionImpl implements Inx_Api_Action_Action
     	$this->_writeAccess( Inx_Api_Action_Action::ATTRIBUTE_COMMANDS );
 	    $this->_oActionData->cmds = Inx_Apiimpl_Action_CommandImpl::convertCmdArr( $aCmds ) ;
     }
+    
+    
+    
+	public function isExecuteAlways()
+	{
+		return $this->_oActionData->executeAlways;
+	}
+
+
+	
+	public function updateExecuteAlways( $bExecuteAlways )
+	{
+		$this->_writeAccess( Inx_Api_Action_Action::ATTRIBUTE_EXECUTE_ALWAYS );
+		$this->_oActionData->executeAlways=$bExecuteAlways;
+	}
+    
+    
 
 
 	/**
@@ -119,23 +140,29 @@ class Inx_Apiimpl_Action_ActionImpl implements Inx_Api_Action_Action
 	 */
 	public function commitUpdate() 
 	{
-		try
+            try
 	    {
-			$oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION_SERVICE );
-			$ret = $oService->update( $this->_oSessionContext->createCxt(), 
+                $oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION2_SERVICE );
+                $ret = $oService->update( $this->_oSessionContext->createCxt(), 
 			        $this->_oActionData, Inx_Apiimpl_TConvert::arrToTArr( $this->_aChangedAttrs ) );
-			$this->_oActionData = $ret->value;
-	        $this->_aChangedAttrs = null;
+                
+                if($ret->excDesc != null)
+                {
+                    throw new Inx_Api_UpdateException( $ret->excDesc->msg, $ret->excDesc->type, $ret->excDesc->source );
+                }
+                
+                $this->_oActionData = $ret->value;
+                $this->_aChangedAttrs = null;
 			
-			if( $this->_oActionData === null )
-			    throw new Inx_Api_DataException( "action is deleted" );
+		if( $this->_oActionData === null )
+                    throw new Inx_Api_DataException( "action is deleted" );
 	    }
 	    catch(Inx_Apiimpl_SoapException $se) {
 	        throw new Inx_Api_UpdateException( $se->getMessage(), $se->getCode(), $se->oReturnObj->excDesc->source);
 	    }
-		catch( Inx_Api_RemoteException $x )
-		{
-			$this->_oSessionContext->notify( $x);
+            catch( Inx_Api_RemoteException $x )
+            {
+		$this->_oSessionContext->notify( $x);
 	    }
 	}
 
@@ -148,7 +175,7 @@ class Inx_Apiimpl_Action_ActionImpl implements Inx_Api_Action_Action
 	{
 		try
 	    {
-			$oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION_SERVICE );
+			$oService = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::ACTION2_SERVICE );
 		    $this->_oActionData = $oService->get( $this->_oSessionContext->createCxt(), $this->_oActionData->id );
 		    $this->_aChangedAttrs = null;
 			

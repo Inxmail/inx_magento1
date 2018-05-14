@@ -15,7 +15,7 @@
  * <li>Retrieve and update test recipient attribute values
  * </ul>
  * There are various methods for fetching test recipient data as <i>Inx_Api_Testprofiles_TestRecipientRowSet</i>. 
- * The following snippet exemplary shows how to use one specific <code>select</code> method which retrieves all 
+ * The following snippet exemplary shows how to use one specific <i>select</i> method which retrieves all
  * test recipients of the specified list whose name is equal to smith, ignoring case considerations:
  * 
  * <pre>
@@ -35,7 +35,7 @@
  * $oTestRecipientRowSet->close();
  * </pre>
  * 
- * <strong>Note:</strong> The % sign can not be used as wildcard in the LIKE statements of the <i>TestRecipientContext</i>. 
+ * <b>Note:</b> The % sign can not be used as wildcard in the LIKE statements of the <i>TestRecipientContext</i>.
  * If you use a filter which includes the % sign, the filter will only match test recipients which contain the % sign.<br>
  * For example the filter statement <i>&quot;Column(\&quot;name\&quot;) LIKE \&quot;s%\&quot;&quot;</i> will match test 
  * recipients whose name is either s% or S% but not, for example, Smith.
@@ -76,7 +76,7 @@
  * <i>Inx_Api_Testprofiles_TestRecipientRowSet::setAttributeValue($oAttribute, $oValue)</i> method. 
  * The test recipient creation example further above used this method to update the email address of the newly created test recipient.
  * <p>
- * <strong>Note:</strong> Getting this context from the session will get a snapshot of the current attributes defined.
+ * <b>Note:</b> Getting this context from the session will get a snapshot of the current attributes defined.
  * This snapshot will be used for the lifetime of the context, changes in the underlying attribute configuration won't
  * be reflected to it. 
  * This ensures that you can safely work with recipient data, even if other users possibly add or change attributes.
@@ -88,7 +88,7 @@
  * Therefore, it is not recommended to use the same test recipient context during long operations as the possibility 
  * of changes in the recipient attributes will rise.
  * <p>
- * <strong>Note:</strong> An <i>Inx_Api_Testprofiles_TestRecipientContext</i> object <strong>must</strong> be closed once it is not
+ * <b>Note:</b> An <i>Inx_Api_Testprofiles_TestRecipientContext</i> object <b>must</b> be closed once it is not
  * needed anymore to prevent memory leaks and other potentially harmful side effects.
  * 
  * @see Inx_Api_Testprofiles_TestRecipientRowSet
@@ -111,7 +111,7 @@ interface Inx_Api_Testprofiles_TestRecipientContext
 	 * For further information on the filter statement syntax, see the
 	 * <i>Inx_Api_Filter_Filter::updateStatement($sStatement)</i> documentation.
 	 * <p>
-	 * <strong>Note:</strong> The % sign can not be used as wildcard in the LIKE statements of the* <i>TestRecipientContext</i>. 
+	 * <b>Note:</b> The % sign can not be used as wildcard in the LIKE statements of the* <i>TestRecipientContext</i>.
 	 * If you use a filter which includes the % sign, the filter will only match test recipients which contain the % sign.<br>
 	 * For example the filter statement <i>'Column(&quot;name&quot;) LIKE &quot;s%&quot;'</i> will match test recipients 
 	 * whose name is either s% or S% but not, for example, Smith.
@@ -136,7 +136,7 @@ interface Inx_Api_Testprofiles_TestRecipientContext
 	
 	/**
 	 * Closes this test recipient context and releases any resources associated with it. 
-     * An <i>Inx_Api_Testprofiles_TestRecipientContext</i> object <strong>must</strong> be closed once it is not
+     * An <i>Inx_Api_Testprofiles_TestRecipientContext</i> object <b>must</b> be closed once it is not
  	 * needed anymore to prevent memory leaks and other potentially harmful side effects.
 	 */
 	public function close();

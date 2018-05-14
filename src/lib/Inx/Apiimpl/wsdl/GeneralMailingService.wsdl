@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://generalmailing.apiservice.xpro.inxmail.com"
+	xmlns:impl="http://generalmailing.apiservice.xpro.inxmail.com" xmlns:inx="http://apiservice.xpro.inxmail.com"
+	xmlns:intf="http://generalmailing.apiservice.xpro.inxmail.com"
+	xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://apiservice.xpro.inxmail.com">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+
+			<complexType name="TString">
+				<sequence>
+					<element name="value" type="xsd:string" />
+				</sequence>
+			</complexType>
+			
+			<complexType name="TDatetime">
+				<sequence>
+					<element name="value" type="xsd:dateTime" />
+				</sequence>
+			</complexType>
+			
+			<complexType name="ArrayOf_TString">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="inx:TString[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_xsd_string">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOf_xsd_int">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="xsd:int[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+			
+			<complexType name="ArrayOf_xsd_long">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType"
+							wsdl:arrayType="xsd:long[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="SessionCxt">
+				<sequence>
+					<element name="sid" type="xsd:string" />
+					<element name="relRefIds" nillable="true" type="inx:ArrayOf_xsd_string" />
+				</sequence>
+			</complexType>
+
+		</schema>
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://generalmailing.apiservice.xpro.inxmail.com">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+			
+			<complexType name="GeneralMailingData">
+				<sequence>
+					<element name="id" type="xsd:long" />
+					<element name="name" nillable="true" type="inx:TString" />
+					<element name="subject" nillable="true" type="inx:TString" />					
+					<element name="listId" type="xsd:int" />
+					<element name="type" type="xsd:int" />
+					<element name="creationDatetime" nillable="true" type="inx:TDatetime"/>
+					<element name="modificationDatetime" type="inx:TDatetime"/>
+				</sequence>
+			</complexType>			
+			
+			<complexType name="ArrayOfGeneralMailingData">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:GeneralMailingData[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ResultSetData">
+				<sequence>
+					<element name="remoteRefId" type="xsd:string" />
+					<element name="size" type="xsd:int" />
+					<element name="data" nillable="true" type="impl:ArrayOfGeneralMailingData" />
+				</sequence>
+			</complexType>
+			
+			<complexType name="ParseResult">
+				<sequence>
+					<element name="remoteRefId" type="xsd:string" />
+					<element name="resultType" type="xsd:int" />
+					<element name="errors" nillable="true"
+						type="impl:ArrayOfRenderErrorData" />
+				</sequence>
+			</complexType>
+
+			<complexType name="BuildResult">
+				<sequence>
+					<element name="resultType" type="xsd:int" />
+					<element name="mailType" type="xsd:int" />
+					<element name="mailPartHtmlText" nillable="true" type="inx:TString" />
+					<element name="mailPartPlainText" nillable="true" type="inx:TString" />
+					<element name="mailPartSubject" nillable="true" type="inx:TString" />
+					<element name="mailPartSender" nillable="true" type="inx:TString" />
+					<element name="mailPartRecipient" nillable="true" type="inx:TString" />
+					<element name="mailPartReplyTo" nillable="true" type="inx:TString" />
+					<element name="mailPartBounce" nillable="true" type="inx:TString" />
+					<element name="attachments" nillable="true"
+						type="impl:ArrayOfAttachmentData" />
+					<element name="embeddedImages" nillable="true"
+						type="impl:ArrayOfAttachmentData" />
+					<element name="headers" nillable="true" type="impl:ArrayOfHeaderData" />
+					<element name="errorEmail" nillable="true" type="xsd:string" />
+					<element name="errors" nillable="true" type="impl:RenderErrorData" />
+				</sequence>
+			</complexType>
+
+			<complexType name="RenderErrorData">
+				<sequence>
+					<element name="errorType" type="xsd:int" />
+					<element name="mailPart" type="xsd:int" />
+					<element name="beginLine" type="xsd:int" />
+					<element name="endLine" type="xsd:int" />
+					<element name="beginColumn" type="xsd:int" />
+					<element name="endColumn" type="xsd:int" />
+					<element name="msgArgs" nillable="true" type="inx:ArrayOf_TString" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOfRenderErrorData">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:RenderErrorData[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="AttachmentData">
+				<sequence>
+					<element name="name" type="xsd:string" />
+					<element name="contentType" type="xsd:string" />
+					<element name="size" type="xsd:long" />
+					<element name="streamId" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOfAttachmentData">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:AttachmentData[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="HeaderData">
+				<sequence>
+					<element name="name" type="xsd:string" />
+					<element name="value" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ArrayOfHeaderData">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="impl:HeaderData[]" />
+					</restriction>
+				</complexContent>
+			</complexType>
+			
+		</schema>
+	</wsdl:types>
+
+	<wsdl:message name="getRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+		<wsdl:part name="id" type="xsd:long" />
+	</wsdl:message>
+	<wsdl:message name="getResponse">
+		<wsdl:part name="getReturn" type="impl:GeneralMailingData" />
+	</wsdl:message>
+
+	<wsdl:message name="selectAllRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+	</wsdl:message>
+	<wsdl:message name="selectAllResponse">
+		<wsdl:part name="selectAllReturn" type="impl:ResultSetData" />
+	</wsdl:message>
+
+	<wsdl:message name="fetchBOsRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />
+		<wsdl:part name="remoteRefId" type="xsd:string" />
+		<wsdl:part name="index" type="xsd:int" />
+		<wsdl:part name="direction" type="xsd:int" />
+	</wsdl:message>
+	<wsdl:message name="fetchBOsResponse">
+		<wsdl:part name="fetchBOsReturn" type="impl:ArrayOfGeneralMailingData" />
+	</wsdl:message>
+
+	<wsdl:message name="findRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt" />		
+		<wsdl:part name="mailingTypes" type="inx:ArrayOf_xsd_int" />
+		<wsdl:part name="listIds" type="inx:ArrayOf_xsd_int" />
+		<wsdl:part name="mailingIds" type="inx:ArrayOf_xsd_long" />
+		<wsdl:part name="mailingNames" type="inx:ArrayOf_xsd_string" />
+		<wsdl:part name="mailingSubjects" type="inx:ArrayOf_xsd_string"/>
+		<wsdl:part name="createdStart" type="inx:TDatetime"/>
+		<wsdl:part name="createdEnd" type="inx:TDatetime"/>
+		<wsdl:part name="modifiedStart" type="inx:TDatetime"/>
+		<wsdl:part name="modifiedEnd" type="inx:TDatetime"/>
+		<wsdl:part name="orderAttribute" type="xsd:int" />
+		<wsdl:part name="orderType" type="xsd:int" />
+	</wsdl:message>
+	<wsdl:message name="findResponse">
+		<wsdl:part name="findReturn" type="impl:ResultSetData" />
+	</wsdl:message>
+	
+	<wsdl:message name="parseMailRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="mailingId" type="xsd:long"/>
+		<wsdl:part name="buildMode" type="xsd:int"/>
+	</wsdl:message>
+	<wsdl:message name="parseMailResponse">
+		<wsdl:part name="parseMailReturn" type="impl:ParseResult"/>
+	</wsdl:message>
+	
+	<wsdl:message name="parseMailWithSendingIdRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="mailingId" type="xsd:long"/>
+		<wsdl:part name="buildMode" type="xsd:int"/>
+		<wsdl:part name="sendingId" type="xsd:long"/>
+	</wsdl:message>
+	<wsdl:message name="parseMailWithSendingIdResponse">
+		<wsdl:part name="parseMailWithSendingIdReturn" type="impl:ParseResult"/>
+	</wsdl:message>
+	
+	<wsdl:message name="buildMailRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="remoteRefId" type="xsd:string"/>
+		<wsdl:part name="recipientId" type="xsd:int"/>
+		<wsdl:part name="mailType" type="xsd:int"/>
+	</wsdl:message>
+	<wsdl:message name="buildMailResponse">
+		<wsdl:part name="buildeMailReturn" type="impl:BuildResult"/>
+	</wsdl:message>
+	
+	<wsdl:message name="buildMailForTestRecipientRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="remoteRefId" type="xsd:string"/>
+		<wsdl:part name="recipientId" type="xsd:int"/>
+		<wsdl:part name="mailType" type="xsd:int"/>
+	</wsdl:message>
+	<wsdl:message name="buildMailForTestRecipientResponse">
+		<wsdl:part name="buildMailForTestRecipientReturn" type="impl:BuildResult"/>
+	</wsdl:message>
+	
+	<wsdl:message name="getInputStreamRequest">
+		<wsdl:part name="sc" type="inx:SessionCxt"/>
+		<wsdl:part name="remoteRefId" type="xsd:string"/>
+		<wsdl:part name="streamId" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="getInputStreamResponse">
+		<wsdl:part name="getInputStreamReturn" type="xsd:string"/>
+	</wsdl:message>
+	
+	
+	<wsdl:portType name="GeneralMailingService">
+
+		<wsdl:operation name="get" parameterOrder="sc id">
+			<wsdl:input name="getRequest" message="impl:getRequest" />
+			<wsdl:output name="getResponse" message="impl:getResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="selectAll" parameterOrder="sc">
+			<wsdl:input name="selectAllRequest" message="impl:selectAllRequest" />
+			<wsdl:output name="selectAllResponse" message="impl:selectAllResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="fetchBOs" parameterOrder="sc remoteRefId index direction">
+			<wsdl:input name="fetchBOsRequest" message="impl:fetchBOsRequest" />
+			<wsdl:output name="fetchBOsResponse" message="impl:fetchBOsResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="find" parameterOrder="sc mailingTypes listIds mailingIds mailingNames mailingSubjects createdStart createdEnd modifiedStart modifiedEnd orderAttribute orderType">
+			<wsdl:input name="findRequest" message="impl:findRequest" />
+			<wsdl:output name="findResponse" message="impl:findResponse" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="parseMail" parameterOrder="sc mailingId buildMode">
+			<wsdl:input name="parseMailRequest" message="impl:parseMailRequest"/>
+			<wsdl:output name="parseMailResponse" message="impl:parseMailResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="parseMailWithSendingId" parameterOrder="sc mailingId buildMode sendingId">
+			<wsdl:input name="parseMailWithSendingIdRequest" message="impl:parseMailWithSendingIdRequest"/>
+			<wsdl:output name="parseMailWithSendingIdResponse" message="impl:parseMailWithSendingIdResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="buildMail" parameterOrder="sc remoteRefId recipientId mailType">
+			<wsdl:input name="buildMailRequest" message="impl:buildMailRequest"/>
+			<wsdl:output name="buildMailResponse" message="impl:buildMailResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="buildMailForTestRecipient" parameterOrder="sc remoteRefId recipientId mailType">
+			<wsdl:input name="buildMailForTestRecipientRequest" message="impl:buildMailForTestRecipientRequest"/>
+			<wsdl:output name="buildMailForTestRecipientResponse" message="impl:buildMailForTestRecipientResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="getInputStream" parameterOrder="sc remoteRefId streamId">
+			<wsdl:input name="getInputStreamRequest" message="impl:getInputStreamRequest"/>
+			<wsdl:output name="getInputStreamResponse" message="impl:getInputStreamResponse"/>
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<wsdl:binding name="GeneralMailingServiceSoapBinding" type="impl:GeneralMailingService">
+
+		<wsdlsoap:binding style="rpc"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+
+		<wsdl:operation name="get">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="getRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="getResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="selectAll">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="selectAllRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="selectAllResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="fetchBOs">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="fetchBOsRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="fetchBOsResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="find">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="findRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="findResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="parseMail">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="parseMailRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="parseMailResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="parseMailWithSendingId">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="parseMailWithSendingIdRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="parseMailWithSendingIdResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="buildMail">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="buildMailRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="buildMailResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="buildMailForTestRecipient">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="buildMailForTestRecipientRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="buildMailForTestRecipientResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="getInputStream">
+
+			<wsdlsoap:operation soapAction="" />
+
+			<wsdl:input name="getInputStreamRequest">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:input>
+
+			<wsdl:output name="getInputStreamResponse">
+				<wsdlsoap:body use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="http://generalmailing.apiservice.xpro.inxmail.com" />
+			</wsdl:output>
+
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="GeneralMailingServiceSoap">
+
+		<wsdl:port name="GeneralMailingService" binding="impl:GeneralMailingServiceSoapBinding">
+
+			<wsdlsoap:address location="http://localhost:80/inxmail/api/GeneralMailingService" />
+
+		</wsdl:port>
+
+	</wsdl:service>
+
+</wsdl:definitions>
+

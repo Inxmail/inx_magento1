@@ -53,4 +53,13 @@
 
     </messages>
 
+    <newsletter_manage_index translate="label">
+        <reference name="my.account.wrapper">
+            <block type="customer/newsletter" name="customer_newsletter">
+                <!--<block type="DndInxmail_Subscriber_Block_Tracking" name="customer.form.newsletter.extra"/>-->
+                <!--<block type="DndInxmail_Subscriber_Block_TrackingDedicated" name="customer.form.newsletter.extra2"/>-->
+            </block>
+        </reference>
+    </newsletter_manage_index>
+
 </layout>

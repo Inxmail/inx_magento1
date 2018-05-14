@@ -50,7 +50,7 @@ class Inx_Apiimpl_Util_UtilitiesImpl implements Inx_Api_Util_Utilities
 		}
 	    try
 		{
-			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE_SERVICE );
+			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::CORE2_SERVICE );
 			try 
 			{
 				$ret = $service->tellAFriend( $this->_oSessionContext->sessionId(), $oListContext->getId(),
@@ -82,7 +82,7 @@ class Inx_Apiimpl_Util_UtilitiesImpl implements Inx_Api_Util_Utilities
 	{
 		try
 		{
-			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+			$service = $this->_oSessionContext->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
 
 			return $service->existsTestRecipient($this->_oSessionContext->createCxt(), $iIdToCheck );
 		}

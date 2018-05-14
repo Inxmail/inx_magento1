@@ -22,7 +22,7 @@ class Inx_Apiimpl_Bounce_BounceImpl implements Inx_Api_Bounce_Bounce
     {
 	    $this->_oSc = $oSc;
 	    $this->_oData = $oData;
-	    $this->service = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE2_SERVICE );
+	    $this->service = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE3_SERVICE );
 	    $this->_aAttrGetterMapping = $_aAttrGetterMapping;
 	    $this->_oRecipientContext = $rc;
 	}
@@ -71,6 +71,11 @@ class Inx_Apiimpl_Bounce_BounceImpl implements Inx_Api_Bounce_Bounce
 		return $this->_oData->mailingId;
 	}
 
+
+	public function getSendingId()
+	{
+                return Inx_Apiimpl_TConvert::convert( $this->_oData->sendingId );
+	}
 
 	public function getReceptionDate()
 	{

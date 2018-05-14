@@ -84,7 +84,7 @@
  * Be aware that <i>rollbackRowUpdate</i> will only undo <i>uncommitted</i> changes to the current row. 
  * So, once you called <i>commitRowUpdate()</i> there is &quot;no way back&quot;.
  * <p>
- * <strong>Note:</strong> An <i>Inx_Api_Recipient_RecipientContext</i> object <strong>must</strong> be closed once it 
+ * <b>Note:</b> An <i>Inx_Api_Recipient_RecipientContext</i> object <b>must</b> be closed once it
  * is not needed anymore to prevent memory leaks and other potentially harmful side effects.
  * <p>
  * For more information about recipients and the operations that can be performed on them, see the
@@ -96,99 +96,12 @@
  * @package Inxmail
  * @subpackage Recipient
  */
-interface Inx_Api_Recipient_RecipientRowSet
-{
-
-    /**
-     * Moves the cursor to the front of this <i>Inx_Api_Recipient_RecipientRowSet</i> object, just before the first row. 
-     * This method has no effect if the result set contains no rows.
-     */
-	public function beforeFirstRow();
-	
-    /**
-     * Moves the cursor to the end of this <i>Inx_Api_Recipient_RecipientRowSet</i> object, just after the last row. 
-     * This method has no effect if the result set contains no rows.
-     */
-	public function afterLastRow();
-	
-    /**
-     * Moves the cursor to the given row number in this <i>Inx_Api_Recipient_RecipientRowSet</i> object.
-     * The first row is row 0, the second is row 1, and so on. 
-     *
-     * @param int $iRow the number of the row to which the cursor should move.
-     */
-	public function setRow( $iRow );
-
-    /**
-     * Retrieves the current row number. The first row is number 0, the second number 1, and so on.  
-     *
-     * @return int the current row number.
-     */
-    public function getRow();
-
-    /**
-     * Moves the cursor down one row from its current position. 
-     * An <i>Inx_Api_Recipient_RecipientRowSet</i> cursor is initially positioned before the first row; the first call to 
-     * the method <i>next()</i> makes the first row the current row; the second call makes the second row the current row, 
-     * and so on.
-	 * 
-	 * @return bool <i>true</i> if the new current row is valid, <i>false</i> if there are no more rows.
-     */
-    public function next();
-    
-    /**
-     * Moves the cursor to the previous row in this <i>Inx_Api_Recipient_RecipientRowSet</i> object.
-     *
-     * @return bool <i>true</i> if the cursor is on a valid row, <i>false</i> if it is off the result set.
-     */
-    public function previous();
-    
-	/**
-	 * Returns the number of rows in this <i>Inx_Api_Recipient_RecipientRowSet</i> object.
-	 *
-	 * @return int the number of rows.
-	 */
-    public function getRowCount();    
-
-    /**
-     * Updates the underlying recipient on the server with the new contents of the current row of this
-	 * <i>Inx_Api_Recipient_RecipientRowSet</i> object.
-	 * 
-	 * @throws Inx_Api_Recipient_BlackListException if the email address is blocked by a blacklist entry.
-	 * @throws Inx_Api_Recipient_IllegalValueException if one of the attribute values is invalid.
-	 * @throws Inx_Api_Recipient_DuplicateKeyException if the key value is already used.
-	 * @throws Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *             <i>next()</i>).
-     */
-    public function commitRowUpdate();
-    
-    /**
-     * Reverts the updates made to the current row in this <i>Inx_Api_Recipient_RecipientRowSet</i> object. 
-     * This method may be called after calling one or several update methods to roll back the updates made to a row. 
-     * If no updates have been made or <i>commitRowUpdate</i> has already been called, this method has no effect.
-     */
-    public function rollbackRowUpdate();
-    
-    /**
-     * Deletes the current row from this <i>Inx_Api_Recipient_RecipientRowSet</i> object. 
-     * This method cannot be called when the cursor is on the insert row. 
-     * Do <strong>not</strong> call <i>commitRowUpdate()</i> after invoking this method, as this would trigger an 
-     * <i>Inx_Api_DataException</i>.
-     */
-    public function deleteRow();
-    
-    /**
-     * Deletes the specified rows from this <i>Inx_Api_Recipient_RecipientRowSet</i> object. 
-     * Do <strong>not</strong> call <i>commitRowUpdate()</i> on an affected row after invoking this method, as this 
-     * would trigger an <i>Inx_Api_DataException</i>.
-	 * 
-	 * @param Inx_Api_IndexSelection $oSelection the rows to be deleted.
-     */
-    public function deleteRows( Inx_Api_IndexSelection $oSelection );
-    
+interface Inx_Api_Recipient_RecipientRowSet extends Inx_Api_Recipient_RecipientManipulationRowSet, 
+    Inx_Api_InsertionRowSet
+{    
     /**
      * Sets the specified attribute value to the recipients in the specified selection. 
-     * This method does <strong>not</strong> require a call to <i>commitRowUpdate()</i> to be reflected on the server.
+     * This method does <b>not</b> require a call to <i>commitRowUpdate()</i> to be reflected on the server.
      * The selection parameter may be ommitted to set the attribute value for all recipients in this row set.
 	 * 
 	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
@@ -197,23 +110,6 @@ interface Inx_Api_Recipient_RecipientRowSet
 	 * @return bool <i>true</i> if the attribute was updated, <i>false</i> otherwise.
      */
     public function setAttributeValue( Inx_Api_Recipient_Attribute $oAttr, $mNewValue, Inx_Api_IndexSelection $oSelection=null );
-    
-    /**
-     * Moves the cursor to the insert row. 
-     * The current cursor position is remembered while the cursor is positioned on the insert row. 
-     * The insert row is a special row associated with an <i>Inx_Api_Recipient_RecipientRowSet</i>. 
-     * It is essentially a buffer where a new row may be constructed by calling the update methods prior to inserting 
-     * the row into the row set. 
-     * Only the update, getter, and <i>commitRowUpdate</i> method may be called when the cursor is on the insert row.
-     */
-    public function moveToInsertRow();    
-
-    /**
-     * Reports whether the underlying recipient is deleted or not.
-     *
-     * @return bool <i>true</i> if the underlaying recipient is deleted, <i>false</i> otherwise.
-     */
-    public function isRowDeleted();    
   
     /**
      * Retrieves the recipient id of the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> object.
@@ -225,263 +121,35 @@ interface Inx_Api_Recipient_RecipientRowSet
     public function getId();
 
     /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>string</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the attribute value as String.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>string</i>.
+     * Retrieves the tracking permission state of the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> object.
+     *
+     * @param Inx_Api_List_ListContext $oList the list context of the tracking permission
+     * @return Inx_Api_TrackingPermission_TrackingPermissionState the tracking permission state
+     * @throws Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
+     * <i>next()</i>).
+     * @throws Inx_Api_Recipient_AttributeNotFoundException if the list is not a standard list.
+     * @throws Inx_Api_Recipient_TrackingPermissionNotFetchedException if the underlying 
+     * <i>Inx_Api_Recipient_RecipientContext</i> does not contain tracking permission attributes, see
+     * <i>Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()</i>.
+     * 
+     * @since API 1.15.0
      */
-    public function getString( Inx_Api_Recipient_Attribute $oAttr );
+    public function getTrackingPermission( Inx_Api_List_ListContext $oList );
 
     /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>bool</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return bool the attribute value as bool.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>bool</i>.
+     * Updates the tracking permission of the recipients in the specified selection.
+     *
+     * @param Inx_Api_List_ListContext $oList the list context
+     * @param Inx_Api_TrackingPermission_TrackingPermissionState $oValue the tracking permission state
+     * @throws Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
+     * <i>next()</i>).
+     * @throws Inx_Api_Recipient_AttributeNotFoundException if the list is not a standard list.
+     * @throws Inx_Api_Recipient_TrackingPermissionNotFetchedException if the underlying 
+     * <i>Inx_Api_Recipient_RecipientContext</i> does not contain tracking permission attributes, see
+     * <i>Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()</i>.
+     * 
+     * @since API 1.15.0
      */
-    public function getBoolean( Inx_Api_Recipient_Attribute $oAttr );
+    public function updateTrackingPermission( Inx_Api_List_ListContext $oList, Inx_Api_TrackingPermission_TrackingPermissionState $oValue );
 
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>int</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return int the attribute value as int.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>int</i>.
-     */
-    public function getInteger( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>double</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return double the attribute value as double.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>double</i>.
-     */
-    public function getDouble( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>date</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the date value as ISO 8601 formatted date string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>date</i>.
-     */
-    public function getDate( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>time</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the time value as ISO 8601 formatted time string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>time</i>.
-	 */
-	public function getTime( Inx_Api_Recipient_Attribute $oAttr );
-    
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as a <i>datetime</i>.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return string the datetime value as ISO 8601 formatted datetime string. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>datetime</i>.
-     */
-    public function getDatetime( Inx_Api_Recipient_Attribute $oAttr );
-
-    /**
-     * Retrieves the value of the designated attribute in the current row of this <i>Inx_Api_Recipient_RecipientRowSet</i> 
-     * object as the same data type as the attribute.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @return mixed the attribute value. 
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-     */
-	public function getObject( Inx_Api_Recipient_Attribute $oAttr );
-  
-    /**
-     * Updates the designated attribute with a <i>string</i> value. 
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param string $sValue the new attribute value.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>string</i>.
-     */	
-    public function updateString( Inx_Api_Recipient_Attribute $oAttr, $sValue );
-
-    /**
-     * Updates the designated attribute with a <i>bool</i> value. 
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param bool $blValue the new attribute value.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>bool</i>.
-     */	
-    public function updateBoolean( Inx_Api_Recipient_Attribute $oAttr, $blValue );
-    
-    /**
-     * Updates the designated attribute with a <i>int</i> value. 
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param int $iValue the new attribute value.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>int</i>.
-     */	
-    public function updateInteger( Inx_Api_Recipient_Attribute $oAttr, $iValue );
-    
-    /**
-     * Updates the designated attribute with a <i>float</i> value. 
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param float $iValue the new attribute value.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>float</i>.
-     */	
-    public function updateDouble( Inx_Api_Recipient_Attribute $oAttr, $iValue );
-
-    /**
-     * Updates the designated attribute with a <i>date</i> value.
-     * The value has to be passed either as a <i>Unix-Timestamp</i> or an ISO 8601 formatted date string.
-     * To format the value correctly, use one of the following methods:
-     * <ul>
-     * <li><i>ISO-8601</i>: <pre>$sDate = date("Y-m-d");</pre>
-     * <li><i>Unix-Timestamp</i>: <pre>$iTimestamp = time();</pre>
-     * </ul>  
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param string $dtValue the new attribute value (either a <i>Unix-Timestamp</i> or a date in the form <i>'2009-11-23'</i>).
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>date</i>.
-     */	
-    public function updateDate( Inx_Api_Recipient_Attribute $oAttr, $dtValue );
-
-    /**
-     * Updates the designated attribute with a <i>time</i> value. 
-     * The value has to be passed either as a <i>Unix-Timestamp</i> or an ISO 8601 formatted time string.
-     * To format the value correctly, use one of the following methods:
-     * <ul>
-     * <li><i>ISO-8601</i>: <pre>$sTime = date("H:i:sP");</pre>
-     * <li><i>Unix-Timestamp</i>: <pre>$iTimestamp = time();</pre>
-     * </ul> 
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param string $tValue the new attribute value (either a <i>Unix-Timestamp</i> or a date in the form <i>'21:46:59'</i>).
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>time</i>.
-     */	
-    public function updateTime( Inx_Api_Recipient_Attribute $oAttr, $tValue );
-
-    /**
-     * Updates the designated attribute with a <i>datetime</i> value.
-     * The value has to be passed either as a <i>Unix-Timestamp</i> or an ISO 8601 formatted datetime string.
-     * To format the value correctly, use one of the following methods:
-     * <ul>
-     * <li><i>ISO-8601</i>: <pre>$sDatetime = date('c');</pre>
-     * <li><i>Unix-Timestamp</i>: <pre>$iTimestamp = time();</pre>
-     * </ul>   
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param string $sValue the new attribute value (either a <i>Unix-Timestamp</i> or an ISO 8601 date in the form <i>'2004-02-12T15:19:21+00:00'</i>).
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-	 * @exception Inx_Api_IllegalStateException if the attribute is not of type <i>datetime</i>.
-     */	
-    public function updateDatetime( Inx_Api_Recipient_Attribute $oAttr, $sValue );
-
-    /**
-     * Updates the designated attribute with a <i>string</i> or <i>mixed</i> value. 
-     * Most string values can be converted regardless of their content. 
-     * The string "test" can, for example, be converted to a boolean and will return true.
-     * However, this is not true for attributes of type date, time or datetime.
-     * These values have to be passed either as a <i>Unix-Timestamp</i> or an ISO 8601 formatted date, time or datetime string.
-     * To format the value correctly, use one of the following methods, according to the datatype of the attribute:
-     * <ul>
-     * <li><i>Date</i>: <pre>$sDate = date("Y-m-d");</pre>
-     * <li><i>Time</i>: <pre>$sTime = date("H:i:sP");</pre>
-     * <li><i>Datetime</i>: <pre>$sDatetime = date('c');</pre>
-     * <li><i>Unix-Timestamp (works for all)</i>: <pre>$iTimestamp = time();</pre>
-     * </ul>  
-     * The update methods are used to update attribute values in the current row or the insert row. 
-     * The update methods do not update the underlying recipient on the server; instead the <i>commitRowUpdate</i> 
-     * method is called to commit the changes.
-	 * 
-	 * @param Inx_Api_Recipient_Attribute $oAttr the designated attribute.
-	 * @param string|mixed $sValue the new attribute value.
-	 * @exception Inx_Api_DataException if the recipient was deleted or no recipient is selected (e.g. you forgot to call
-	 *                <i>next()</i>).
-     */	
-    public function updateObject( Inx_Api_Recipient_Attribute $oAttr, $sValue );
-	
-	/**
-	 * Retrieves the <i>Inx_Api_Recipient_RecipientContext</i> which created this <i>Inx_Api_Recipient_RecipientRowSet</i>.
-	 * 
-	 * @return Inx_Api_Recipient_RecipientContext the <i>Inx_Api_Recipient_RecipientContext</i> which created this 
-	 * <i>Inx_Api_Recipient_RecipientRowSet</i>.
-	 */
-	public function getContext();
-	
-	/**
-	 * Retrieves the <i>Inx_Api_Recipient_RecipientMetaData</i> object associated with this 
-	 * <i>Inx_Api_RecipientRecipientRowSet</i>.
-	 * 
-	 * @since API 1.0.1
-	 * @return Inx_Api_Recipient_RecipientMetaData the <i>Inx_Api_Recipient_RecipientMetaData</i> object associated with this 
-	 * <i>Inx_Api_RecipientRecipientRowSet</i>.
-	 */
-	public function getMetaData();
-
-    /**
-     * Releases the resources associated with this <i>Inx_Api_Recipient_RecipientRowSet</i> object on the server immediately.
-     * <p>
-     * An <i>Inx_Api_Recipient_RecipientContext</i> object <strong>must</strong> be closed once it 
-	 * is not needed anymore to prevent memory leaks and other potentially harmful side effects.
-     */	
-	public function close();
 }

@@ -43,7 +43,7 @@
  * <li>Request the approval of a trigger mailing
  * <li>Approve or revoke the approval for the trigger mailing
  * </ul>
- * <strong>Handling trigger mailing content and approval</strong>
+ * <b>Handling trigger mailing content and approval</b>
  * <p>
  * For the most part, the content handling and approval process of trigger mailings is identical to that of normal
  * mailings (see <i>Inx_Api_Mailing_Mailing</i>). There is only one difference regarding the approval process: instead of 
@@ -51,7 +51,7 @@
  * introduced to bypass the approval process. Given the API user has the necessary permissions, it can be used to approve a 
  * trigger mailing directly.
  * <p>
- * <strong>Controlling dispatch of trigger mailings</strong>
+ * <b>Controlling dispatch of trigger mailings</b>
  * <p>
  * As mentioned earlier, trigger mailings cannot be simply sent to all recipients of the mailing list. Instead, you
  * activate or deactivate the trigger of a trigger mailing, given the mailing is approved. The activation and
@@ -62,7 +62,7 @@
  * an active sending.
  * </ul>
  * <p>
- * <strong>Note:</strong> For existing trigger mailings, always call <i>lock()</i> before updating it, and
+ * <b>Note:</b> For existing trigger mailings, always call <i>lock()</i> before updating it, and
  * <i>unlock()</i> after committing changes!
  * <p>
  * For an example on how to retrieve and create trigger mailings, see the <i>Inx_Api_TriggerMailing_TriggerMailingManager</i> 
@@ -275,10 +275,10 @@ interface Inx_Api_TriggerMailing_TriggerMailing extends Inx_Api_BusinessObject
 	/**
 	 * Locks this <i>TriggerMailing</i>, so it cannot be locked by another session.
 	 * <p>
-	 * <strong>Note:</strong> For existing trigger mailings, always call <i>lock()</i> before updating it, and
+	 * <b>Note:</b> For existing trigger mailings, always call <i>lock()</i> before updating it, and
 	 * <i>unlock()</i> after committing changes!
 	 * <p>
-	 * <strong>Updating existing trigger mailings without explicit locking is strongly discouraged.</strong>
+	 * <b>Updating existing trigger mailings without explicit locking is strongly discouraged.</b>
 	 *
 	 * @throws Inx_Api_LockException if this trigger mailing is already locked by another session.
 	 * @throws Inx_Api_TriggerMailing_TriggerMailingStateException if this trigger mailing is in an illegal state.
@@ -620,4 +620,23 @@ interface Inx_Api_TriggerMailing_TriggerMailing extends Inx_Api_BusinessObject
          *      formatted datetime string.
 	 */
 	public function getNextSending();
+        
+        
+        /**
+	 * Returns an <i>Inx_Api_ROBOResultSet</i> containing all sendings of this trigger mailing.
+	 * 
+	 * @return Inx_Api_ROBOResultSet A <i>ROBOResultSet</i> containing all sendings of this trigger mailing.
+	 * @since API 1.11.1
+	 */
+        public function findSendings();
+        
+        
+        /**
+	 * Returns the <i>Inx_Api_Sending_Sending</i> object for the last sending of this trigger mailing, if any.
+	 * 
+	 * @return Inx_Api_Sending_Sending The <i>Sending</i> object for the last sending of this trigger mailing, 
+         * if any, <i>null</i> otherwise.
+	 * @since API 1.11.1
+	 */
+        public function findLastSending();
 }

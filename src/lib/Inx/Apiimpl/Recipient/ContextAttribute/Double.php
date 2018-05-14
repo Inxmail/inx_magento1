@@ -23,12 +23,12 @@ class Inx_Apiimpl_Recipient_ContextAttribute_Double extends Inx_Apiimpl_Recipien
 		return $oRecipientData->doubleData[$this->_iTypeAttrIndex]->value;
 	}
 
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $oValue )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $oValue )
 	{
 		$this->updateDouble( $oRecipientData, $aChangedAttrs, (double)$oValue );
 	}
 
-	public function updateDouble( $oRecipientData, &$aChangedAttrs, $iValue )
+	public function updateDouble( $oRecipientData, array &$aChangedAttrs, $iValue )
 	{
 		$oRecipientData->doubleData[$this->_iTypeAttrIndex] = new stdClass();
 		$oRecipientData->doubleData[$this->_iTypeAttrIndex]->value = $iValue;
