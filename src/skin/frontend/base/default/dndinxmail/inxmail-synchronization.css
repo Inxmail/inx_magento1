@@ -1,3 +1,13 @@
+/*
+ *  Magento Inxmail Module
+ *
+ *  @link http://flagbit.de
+ *  @link https://www.inxmail.de/
+ *  @author Flagbit GmbH
+ *  @copyright Copyright © 2018 Inxmail GmbH
+ *  @license Licensed under the Open Software License version 3.0 (https://opensource.org/licenses/OSL-3.0)
+ */
+
 body{ background: #ffffff; }
 .synchronize-block-content { display:block; overflow:hidden; width:520px; margin:0 auto; }
 .synchronize-block-content .logo-inxmail { display:block; overflow:hidden; background:url('images/inxmail-logo.png') no-repeat scroll center center transparent; height:100px;  }

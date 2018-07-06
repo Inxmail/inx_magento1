@@ -1,4 +1,13 @@
 <?php
+/**
+ *  Magento Inxmail Module
+ *
+ *  @link http://flagbit.de
+ *  @link https://www.inxmail.de/
+ *  @author Flagbit GmbH
+ *  @copyright Copyright © 2018 Inxmail GmbH
+ *  @license Licensed under the Open Software License version 3.0 (https://opensource.org/licenses/OSL-3.0)
+ */
 
 /**
  * @category               Module Model
@@ -165,4 +174,3 @@ class DndInxmail_Subscriber_Model_Synchronization extends Mage_Core_Model_Abstra
         return $customers;
     }
 }
- 
