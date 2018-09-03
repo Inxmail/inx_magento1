@@ -22,8 +22,8 @@ interface Inx_Api_Util_Utilities
 	 * @param Inx_Api_List_ListContext $oListContext the list to which the mail was sent.
 	 * @param int $iMailingId the mailing to forward.
 	 * @param int $iRecipientId the original recipient.
-	 * @param bool $blTakeProfile <code>true</code> if the mailing shall be personalized for the original recipient,
-	 *            <code>false</code> otherwise.
+	 * @param bool $blTakeProfile <i>true</i> if the mailing shall be personalized for the original recipient,
+	 *            <i>false</i> otherwise.
 	 * @param string $sEmail the address of the recipient to whom the mail shall be forwarded.
 	 * @param string $sTextIntro introductory text, plain text format.
 	 * @param string $sHtmlIntro introductory text, HTML format.

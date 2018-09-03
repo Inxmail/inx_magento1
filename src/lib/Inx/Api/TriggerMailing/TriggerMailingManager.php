@@ -16,7 +16,7 @@
  * Be aware that this manager is not able to manage normal mailings. Normal mailings are managed by the
  * <i>Inx_Api_Mailing_MailingManager</i>.
  * <p>
- * <strong>Mailing retrieval</strong>
+ * <b>Mailing retrieval</b>
  * <p>
  * There are several ways to retrieve trigger mailings. The simplest way is to call <i>selectAll()</i> which will
  * retrieve all trigger mailings. To retrieve a single trigger mailing, use the <i>get(int)</i> method. To
@@ -25,7 +25,7 @@
  * order the result.
  * <p>
  * The following snippet shows how to retrieve all trigger mailings of a specific list, which are either in the
- * <code>DRAFT</code> or the <code>APPROVAL_REQUESTED</code> state and print out their names:
+ * <i>DRAFT</i> or the <i>APPROVAL_REQUESTED</i> state and print out their names:
  * 
  * <pre>
  * $triggerMailingMgr = $session->getTriggerMailingManager();
@@ -74,7 +74,7 @@
  * $set->close();
  * </pre>
  * <p>
- * <strong>Mailing creation and editing</strong>
+ * <b>Mailing creation and editing</b>
  * <p>
  * Creating a trigger mailing can be a bit tricky as there are many settings needed to set up a trigger descriptor.
  * There are several builders which will help you with creating a valid trigger descriptor. The following snippet
@@ -106,7 +106,7 @@
  * mailing. The available options vary from builder to builder, documented for each builder interface, including
  * information on which settings are mandatory and which are optional.
  * <p>
- * <strong>Note:</strong> For existing trigger mailings, always call <i>lock()</i> before updating it, and
+ * <b>Note:</b> For existing trigger mailings, always call <i>lock()</i> before updating it, and
  * <i>unlock()</i> after committing changes!
  * <p>
  * The following snippet shows how to edit an existing trigger mailing:
@@ -138,7 +138,7 @@
  * $triggerMailingMgr->cloneMailing( $iMailingId, $listContext );
  * </pre>
  * <p>
- * <strong>Preview generation</strong>
+ * <b>Preview generation</b>
  * <p>
  * To create a preview of a trigger mailing, an <i>Inx_Api_TriggerMail_TriggerMailingRenderer</i> is needed. A renderer 
  * can be obtained using the <i>createRenderer()</i> method.
@@ -166,7 +166,7 @@
 interface Inx_Api_TriggerMailing_TriggerMailingManager extends Inx_Api_BOManager
 {
 	/**
-	 * Returns a <code>BOResultSet</code> containing all trigger mailings of the specified list, that pass the specified
+	 * Returns a <i>BOResultSet</i> containing all trigger mailings of the specified list, that pass the specified
 	 * state filter and filter expression. The result will be ordered by the given attribute using the specified order
 	 * type.
 	 * <p>

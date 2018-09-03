@@ -1,4 +1,13 @@
 <?php
+/**
+ *  Magento Inxmail Module
+ *
+ *  @link http://flagbit.de
+ *  @link https://www.inxmail.de/
+ *  @author Flagbit GmbH
+ *  @copyright Copyright © 2018 Inxmail GmbH
+ *  @license Licensed under the Open Software License version 3.0 (https://opensource.org/licenses/OSL-3.0)
+ */
 
 /**
  * @category               Module Observer
@@ -27,6 +36,7 @@ class DndInxmail_Subscriber_Model_Observer
                 return false;
             }
 
+            /** @var \DndInxmail_Subscriber_Helper_Synchronize $synchronize */
             $synchronize = Mage::helper('dndinxmail_subscriber/synchronize');
 
             $subscriber = $observer->getDataObject();
@@ -46,6 +56,14 @@ class DndInxmail_Subscriber_Model_Observer
             $status     = $subscriber->getStatus();
             $storeId    = $subscriber->getStoreId();
 
+            $tracking = (bool)$this->getTrackingPermission();
+            if ($tracking !== (bool) $subscriber->getInxTrackingPermission()) {
+                $subscriber->setInxTrackingPermission($tracking);
+                $subscriber->setNotSyncInxmail(true);
+                $subscriber->save();
+            }
+
+            /** @var \Inx_Api_Session $session */
             if (!$session = $synchronize->openInxmailSession()) {
                 return false;
             }
@@ -54,8 +72,10 @@ class DndInxmail_Subscriber_Model_Observer
                 return false;
             }
             $synchronize->doMappingCheck();
-            
+
+            /** @var \Inx_Api_List_ListContextManager $listContextManager */
             $listContextManager = $session->getListContextManager();
+            /** @var \Inx_Api_List_ListContext $inxmailList */
             $inxmailList        = $listContextManager->get($listid);
 
             Mage::helper('dndinxmail_subscriber/synchronize')->switchActionToSubscriberStatus($status, $email, $trigger, $inxmailList);
@@ -66,7 +86,6 @@ class DndInxmail_Subscriber_Model_Observer
         }
         catch (Exception $e) {
             Mage::helper('dndinxmail_subscriber/log')->logExceptionData($e->getMessage(), __FUNCTION__);
-
             return false;
         }
     }
@@ -227,5 +246,12 @@ class DndInxmail_Subscriber_Model_Observer
         ) {
             Mage::register(self::TRIGER_EMAIL_REGISTRY, true);
         }
+    }
+
+    public function getTrackingPermission()
+    {
+        $request = Mage::app()->getRequest();
+        $permission = $request->getParam('inx_tracking_permission', false);
+        return $permission;
     }
 }

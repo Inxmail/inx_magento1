@@ -8,7 +8,7 @@
  * For this purpose, there is a 'blacklist' of addresses, which can not be added to the Inxmail recipient list, neither 
  * by import nor by subscription or in any other ways.
  * <p>
- * You can activate the blacklist feature from the <code>SystemListContext</code>. The following snippet shows how this
+ * You can activate the blacklist feature from the <i>SystemListContext</i>. The following snippet shows how this
  * can be achieved:
  * <pre>
  *   $oListContextManager = $oSession->getListContextManager();

@@ -104,7 +104,7 @@ final class Inx_Api_TriggerMailing_TriggerMailingState
 
 	/**
 	 * State constant for an unknown state. This state indicates a version mismatch between API and server. The state
-	 * constants are also used by the <code>TriggerMailingStateException</code>.
+	 * constants are also used by the <i>TriggerMailingStateException</i>.
 	 *
 	 * @return Inx_Api_TriggerMailing_TriggerMailingState the unknown state.
 	 * @see Inx_Api_TriggerMailing_TriggerMailingStateException::getCurrentMailingState()

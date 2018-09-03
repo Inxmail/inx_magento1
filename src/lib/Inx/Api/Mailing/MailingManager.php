@@ -14,7 +14,7 @@
  * <li>Create a renderer to generate a preview of the mailing
  * </ul>
  * <p>
- * <strong>Mailing retrieval</strong>
+ * <b>Mailing retrieval</b>
  * <p>
  * There are several ways to retrieve mailings. 
  * The simplest way is to call <i>selectAll()</i> which will retrieve all mailings. 
@@ -24,7 +24,7 @@
  * It is also possible to order the result.
  * <p>
  * The following snippet shows how to retrieve all mailings of a specific list, which are either in the
- * <code>DRAFT</code> or the <code>TO_BE_APPROVE</code> state and print out their names:
+ * <i>DRAFT</i> or the <i>TO_BE_APPROVE</i> state and print out their names:
  * 
  * <pre>
  * $oMailingManager = $oSession->getMailingManager();
@@ -66,7 +66,7 @@
  * $oBOResultSet->close();
  * </pre>
  * <p>
- * <strong>Mailing creation and editing</strong>
+ * <b>Mailing creation and editing</b>
  * <p>
  * The following snippet shows how to create a mailing:
  * 
@@ -77,7 +77,7 @@
  * $oMailing->commitUpdate();
  * </pre>
  * <p>
- * <strong>Note:</strong> For existing mailings, always call <i>lock()</i> before updating it, and
+ * <b>Note:</b> For existing mailings, always call <i>lock()</i> before updating it, and
  * <i>unlock()</i> after committing changes!
  * <p>
  * The following snippet shows how to edit an existing mailing:
@@ -109,12 +109,12 @@
  * $oMailingManager->cloneMailing($iMailingId, $oListContext);
  * </pre>
  * <p>
- * <strong>Preview generation</strong>
+ * <b>Preview generation</b>
  * <p>
  * To create a preview of a mailing, an <i>Inx_Api_Mail_MailingRenderer</i> is needed. 
  * A renderer can be obtained using the <i>createRenderer()</i> method.
  * <p>
- * The following snippet shows how to create a <code>MailingRenderer</code> and generate a preview of the mailing:
+ * The following snippet shows how to create a <i>MailingRenderer</i> and generate a preview of the mailing:
  * 
  * <pre>
  * $oMailingManager = $oSession->getMailingManager();
@@ -220,17 +220,17 @@ interface Inx_Api_Mailing_MailingManager extends Inx_Api_BOManager
 	public function createRenderer();
 	
 		/**
-	 * Creates the new <code>Inx_Api_Mail_MailingRenderer</code> to rendering a <code>Mailing</code> with test recipients.
+	 * Creates the new <i>Inx_Api_Mail_MailingRenderer</i> to rendering a <i>Mailing</i> with test recipients.
 	 * 
-	 * @return the new <code>Inx_Api_Mail_MailingRenderer</code>
+	 * @return the new <i>Inx_Api_Mail_MailingRenderer</i>
 	 * @since API 1.6.0
 	 */
 	public function createRendererForTestRecipient();
 
 	/**
-	 * Copies a <code>Inx_Api_Mail_Mailing</code> to the specified list.
+	 * Copies a <i>Inx_Api_Mail_Mailing</i> to the specified list.
 	 * 
-	 * @return the new <code>Inx_Api_Mail_Mailing</code>
+	 * @return the new <i>Inx_Api_Mail_Mailing</i>
 	 * @since API 1.6.0
 	 */
 	public function cloneMailing($iMailingId, Inx_Api_List_ListContext $oListContext );

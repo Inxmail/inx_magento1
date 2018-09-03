@@ -113,7 +113,7 @@ interface Inx_Api_MailingTemplate_MailingTemplate extends Inx_Api_BusinessObject
 	public function updateHtmlTextContent( $sHtmlTextContent );
 
 	/**
-	 * Returns the plain text part of this mailing template, or <code>null</code> if the MIME type is
+	 * Returns the plain text part of this mailing template, or <i>null</i> if the MIME type is
 	 * <i>MIME_TYPE_HTML_TEXT</i>.
 	 * 
 	 * @return string the plain text part of this mailing template, if any.

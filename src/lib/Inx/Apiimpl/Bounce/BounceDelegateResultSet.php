@@ -15,7 +15,7 @@ class Inx_Apiimpl_Bounce_BounceDelegateResultSet extends Inx_Apiimpl_Core_Delega
 			$rs, $rc, $aAttrs )
 	{
 		parent::__construct( $oSc, $oDelegate, $rs->remoteRefId, $rs->size, null );
-		$this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE2_SERVICE );
+		$this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE3_SERVICE );
 		$this->_oRecipientContext = $rc;
 		$this->oSc = $oSc;
 		$this->_oDelegate = $oDelegate;

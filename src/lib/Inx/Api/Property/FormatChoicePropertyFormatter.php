@@ -34,7 +34,7 @@
  * <li><i>MULTIPART_FORMAT</i>: Mailings will contain both, plain and HTML text parts.
  * </ul>
  * <p>
- * <strong>Note:</strong> When using the <i>ATTRIBUTE_STRATEGY</i> it is recommended to create multipart mailings only. 
+ * <b>Note:</b> When using the <i>ATTRIBUTE_STRATEGY</i> it is recommended to create multipart mailings only.
  * However, it is still possible to create plain or HTML text mailings. 
  * Be aware that in such a case, all recipients will receive the mailing in the same format (which is plain or HTML text).
  * <p>
@@ -44,7 +44,7 @@
  * If the value matches none of the specified patterns, the default format will be used. 
  * The pattern of the default format is automatically set to <i>null</i>.
  * <p>
- * The patterns are <strong>not</strong> patterns in the ordinary sense. 
+ * The patterns are <b>not</b> patterns in the ordinary sense.
  * No operators or wildcards are allowed and the value is case sensitive and without quotes. 
  * Let's say we use the following patterns:
  * <p>

@@ -4,8 +4,8 @@
  */
 /**
  * An <i>Inx_Api_DataException</i> is thrown when a <i>BusinessObject</i> cannot be found on the server.
- * Example: Calling <code>commitUpdate()</code> on a <code>BusinessObject</code> that was deleted will result in a
- * <code>DataException</code>.
+ * Example: Calling <i>commitUpdate()</i> on a <i>BusinessObject</i> that was deleted will result in a
+ * <i>DataException</i>.
  * 
  * @see Inx_Api_BusinessObject#commitUpdate()
  * @see Inx_Api_BusinessObject#reload()

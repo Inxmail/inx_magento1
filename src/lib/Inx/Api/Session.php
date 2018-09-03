@@ -47,7 +47,7 @@
  * </PRE>
  * 
  * <p/>
- * <strong>Note:</strong> An <i>Inx_Api_Session</i> object <strong>must</strong> be closed once it is not needed anymore to
+ * <b>Note:</b> An <i>Inx_Api_Session</i> object <b>must</b> be closed once it is not needed anymore to
  * prevent memory leaks and other potentially harmful side effects.
  *
  * @since   API 1.0
@@ -177,12 +177,24 @@ abstract class Inx_Api_Session
 	
 	/**
 	 * Creates a new <i>Inx_Api_Recipient_RecipientContext</i> that can be used to access and manipulate 
-	 * recipient data.
-	 * 
-	 * @return Inx_Api_Recipient_RecipientContext a new <i>Inx_Api_Recipient_RecipientContext</i>.
-	 * @since API 1.0
+         * recipient data. The created <i>Inx_Api_Recipient_RecipientContext</i> will contain tracking 
+         * permission attributes depending on the value of the <i>$blIncludeTrackingPermissions</i> parameter.
+	 * <br>
+	 * In order to interact with tracking permissions, this parameter needs to be set to <i>true</i>. For 
+         * more information, see <i>Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()</i>.
+         * <br>
+	 * Be aware that enabling tracking permission attributes incurs a considerable performance degradation. 
+         * Therefore, it is <b>strongly recommended</b> to enable tracking permission attributes only when 
+         * necessary.
+	 *
+	 * @param bool $blIncludeTrackingPermissions if <i>true</i> the created 
+         * <i>Inx_Api_Recipient_RecipientContext</i> will contain tracking permission attributes, if <i>false</i> 
+         * it won't.
+	 * @return Inx_Api_Recipient_RecipientContext a new <i>Inx_Api_Recipient_RecipientContext</i>
+	 * @see Inx_Api_Recipient_RecipientContext::includesTrackingPermissions()
+	 * @since API 1.0 (overloaded since API 1.16.0)
 	 */
-	public abstract function createRecipientContext();
+	public abstract function createRecipientContext( $blIncludeTrackingPermissions = false );
 	
 	
 	/**
@@ -205,6 +217,16 @@ abstract class Inx_Api_Session
 
 	
 	/**
+	 * Returns the <i>Inx_Api_GeneralMailing_GeneralMailingManager</i> object that will be used to access mailings
+	 * regardless of their type.
+	 *
+	 * @return Inx_Api_GeneralMailing_GeneralMailingManager the general mailing manager.
+	 * @since API 1.11.10
+	 */
+	public abstract function getGeneralMailingManager();
+	
+	
+	/**
 	 * Returns the <i>Inx_Api_Mailing_MailingManager</i> object that will be used to manage mailings and 
 	 * produce the mailing output (HTML and/or plain text) for a single recipient.
 	 *
@@ -222,6 +244,15 @@ abstract class Inx_Api_Session
 	 * @since API 1.10.0
 	 */
         public abstract function getTriggerMailingManager();
+        
+        
+        /**
+         * Returns the <i>Inx_Api_Sending_SendingHistoryManager</i> object that will be used to retrieve sending information.
+	 * 
+	 * @return Inx_Api_Sending_SendingHistoryManager the sending history manager.
+	 * @since API 1.11.1
+         */
+        public abstract function getSendingHistoryManager();
 
 	
 	/**
@@ -252,6 +283,15 @@ abstract class Inx_Api_Session
 	 * @since API 1.2.0
 	 */
 	public abstract function getActionManager();
+
+
+	/**
+	 * Returns the <i>Inx_Api_TrackingPermission_TrackingPermissionManager</i> object that will be used to manage tracking permissions. 
+	 * 
+	 * @return Inx_Api_TrackingPermission_TrackingPermissionManager the tracking permission manager.
+	 * @since API 1.17.0
+	 */
+	public abstract function getTrackingPermissionManager();
 
 	
 	/**
@@ -284,7 +324,7 @@ abstract class Inx_Api_Session
 	
 	/**
 	 * Returns the <i>Inx_Api_Filter_FilterManager</i> object that will be used to manage filters. 
-	 * A <code>Filter</code> is used to define target groups of recipients that share a common property. 
+	 * A <i>Filter</i> is used to define target groups of recipients that share a common property.
 	 * For example: All recipients born after 1970.
 	 * 
 	 * @return Inx_Api_Filter_FilterManager the filter manager.
@@ -351,8 +391,8 @@ abstract class Inx_Api_Session
 	
 	
 	/**
-	 * Returns the <i>Inx_Api_UserContext</i> object associated with this <code>Session</code> object. 
-	 * The <code>UserContext</code> may be used to check the rights of the session user.
+	 * Returns the <i>Inx_Api_UserContext</i> object associated with this <i>Session</i> object.
+	 * The <i>UserContext</i> may be used to check the rights of the session user.
 	 * 
 	 * @return Inx_Api_UserContext the user context.
 	 * @since API 1.0
@@ -386,6 +426,32 @@ abstract class Inx_Api_Session
 	 */
 	public abstract function getApprovalManager();
 	
+	/**
+	 * Returns the <i>Inx_Api_Transformation_TransformationManager</i> object that will be used to manage transformations.
+	 * A transformation converts datasource content to another format and allows another presentation of the datasource.
+	 * 
+	 * @return Inx_Api_Transformation_TransformationManager the transformation Manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getTransformationManager();
+
+	/**
+	 * Return the <i>Inx_Api_SplitTestMailing_SplitTestMailingManager</i> object that gives read only access to all split test mailings in
+	 * the system.
+	 *
+	 * @return Inx_Api_SplitTestMailing_SplitTestMailingManager the split test mailing manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getSplitTestMailingManager();
+
+	/**
+	 * Return the <i>Inx_Api_SplitTest_SplitTestManager</i> object that gives read only access to all split tests in
+	 * the system.
+	 *
+	 * @return Inx_Api_SplitTest_SplitTestManager the split test manager.
+	 * @since API 1.13.1
+	 */
+	public abstract function getSplitTestManager();
 	
 	/**
 	 * Returns the unique id of this session.
@@ -398,7 +464,7 @@ abstract class Inx_Api_Session
 	
     /**
      * Closes this session and releases any resources associated with the session. 
-     * An <i>Inx_Api_Session</i> object <strong>must</strong> be closed once it is not needed anymore to prevent 
+     * An <i>Inx_Api_Session</i> object <b>must</b> be closed once it is not needed anymore to prevent
      * memory leaks and other potentially harmful side effects.
      *
      * @since API 1.0
@@ -415,8 +481,8 @@ abstract class Inx_Api_Session
 	public abstract function getServerTime();
 	
 	/**
-	 * Returns the <code>PluginStore</code> object that will be used to manage stored informations. 
-	 * The <code>PluginStore</code> is used as isolated storage for plug-ins. 
+	 * Returns the <i>PluginStore</i> object that will be used to manage stored informations.
+	 * The <i>PluginStore</i> is used as isolated storage for plug-ins.
 	 * This is only useful for plug-in usage of the api.
 	 * 
 	 * @since API 1.7.0
@@ -424,14 +490,22 @@ abstract class Inx_Api_Session
 	public abstract function getPluginStore();
 	
 	/**
-	 * Creates a new <code>Inx_Api_Testprofiles_TestRecipientContext</code> that can be used to access and manipulate 
+	 * Creates a new <i>Inx_Api_Testprofiles_TestRecipientContext</i> that can be used to access and manipulate
 	 * test recipient data.
 	 * Test recipients are used to create a preview of a mailing.
 	 * 
-	 * @return a new <code>TestRecipientContext</code>.
+	 * @return a new <i>TestRecipientContext</i>.
 	 * @since API 1.6.0
 	 */
 	public abstract function createTestRecipientContext();
+        
+        /**
+	 * Returns the URL of the peer of this session, which is the URL of the Inxmail Professional server.
+	 * 
+	 * @return string the URL of the peer of this session.
+     * @since API 1.11.1
+	 */
+	public abstract function getConnectionUrl();
 	
 	/**
 	 * Sets the session property specified by the given key to the given value. 

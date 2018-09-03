@@ -155,7 +155,7 @@ interface Inx_Api_List_ListContext extends Inx_Api_BusinessObject
 	 * the parameter is true. Note: Refreshing the list size can produce a high load on the Inxmail Server. USE THIS
 	 * METHOD WITH CAUTION!
 	 * 
-	 * @param bool $computeNow <code>true</code> if the number of recipients shall be recomputed, <code>false</code>
+	 * @param bool $computeNow <i>true</i> if the number of recipients shall be recomputed, <i>false</i>
 	 *            otherwise. May be ommitted (defaults to <i>false</i>).
 	 * @return Inx_Api_List_ListSize the list size object.
 	 * @throws Inx_Api_DataException if the list is deleted.

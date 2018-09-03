@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <code>CommandFactoryImpl</code>
+ * <i>CommandFactoryImpl</i>
  * 
  * @since API 1.2.0
  * @version $Revision: 9739 $ $Date: 2008-01-23 14:44:04 +0200 (Tr, 23 Sau 2008) $ $Author: aurimas $
@@ -155,4 +155,28 @@ class Inx_Apiimpl_Action_CommandFactoryImpl implements Inx_Api_Action_CommandFac
 	{
             return new Inx_Apiimpl_Action_CommandImpl_SendActionMailCmd($iListContextId, $iActionMailingId);
 	}
+
+    /**
+     * @see Inx_Api_Action_CommandFactory::createGrantTrackingPermissionCmd
+     */
+    public function createGrantTrackingPermissionCmd( $iListContextId )
+    {
+        return new Inx_Apiimpl_Action_CommandImpl_GrantTrackingPermissionCmd( $iListContextId );
+    }
+
+    /**
+     * @see Inx_Api_Action_CommandFactory::createRevokeTrackingPermissionCmd
+     */
+    public function createRevokeTrackingPermissionCmd( $iListContextId )
+    {
+        return new Inx_Apiimpl_Action_CommandImpl_RevokeTrackingPermissionCmd( $iListContextId );
+    }
+
+    /**
+     * @see Inx_Api_Action_CommandFactory::createTransferTrackingPermissionCmd
+     */
+    public function createTransferTrackingPermissionCmd( $iTargetListId, $iSourceListId = null )
+    {
+        return new Inx_Apiimpl_Action_CommandImpl_TransferTrackingPermissionCmd( $iTargetListId, $iSourceListId );
+    }
 }

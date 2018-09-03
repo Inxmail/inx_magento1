@@ -1,4 +1,13 @@
 <?php
+/**
+ *  Magento Inxmail Module
+ *
+ *  @link http://flagbit.de
+ *  @link https://www.inxmail.de/
+ *  @author Flagbit GmbH
+ *  @copyright Copyright © 2018 Inxmail GmbH
+ *  @license Licensed under the Open Software License version 3.0 (https://opensource.org/licenses/OSL-3.0)
+ */
 
 /**
  * @category                Module Controller
@@ -167,6 +176,7 @@ class DndInxmail_Subscriber_SourceController extends Mage_Core_Controller_Front_
         }
 
         $order = Mage::getResourceModel('sales/order_collection')->addFieldToFilter('customer_id', $customerId)->addAttributeToSort('created_at', 'DESC')->setPageSize($nb);
+        $order = $order->getFirstItem();
 
         if (!$order->getId()) {
             echo $this->__('Customer with ID %s does not have order yet', $customerId);
@@ -225,14 +235,13 @@ class DndInxmail_Subscriber_SourceController extends Mage_Core_Controller_Front_
         }
 
         $collection = $product->getRelatedProductCollection()->addAttributeToSelect('required_options')->setPositionOrder()->addStoreFilter();
+        $collection->load();
 
         if (Mage::helper('catalog')->isModuleEnabled('Mage_Checkout')) {
             $collection->addMinimalPrice()->addFinalPrice()->addTaxPercents()->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())->addUrlRewrite();
         }
 
         Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
-
-        $collection->load();
 
         $products = array();
         foreach ($collection as $product) {

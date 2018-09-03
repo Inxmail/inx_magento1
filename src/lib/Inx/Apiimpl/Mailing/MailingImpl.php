@@ -16,6 +16,11 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 	public $oSc;
 
 	protected $_oMService;
+        
+        /**
+         * @var type Inx_Apiimpl_Mailing_MailingManagerImpl
+         */
+        protected $_oMailingManager;
 
 	/**
 	 * Enter description here...
@@ -55,10 +60,12 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 	 * @param int $iFeatureId
 	 * throws Inx_Api_DataException
 	 */
-	public function __construct( Inx_Apiimpl_SessionContext $oSc, stdClass $oData = null, $iListContextId = null, $iFeatureId = null )
+	public function __construct( Inx_Apiimpl_SessionContext $oSc, Inx_Apiimpl_Mailing_MailingManagerImpl $oMailingManager,
+                stdClass $oData = null, $iListContextId = null, $iFeatureId = null )
 	{
 		$this->oSc = $oSc;
-		$this->_oMService = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+		$this->_oMService = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
+                $this->_oMailingManager = $oMailingManager;
 		
 		if ( $oData != null ) {
 			$this->refreshData( $oData );
@@ -248,6 +255,18 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 		}
 		return new SendingInfoImpl( 0, 0, 0, 0, 0 );
 	}
+        
+        
+        public function findSendings() 
+        {
+            return $this->_oMailingManager->findSendingsByMailing($this->getId());
+        }
+        
+       
+        public function findLastSending() 
+        {
+            return $this->_oMailingManager->findLastSendingForMailing($this->getId());
+        }
 
 
 	public function approve( $approverId = 0, $comment=null )
@@ -824,7 +843,7 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 	public function commitUpdate()
 	{
 		try {
-			$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+			$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
 			$h = $ms->update( $this->oSc->createCxt(), $this->oData, Inx_Apiimpl_TConvert::arrToTArr( $this->_aChangedAttrs ) );
 			
 			if(! empty($h->updExcDesc) )
@@ -862,7 +881,7 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 			$this->oContentHandler = null;
 		}
 
-		$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+		$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
 		try
 		{
 			$oRetData = $ms->get( $this->oSc->createCxt(), $this->oData->id );
@@ -884,7 +903,8 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 	 * @param array $aData
 	 * @return unknown
 	 */
-	public static function convert( Inx_Apiimpl_SessionContext $oSc, $aData )
+	public static function convert( Inx_Apiimpl_SessionContext $oSc, $aData, 
+                Inx_Apiimpl_Mailing_MailingManagerImpl $oMailingManager )
 	{
 		if( $aData === null || sizeof($aData) == 0 ) {
 			return array();
@@ -894,7 +914,7 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 		
 		foreach ($aData as $i => $value) {
 			try {
-				$ms[$i] = new Inx_Apiimpl_Mailing_MailingImpl($oSc, $value);
+				$ms[$i] = new Inx_Apiimpl_Mailing_MailingImpl($oSc, $oMailingManager, $value);
 			} catch (Inx_Api_DataException $e) {
 				$ms[$i] = null;
 			}
@@ -922,7 +942,7 @@ class Inx_Apiimpl_Mailing_MailingImpl implements Inx_Api_Mailing_Mailing
 				}
 				else
 				{
-					$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING6_SERVICE );
+					$ms = $this->oSc->getService( Inx_Apiimpl_SessionContext::MAILING7_SERVICE );
 					$this->oData->lazyData = $ms->getLazyData( $this->oSc->createCxt(), $this->oData->id );
 				}
 			}

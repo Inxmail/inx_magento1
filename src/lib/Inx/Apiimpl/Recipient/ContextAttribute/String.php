@@ -23,14 +23,14 @@ class Inx_Apiimpl_Recipient_ContextAttribute_String extends Inx_Apiimpl_Recipien
 		return $oRecipientData->stringData[$this->_iTypeAttrIndex]->value;
 	}
 
-	public function updateString( $oRecipientData, &$aChangedAttrs, $sValue )
+	public function updateString( $oRecipientData, array &$aChangedAttrs, $sValue )
 	{
 		$oRecipientData->stringData[$this->_iTypeAttrIndex] = new stdClass;
 	    $oRecipientData->stringData[$this->_iTypeAttrIndex]->value = (string)$sValue;
 		$aChangedAttrs[$this->_iArrayIndex] = true;
 	}
 	
-	public function updateObject( $oRecipientData, &$aChangedAttrs, $value )
+	public function updateObject( $oRecipientData, array &$aChangedAttrs, $value )
 	{
 		$this->updateString( $oRecipientData, $aChangedAttrs, $value );
 	}

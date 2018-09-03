@@ -1,0 +1,32 @@
+<?php
+/**
+ *  Magento Inxmail Module
+ *
+ *  @link http://flagbit.de
+ *  @link https://www.inxmail.de/
+ *  @author Flagbit GmbH
+ *  @copyright Copyright © 2018 Inxmail GmbH
+ *  @license Licensed under the Open Software License version 3.0 (https://opensource.org/licenses/OSL-3.0)
+ */
+
+// Test permission commit only
+/*
+ * This is an example code to facilitate implementation if you want to use the tracking permission features of Inxmail Professional. Inxmail will not provide any guidance on how to collect the tracking permission and its evaluation within your magento installation. Further, this code does not ensure that your shop is EU-GDPR compliant. By using this code you are aware of this and accept it.
+ */
+?>
+<h1 style="color: #ff0000">Example Code - This block does not ensure that your shop is EU-GDPR compliant</h1>
+<form action="<?php echo $this->getAction() ?>" method="post" id="form-validate">
+    <div class="fieldset">
+        <?php echo $this->getBlockHtml('formkey')?>
+        <ul class="form-list">
+
+            <li class="control">
+                <label for="tracking_permission"><?php echo $this->__('Give Inxmail tracking permission') ?></label>
+                <div class="input-box">
+                    <input type="checkbox" name="tracking_permission" id="tracking_permission" value="1" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Give Inxmail tracking persmission')) ?>"<?php if($this->getInxTrackingPermission()): ?> checked="checked"<?php endif; ?> class="checkbox" />
+                </div>
+            </li>
+        </ul>
+        <button type="submit" title="<?php echo $this->__('Save') ?>" class="button button-yellow-plain"><span><span><?php echo $this->__('Save') ?></span></span></button>
+    </div>
+</form>

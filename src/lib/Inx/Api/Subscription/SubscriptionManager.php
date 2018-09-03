@@ -118,30 +118,33 @@ interface Inx_Api_Subscription_SubscriptionManager
 
 	
 	/**
-	 * Activates the subscription process for the specified email address and sets the attribute values specified in the
-	 * given associative array.
-	 * 
-	 * @param string $sSourceIdentifier the source identifier used for reports (e.g. the name of the landing page).
-	 * @param string $sRemoteAddress the remote IP address of the subscriber.
-	 * @param Inx_Api_List_StandardListContext $oListContext the list to which the recipient shall be subscribed.
-	 * @param string $sEmailAddress the email address of the recipient.
-	 * @param associative array $aAttrKeyValuePairs a map of attribute key/value-pairs which will be set for the recipient; 
-	 * 			may be <i>null</i> or ommitted.
-	 * @return int the state of the process activation. May be one of:
-	 *         <ul>
-	 *         <li><i>PROCESS_ACTIVATION_SUCCESSFULLY</i>: the process was successfully activated
-	 *         <li><i>PROCESS_ACTIVATION_FAILED_ADDRESS_ILLEGAL</i>: the provided email address is not conform to the
-	 *         RFC standard.
-	 *         </ul>
-	 * @throws Inx_Api_FeatureNotAvailableException if the subscription feature is not enabled.
-	 * @throws Inx_Api_SecurityException if the session user doesn't have the following permission:
-	 *             <i>Inx_Api_UserRights::SUBSCRIPTION_FEATURE_USE</i>
+	 * Activates the subscription process for the specified email address, sets the attribute values specified in the
+     * given map and sets the tracking permission state.
+     *
+     * @param string $sSourceIdentifier the source identifier used for reports (e.g. the name of the landing page).
+     * @param string $sRemoteAddress the remote IP address of the subscriber.
+     * @param Inx_Api_List_StandardListContext $oListContext the list to which the recipient shall be subscribed.
+     * @param string $sEmailAddress the email address of the recipient.
+     * @param associative array $aAttrKeyValuePairs a map of attribute key/value-pairs which will be set for the recipient;
+     * 			may be <i>null</i> or ommitted.
+     * @param Inx_Api_TrackingPermission_TrackingPermissionState $oTrackingPermission the tracking permission
+     *          state of the subscriber; may be <i>null</i>.
+     * @return int the state of the process activation. May be one of:
+     *         <ul>
+     *         <li><i>PROCESS_ACTIVATION_SUCCESSFULLY</i>: the process was successfully activated
+     *         <li><i>PROCESS_ACTIVATION_FAILED_ADDRESS_ILLEGAL</i>: the provided email address is not conform to the
+     *         RFC standard.
+     *         </ul>
+     * @throws Inx_Api_FeatureNotAvailableException if the subscription feature is not enabled.
+     * @throws Inx_Api_SecurityException if the session user doesn't have the following permission:
+     *             <i>Inx_Api_UserRights::SUBSCRIPTION_FEATURE_USE</i>
 	 * @since API 1.0.2
 	 */
 	public function processSubscription( $sSourceIdentifier = null, $sRemoteAddress = null, 
-				Inx_Api_List_StandardListContext $oListContext, $sEmailAddress, /*Map*/ $aAttrKeyValuePairs=array() );
+				Inx_Api_List_StandardListContext $oListContext, $sEmailAddress, /*Map*/ $aAttrKeyValuePairs=array(),
+				Inx_Api_TrackingPermission_TrackingPermissionState $oTrackingPermission = null);
 
-	
+
 	/**
 	 * Activates the unsubscription process for the specified email address and mailing id. 
 	 * The mailing id specifies the mailing, which contains the unsubscription link used to unsubscribe the recipient.
@@ -232,6 +235,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getAllLogEntries($rc, $attrs );
 
@@ -246,6 +250,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesForList( $lc, $rc, $attrs );
 
@@ -262,6 +267,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and before a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBeforeAndList( $lc, $before, $rc, $attrs );
 
@@ -278,6 +284,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and after a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesAfterAndList( $lc, $after, $rc, $attrs );
 
@@ -296,6 +303,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries for a given list and between the given dates.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBetweenAndList( $lc, $start, $end, $rc, $attrs );
 
@@ -311,6 +319,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				un/subscription log entries before a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBefore( $before, $rc, $attrs );
 
@@ -326,6 +335,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				un/subscription log entries after a given date.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesAfter( $after, $rc, $attrs );
 
@@ -343,6 +353,7 @@ interface Inx_Api_Subscription_SubscriptionManager
 	 * 				may be <i>null</i>.
 	 * @return Inx_Api_Subscription_SubscriptionLogEntryRowSet a <i>SubscriptionLogEntryRowSet</i> containing all existing 
 	 * 				(un)subscription log entries between given dates.
+         * @throws Inx_Api_NullPointerException if no <i> Inx_Api_Recipient_RecipientContext</i> is provided.
 	 */
 	public function getLogEntriesBetween( $start, $end, $rc, $attrs );
 

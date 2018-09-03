@@ -31,11 +31,11 @@
  * }
  * </pre>
  * <p/>
- * Some output formats (e.g. <code>OUTPUT_FORMAT_HTML</code>, <code>OUTPUT_FORMAT_HTML_INXLINKS</code> or
- * <code>OUTPUT_FORMAT_CSV</code>) are provide as ZIP compressed archive file, as these formats usually contain several
+ * Some output formats (e.g. <i>OUTPUT_FORMAT_HTML</i>, <i>OUTPUT_FORMAT_HTML_INXLINKS</i> or
+ * <i>OUTPUT_FORMAT_CSV</i>) are provide as ZIP compressed archive file, as these formats usually contain several
  * files. 
  * The PDF output formats on the other hand are provided as single PDF files. 
- * The <code>download()</code> method presented in the following snippet is used to download these files, but will not 
+ * The <i>download()</i> method presented in the following snippet is used to download these files, but will not
  * uncompress ZIP files:
  * 
  * <pre>

@@ -38,8 +38,14 @@ interface Inx_Api_Bounce_Bounce extends Inx_Api_BusinessObject
 	/** This category represents a bounce of unknown type. */
 	const CATEGORY_UNKNOWN_BOUNCE = 2;
 
+    /** This category represents a bounce of auto responder type. */
+    const CATEGORY_AUTO_RESPONDER_BOUNCE = 3;
+
+    /** This category represents a bounce of spam type. */
+    const CATEGORY_SPAM_BOUNCE = 4;
+
 	/**
-	 * State for missing recipient information. This state will be used when no <code>RecipientContext</code> and/or no
+	 * State for missing recipient information. This state will be used when no <i>RecipientContext</i> and/or no
 	 * attributes are specified in the query or in case of an unknown recipient.
 	 */
 	const RECIPIENT_STATE_UNKNOWN = 0;
@@ -120,6 +126,13 @@ interface Inx_Api_Bounce_Bounce extends Inx_Api_BusinessObject
 	 */
 	public function getMailingId();
 
+
+	/**
+	 * Returns the id of the bounced sending. Returns null if the sending cannot be determined.
+	 * 
+	 * @return long|null the sending id.
+	 */
+	public function getSendingId();
 
 	/**
 	 * Returns the header of the bounce message as string.

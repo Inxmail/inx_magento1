@@ -5,7 +5,7 @@
  */
 /**
  * An <i>Inx_Api_Filter_Filter</i> is used to define target groups of recipients that share common properties. 
- * For example: All recipients born after 1970. To accomplish this, a <code>Filter</code> uses a statement. 
+ * For example: All recipients born after 1970. To accomplish this, a <i>Filter</i> uses a statement.
  * The statement syntax is described in the documentation for {@link #updateStatement(String)}.
  * <p>
  * For an example on how to create filters, see the <i>Inx_Api_Filter_FilterManager</i> documentation.
@@ -117,7 +117,7 @@ interface Inx_Api_Filter_Filter extends Inx_Api_BusinessObject
 	 * </ul>
 	 * All of these operators may be used along with text columns. The check values of free expressions may contain
 	 * wildcards to match a specific pattern.<br>
-	 * <strong>Note:</strong> The wilcard character used in free expressions is NOT the asterisk (*) but the percentage
+	 * <b>Note:</b> The wilcard character used in free expressions is NOT the asterisk (*) but the percentage
 	 * sign (%).
 	 * <p>
 	 * Recipient reaction conditions may be used to select recipients who reacted on a specific mailing or link. The

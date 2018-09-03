@@ -2,6 +2,32 @@
 
 class Inx_Apiimpl_TConvert 
 {
+    
+    const DATETIMEFORMAT = "Y-m-d\TH:i:s.uT";
+    
+    /**
+     * Convert a time representing string to {@link DateTime} object
+     * 
+     * @param String $sString
+     * @return DateTime
+     */
+    public static function stringToDateTime( $sString )
+    {
+        return DateTime::createFromFormat( self::DATETIMEFORMAT, $sString, new DateTimeZone( "Z" ) );
+    }
+    
+    /**
+     * Convert a {@link DateTime} object to string
+     * 
+     * @param DateTime $oDate
+     * @return String
+     */
+    public static function DateTimeToString( DateTime $oDate )
+    {
+        return $oDate->format( self::DATETIMEFORMAT );
+    }
+
+
     public static function stringToTString($sString) {
         if ($sString == null) {
             return null;
@@ -45,7 +71,7 @@ class Inx_Apiimpl_TConvert
     	}
     	
         $aRet = array();
-        if (is_array($arr)) {
+        if (is_array($arr) || ( class_exists( "SplFixedArray" ) && $arr instanceof SplFixedArray ) ) {
             foreach($arr as $val) {
             	if (! is_null($val)) {
     				$oVal = new stdClass();
@@ -58,6 +84,29 @@ class Inx_Apiimpl_TConvert
             }
         }
         return $aRet;
+    }
+    
+    /**
+     * Create an array with predefined size.
+     * 
+     * If class {@link SplFixedArray} exists, an instance will be returned. 
+     * {@link SplFixedArray} will provide an object that can handled as an 
+     * array but with fixed size. It it not possible to alter the size of 
+     * that array. 
+     * 
+     * @param int $count the size of the array
+     * @return array|SplFixedArray
+     */
+    public static function fixSizeArray( $count )
+    {
+        if( class_exists( "SplFixedArray" ) )
+        {
+            return new SplFixedArray( $count );
+        }
+        else
+        {
+            return array_fill(0, $count, NULL);
+        }
     }
     
     public static function convert($oValue) {

@@ -10,7 +10,7 @@
  * Each plug-in may only use its isolated storage, identified by the plug-in secret. 
  * The data is allocated using unique keys.
  * <p>
- * <strong>Note:</strong> It is <strong>strongly recommended</strong> to upload a maximum of 1 MB of data. 
+ * <b>Note:</b> It is <b>strongly recommended</b> to upload a maximum of 1 MB of data.
  * Uploading too much data may significantly reduce the performance of the server.
  * <p>
  * The following snippet shows how to upload an image to the plug-in store of a plug-in with the secret id
@@ -51,7 +51,7 @@ interface Inx_Api_Plugin_PluginStore
 	/**
 	 * Uploads data from a plug-in which needs to be stored in Inxmail Professional. 
 	 * The data should be no bigger than 1 MB. 
-	 * Uploading more data is <strong>strongly discouraged</strong> as it may significantly reduce the performance of the server.
+	 * Uploading more data is <b>strongly discouraged</b> as it may significantly reduce the performance of the server.
 	 * 
 	 * @param string $secretId the secret id of the plug-in.
 	 * @param string $key the key for the uploaded data.

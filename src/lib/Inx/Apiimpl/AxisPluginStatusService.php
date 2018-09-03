@@ -4,18 +4,18 @@
 class Inx_Apiimpl_AxisPluginStatusService extends Inx_Api_PluginStatusService
 {
 
-	const CORE_SERVICE = "CoreService";
+	const CORE2_SERVICE = "Core2Service";
 	
 	protected       	$_aServiceMap           = array();
 	
 	protected static $_aServiceDescriptors 	= array(
- 		self::CORE_SERVICE => 'http://core.apiservice.xpro.inxmail.com'
+ 		self::CORE2_SERVICE => 'http://core2.apiservice.xpro.inxmail.com'
  	);
 	
 	public function __construct($sApplicationUrl) {
 
 		$this->_sApplicationUrl = rtrim($sApplicationUrl, '/') . '/api/';
-		$this->oService = $this->getService(self::CORE_SERVICE);
+		$this->oService = $this->getService(self::CORE2_SERVICE);
  	}
  	
 
@@ -50,12 +50,6 @@ class Inx_Apiimpl_AxisPluginStatusService extends Inx_Api_PluginStatusService
 			 	
 			$sApiServletUrl = $this->_sApplicationUrl . $sServiceName;
 			$sWsdlLocation = dirname(__FILE__).DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR . $sServiceName . '.wsdl';
-			
-			// Magento compilation FIX
-			if (defined('COMPILER_INCLUDE_PATH')) {
-				$sWsdlLocation = Mage::getBaseDir('lib').DIRECTORY_SEPARATOR.'Inx'.DIRECTORY_SEPARATOR.'Apiimpl'.DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR . $sServiceName . '.wsdl';
-			}
-			// / Magento compilation FIX
 			
 			if (file_exists($sWsdlLocation)) {
 				$aArgs = array();

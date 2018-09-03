@@ -18,7 +18,7 @@ class Inx_Apiimpl_Bounce_BounceManagerImpl implements Inx_Api_Bounce_BounceManag
 	public function __construct( $oSc )
 	{
 		$this->_oSc = $oSc;
-		$this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE2_SERVICE );
+		$this->_oService = $oSc->getService( Inx_Apiimpl_SessionContext::BOUNCE3_SERVICE );
 	}
 
 
@@ -231,4 +231,20 @@ class Inx_Apiimpl_Bounce_BounceManagerImpl implements Inx_Api_Bounce_BounceManag
 		}
 		return $aAttrIds;
 	}
+        
+        /**
+         * 
+         * @return Inx_Apiimpl_Bounce_BounceQueryImpl
+         */
+        public function createQuery(Inx_Api_Recipient_RecipientContext $oRc = null, array $aAttrs = null) {
+            if ($aAttrs != null) {
+                foreach ($aAttrs as $val) {
+                    if (is_null($val)) {
+			throw new Inx_Api_IllegalArgumentException('Attribute array must not contain null values');
+                    }
+                }
+	    }
+            
+            return new Inx_Apiimpl_Bounce_BounceQueryImpl($this->_oSc, $this, $oRc, $aAttrs);
+        }
 }
