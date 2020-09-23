@@ -50,7 +50,7 @@ class DndInxmail_Subscriber_Helper_Data extends DndInxmail_Subscriber_Helper_Abs
      */
     public function getHashKey()
     {
-        return substr(hash('sha256', '7gWTgEHDp3cZsXAzj8UWWSwUyrM6jNZA'), 0, 32);
+        return substr(hash('sha256', (string)Mage::getConfig()->getNode('global/crypt/key')), 0, 32);
     }
 
     /**
