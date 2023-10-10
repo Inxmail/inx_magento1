@@ -1,4 +1,4 @@
-#EOL Notice
+# EOL Notice
 We are not updating this extension any longer.
 
 # Inxmail Professional Email Marketing für Magento CE und EE (1.x)
