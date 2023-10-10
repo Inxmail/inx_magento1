@@ -1,3 +1,6 @@
+#EOL Notice
+We are not updating this extension any longer.
+
 # Inxmail Professional Email Marketing für Magento CE und EE (1.x)
 This repository contains the Inxmail extension code for Magento 1
 
